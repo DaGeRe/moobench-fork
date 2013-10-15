@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-package kieker.evaluation.benchmark;
+package mooBench.benchmark;
 
 import java.util.concurrent.CountDownLatch;
 
-import kieker.evaluation.monitoredApplication.MonitoredClass;
+import mooBench.monitoredApplication.MonitoredClass;
 
 /**
  * @author Jan Waller

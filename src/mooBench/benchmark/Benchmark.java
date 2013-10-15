@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-package kieker.evaluation.benchmark;
+package mooBench.benchmark;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -30,7 +29,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
-import kieker.evaluation.monitoredApplication.MonitoredClass;
+import mooBench.monitoredApplication.MonitoredClass;
 
 /**
  * @author Jan Waller
@@ -45,14 +44,6 @@ public final class Benchmark {
 	private static long methodTime = 0;
 	private static int recursionDepth = 0;
 	private static boolean quickstart = false;
-
-	static {
-		try {
-			java.util.logging.LogManager.getLogManager().readConfiguration(Benchmark.class.getClassLoader().getResourceAsStream("META-INF/logging.properties"));
-		} catch (final IOException ex) {
-			java.util.logging.Logger.getAnonymousLogger().log(java.util.logging.Level.SEVERE, "Could not load default logging.properties file", ex);
-		}
-	}
 
 	private Benchmark() {}
 
@@ -95,7 +86,7 @@ public final class Benchmark {
 			}
 		}
 		final long startTime = System.currentTimeMillis();
-		System.out.print(" # 6. Starting benchmark ..."); // NOPMD (System.out)
+		System.out.println(" # 6. Starting benchmark ..."); // NOPMD (System.out)
 		// 3. Starting Threads
 		for (int i = 0; i < Benchmark.totalThreads; i++) {
 			threads[i].start();
@@ -109,7 +100,7 @@ public final class Benchmark {
 			System.exit(-1);
 		}
 		final long totalTime = System.currentTimeMillis() - startTime;
-		System.out.println("done (" + TimeUnit.MILLISECONDS.toSeconds(totalTime) + " s)"); // NOPMD (System.out)
+		System.out.println(" #    done (" + TimeUnit.MILLISECONDS.toSeconds(totalTime) + " s)"); // NOPMD (System.out)
 
 		// 5. Print experiment statistics
 		System.out.print(" # 7. Writing results ... "); // NOPMD (System.out)
@@ -143,6 +134,9 @@ public final class Benchmark {
 		cmdlOpts.addOption(OptionBuilder.withLongOpt("output-filename").withArgName("filename").hasArg(true).isRequired(true)
 				.withDescription("Filename of results file. Output is appended if file exists.").withValueSeparator('=').create("o"));
 		cmdlOpts.addOption(OptionBuilder.withLongOpt("quickstart").isRequired(false).withDescription("Skips initial Garbage Collection.").create("q"));
+		cmdlOpts.addOption(OptionBuilder.withLongOpt("runnable").withArgName("classname").hasArg(true).isRequired(false)
+				.withDescription("Class implementing the Runnable interface. run() method is executed before the benchmark starts.").withValueSeparator('=')
+				.create("r"));
 		try {
 			CommandLine cmdl = null;
 			final CommandLineParser cmdlParser = new BasicParser();
@@ -154,9 +148,13 @@ public final class Benchmark {
 			Benchmark.recursionDepth = Integer.parseInt(cmdl.getOptionValue("recursiondepth"));
 			Benchmark.quickstart = cmdl.hasOption("quickstart");
 			Benchmark.ps = new PrintStream(new BufferedOutputStream(new FileOutputStream(Benchmark.outputFn, true), 8192 * 8), false, Benchmark.ENCODING);
+			final String clazzname = cmdl.getOptionValue("runnable");
+			if (null != clazzname) {
+				((Runnable) Class.forName(clazzname).newInstance()).run();
+			}
 		} catch (final Exception ex) { // NOCS (e.g., IOException, ParseException, NumberFormatException)
 			new HelpFormatter().printHelp(Benchmark.class.getName(), cmdlOpts);
-			ex.printStackTrace(); // NOPMD (Stacktrace)
+			System.out.println(ex.toString()); // NOPMD (Stacktrace)
 			System.exit(-1);
 		}
 	}

@@ -14,12 +14,19 @@
 		<path id="compile-classpath">
 			<fileset dir="lib/">
 				<include name="commons-cli-*.jar" />
-				<include name="kieker-*.jar" />
+				<include name="frameworks/Kieker/lib/kieker-*.jar" />
+			</fileset>
+			<fileset dir="frameworks/Kieker/lib/">
+				<include name="*.jar" />
 			</fileset>
 		</path>
-		<javac source="1.5" target="1.5" destDir="build" debug="true" classpathref="compile-classpath" srcdir="src" includeAntRuntime="false" />
+		<javac source="1.5" target="1.5" destDir="build" debug="true" classpathref="compile-classpath" includeAntRuntime="false">
+			<src path="src" />
+			<src path="frameworks/Kieker/src" />
+		</javac>
 		<copy todir="build/META-INF">
 			<fileset dir="src/META-INF" />
+			<fileset dir="frameworks/Kieker/src/META-INF" />
 		</copy>
 	</target>
 
@@ -28,6 +35,7 @@
 			<classpath>
 				<fileset dir="lib/">
 					<include name="**/*.jar" />
+					<exclude name="commons-cli-*.jar" />
 				</fileset>
 			</classpath>
 		</manifestclasspath>
@@ -35,9 +43,10 @@
 			<fileset dir="build" />
 			<fileset dir="." includes="LICENSE README" />
 			<manifest>
-				<attribute name="Main-Class" value="kieker.evaluation.benchmark.Benchmark" />
+				<attribute name="Main-Class" value="mooBench.benchmark.Benchmark" />
 				<attribute name="Class-Path" value="${jar.classpath}" />
 			</manifest>
+			<zipfileset src="lib/commons-cli-1.2.jar" />
 		</jar>
 	</target>
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-package kieker.evaluation.monitoredApplication;
+package mooBench.monitoredApplication;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
