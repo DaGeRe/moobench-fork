@@ -187,4 +187,5 @@ EOF
 ## Clean up raw results
 zip -jqr ${RESULTSDIR}results.zip ${RAWFN}*
 rm -f ${RAWFN}*
-[ -f ${BASEDIR}nohup.out ] && mv ${BASEDIR}nohup.out ${RESULTSDIR}
+[ -f ${BASEDIR}nohup.out ] && cp ${BASEDIR}nohup.out ${RESULTSDIR}
+[ -f ${BASEDIR}nohup.out ] && > ${BASEDIR}nohup.out

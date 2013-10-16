@@ -40,9 +40,9 @@ JAR="-jar dist/OverheadEvaluationMicrobenchmark.jar"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
 JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}lib/kieker-1.0_aspectj.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dkieker.monitoring.adaptiveMonitoring.enabled=false"
-JAVAARGS_KIEKER_DEACTV="${JAVAARGS_LTW} -Dtpmon.configuration=kieker.monitoring.properties.disabled"
-JAVAARGS_KIEKER_NOLOGGING="${JAVAARGS_LTW} -Dtpmon.configuration=kieker.monitoring.properties.collect"
-JAVAARGS_KIEKER_LOGGING1="${JAVAARGS_LTW} -Dtpmon.configuration=kieker.monitoring.properties.writer -Dtpmon.customStoragePath=${BASEDIR}tmp"
+JAVAARGS_KIEKER_DEACTV="${JAVAARGS_LTW} -Dtpmon.configuration=META-INF/tpmon.properties.disabled"
+JAVAARGS_KIEKER_NOLOGGING="${JAVAARGS_LTW} -Dtpmon.configuration=META-INF/tpmon.properties.collect"
+JAVAARGS_KIEKER_LOGGING1="${JAVAARGS_LTW} -Dtpmon.configuration=META-INF/tpmon.properties.writer -Dtpmon.customStoragePath=${BASEDIR}tmp"
 
 ## Write configuration
 uname -a >${RESULTSDIR}configuration.txt
@@ -136,7 +136,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --recursiondepth ${j} \
         ${MOREPARAMS}
     kill %sar
-    rm -rf ${BASEDIR}tmp/kieker-*
+    rm -rf ${BASEDIR}tmp/tpmon-*
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}kieker.log
     echo >>${BASEDIR}kieker.log
@@ -157,7 +157,7 @@ results_fn="${RAWFN}"
 outtxt_fn="${RESULTSDIR}results-text.txt"
 configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
-configs.labels=c("No Probe","Deactivated Probe","Collecting Data","Writer1","Writer2")
+configs.labels=c("No Probe","Deactivated Probe","Collecting Data","Writer")
 results.count=${TOTALCALLS}
 results.skip=${TOTALCALLS}/2
 source("${RSCRIPTDIR}stats.r")
@@ -166,4 +166,5 @@ EOF
 ## Clean up raw results
 zip -jqr ${RESULTSDIR}results.zip ${RAWFN}*
 rm -f ${RAWFN}*
-[ -f ${BASEDIR}nohup.out ] && mv ${BASEDIR}nohup.out ${RESULTSDIR}
+[ -f ${BASEDIR}nohup.out ] && cp ${BASEDIR}nohup.out ${RESULTSDIR}
+[ -f ${BASEDIR}nohup.out ] && > ${BASEDIR}nohup.out

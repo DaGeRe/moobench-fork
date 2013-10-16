@@ -1,12 +1,13 @@
 #!/bin/bash
 
-SLEEPTIME=0            ## 30
-NUM_LOOPS=1            ## 10
+SLEEPTIME=30            ## 30
+NUM_LOOPS=10            ## 10
 THREADS=1               ## 1
 RECURSIONDEPTH=10       ## 10
-TOTALCALLS=20000      ## 2000000
+TOTALCALLS=2000000      ## 2000000
 METHODTIME=0            ## 0
-MOREPARAMS="--quickstart"
+#MOREPARAMS="--quickstart"
+MOREPARAMS=""
 
 source bin/benchmark-disk-writer-1.8-oer.sh
 source bin/benchmark-disk-writer-1.7-oer.sh
