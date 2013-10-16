@@ -1,20 +1,20 @@
 #!/bin/bash
 
-JAVABIN="/localhome/jwa/jdk/bin/"
+JAVABIN=""
 
 RSCRIPTDIR=bin/r/
 BASEDIR=./
-RESULTSDIR="${BASEDIR}tmp/results-benchmark-kieker-disk-1.8/"
+RESULTSDIR="${BASEDIR}tmp/results-benchmark-kieker-disk-1.7-event/"
 
-SLEEPTIME=30            ## 30
-NUM_LOOPS=10            ## 10
-THREADS=1               ## 1
-RECURSIONDEPTH=10       ## 10
-TOTALCALLS=2000000      ## 2000000
-METHODTIME=0            ## 0
+#SLEEPTIME=30            ## 30
+#NUM_LOOPS=10            ## 10
+#THREADS=1               ## 1
+#RECURSIONDEPTH=10       ## 10
+#TOTALCALLS=2000000      ## 2000000
+#METHODTIME=0            ## 0
 
-MOREPARAMS="-r kieker.Logger"
-#MOREPARAMS="-r kieker.Logger --quickstart"
+#MOREPARAMS="--quickstart"
+MOREPARAMS="${MOREPARAMS} -r kieker.Logger"
 
 TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEPTIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSIONDEPTH} + 50 \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
@@ -39,11 +39,11 @@ JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
 JAR="-jar dist/OverheadEvaluationMicrobenchmark.jar"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}lib/kieker-1.8_aspectj.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dkieker.monitoring.adaptiveMonitoring.enabled=false -Dorg.aspectj.weaver.loadtime.configuration=META-INF/kieker.aop.xml"
+JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}lib/kieker-1.7_aspectj.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dkieker.monitoring.adaptiveMonitoring.enabled=false -Dorg.aspectj.weaver.loadtime.configuration=META-INF/kieker.aop.xml"
 JAVAARGS_KIEKER_DEACTV="${JAVAARGS_LTW} -Dkieker.monitoring.enabled=false -Dkieker.monitoring.writer=kieker.monitoring.writer.DummyWriter"
 JAVAARGS_KIEKER_NOLOGGING="${JAVAARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.DummyWriter"
-JAVAARGS_KIEKER_LOGGING1="${JAVAARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncFsWriter -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.customStoragePath=${BASEDIR}tmp"
-JAVAARGS_KIEKER_LOGGING2="${JAVAARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncBinaryFsWriter -Dkieker.monitoring.writer.filesystem.AsyncBinaryFsWriter.customStoragePath=${BASEDIR}tmp"
+JAVAARGS_KIEKER_LOGGING1="${JAVAARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncFsWriter -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.storeInJavaIoTmpdir=false -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.customStoragePath=${BASEDIR}tmp"
+JAVAARGS_KIEKER_LOGGING2="${JAVAARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncBinaryFsWriter -Dkieker.monitoring.writer.filesystem.AsyncBinaryFsWriter.storeInJavaIoTmpdir=false -Dkieker.monitoring.writer.filesystem.AsyncBinaryFsWriter.customStoragePath=${BASEDIR}tmp"
 
 ## Write configuration
 uname -a >${RESULTSDIR}configuration.txt
@@ -175,16 +175,13 @@ mv ${BASEDIR}kieker.log ${RESULTSDIR}kieker.log
 # Bars
 R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
-output_fn="${RESULTSDIR}results-bars.pdf"
 outtxt_fn="${RESULTSDIR}results-text.txt"
 configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","Writer1","Writer2")
 results.count=${TOTALCALLS}
 results.skip=${TOTALCALLS}/2
-bars.minval=(${METHODTIME}/1000)
-bars.maxval=(${METHODTIME}/1000)+200
-source("${RSCRIPTDIR}bar.r")
+source("${RSCRIPTDIR}stats.r")
 EOF
 
 ## Clean up raw results
