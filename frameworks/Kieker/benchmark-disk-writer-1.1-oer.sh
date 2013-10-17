@@ -39,7 +39,7 @@ JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
 JAR="-jar dist/OverheadEvaluationMicrobenchmark.jar"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}lib/kieker-1.1_aspectj.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dkieker.monitoring.adaptiveMonitoring.enabled=false"
+JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}lib/kieker-1.1_aspectj.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false"
 JAVAARGS_KIEKER_DEACTV="${JAVAARGS_LTW} -Dtpmon.configuration=META-INF/tpmon.properties.disabled"
 JAVAARGS_KIEKER_NOLOGGING="${JAVAARGS_LTW} -Dtpmon.configuration=META-INF/tpmon.properties.collect"
 JAVAARGS_KIEKER_LOGGING1="${JAVAARGS_LTW} -Dtpmon.configuration=META-INF/tpmon.properties.writer -Dtpmon.customStoragePath=${BASEDIR}tmp"
