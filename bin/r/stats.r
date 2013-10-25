@@ -54,20 +54,26 @@ for (cr in configs.recursion) {
 
 
 for (cr in configs.recursion) {
-  printvalues = matrix(nrow=5,ncol=configs.count,dimnames=list(c("mean","ci95%","md25%","md50%","md75%"),c(1:configs.count)))
-  printthrough = matrix(nrow=5,ncol=configs.count,dimnames=list(c("mean","ci95%","md25%","md50%","md75%"),c(1:configs.count)))
+  printvalues = matrix(nrow=7,ncol=configs.count,dimnames=list(c("mean","ci95%","md25%","md50%","md75%","max","min"),c(1:configs.count)))
+  printthrough = matrix(nrow=7,ncol=configs.count,dimnames=list(c("mean","ci95%","md25%","md50%","md75%","max","min"),c(1:configs.count)))
   for (cc in (1:configs.count)) {
     printvalues["mean",cc]=mean(resultsBIG[(1:length(configs.recursion))[configs.recursion==cr],cc,c(1:(results.count-results.skip))])
     printvalues["ci95%",cc]=qnorm(0.975)*sd(resultsBIG[(1:length(configs.recursion))[configs.recursion==cr],cc,c(1:(results.count-results.skip))])/sqrt(length(resultsBIG[(1:length(configs.recursion))[configs.recursion==cr],cc,c(1:(results.count-results.skip))]))
     printvalues[c("md25%","md50%","md75%"),cc]=quantile(resultsBIG[(1:length(configs.recursion))[configs.recursion==cr],cc,c(1:(results.count-results.skip))],probs=c(0.25,0.5,0.75))
+    printvalues["max",cc]=max(resultsBIG[(1:length(configs.recursion))[configs.recursion==cr],cc,c(1:(results.count-results.skip))])
+    printvalues["min",cc]=min(resultsBIG[(1:length(configs.recursion))[configs.recursion==cr],cc,c(1:(results.count-results.skip))])
     printthrough["mean",cc]=mean(throughput[[(1:length(configs.recursion))[configs.recursion==cr],cc]])
     printthrough["ci95%",cc]=qnorm(0.975)*sd(throughput[[(1:length(configs.recursion))[configs.recursion==cr],cc]])/sqrt(length(throughput[[(1:length(configs.recursion))[configs.recursion==cr],cc]]))
     printthrough[c("md25%","md50%","md75%"),cc]=quantile(throughput[[(1:length(configs.recursion))[configs.recursion==cr],cc]],probs=c(0.25,0.5,0.75))
+    printthrough["max",cc]=max(throughput[[(1:length(configs.recursion))[configs.recursion==cr],cc]])
+    printthrough["min",cc]=min(throughput[[(1:length(configs.recursion))[configs.recursion==cr],cc]])
   }
   resultstext=formatC(printvalues,format="f",digits=4,width=8)
   throughtext=formatC(printthrough,format="f",digits=1,width=12)
   print(resultstext)
+  print(throughtext)
   write(paste("Recursion Depth: ", cr),file=outtxt_fn,append=TRUE)
+  write("response time",file=outtxt_fn,append=TRUE)
   write.table(resultstext,file=outtxt_fn,append=TRUE,quote=FALSE,sep="\t",col.names=FALSE)
   write("Throughput",file=outtxt_fn,append=TRUE)
   write.table(throughtext,file=outtxt_fn,append=TRUE,quote=FALSE,sep="\t",col.names=FALSE)
