@@ -1,9 +1,11 @@
-This example contains micro-benchmarks to quantify the performance
-overhead caused by the Kieker framework components. 
+The MooBench Monitoring OVerhead Benchmark
+------------------------------------------
 
-All experiments employ AspectJ for weaving the monitoring probes 
-into the application. The Java methods to be instrumented are 
-selected using Java annotations.
+This micro-benchmarks can be used to quantify the performance
+overhead caused by monitoring framework components. 
+
+The default experiments employ AspectJ for weaving the monitoring 
+probes into the application.
 
 Currently only shell (.sh) scripts are provided.
 
