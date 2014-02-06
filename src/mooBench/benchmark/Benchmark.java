@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright 2013 Kieker Project (http://kieker-monitoring.net)
+ * Copyright 2014 Kieker Project (http://kieker-monitoring.net)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
 import mooBench.monitoredApplication.MonitoredClass;
+import mooBench.monitoredApplication.MonitoredClassThreaded;
 
 /**
  * @author Jan Waller
@@ -44,6 +45,7 @@ public final class Benchmark {
 	private static long methodTime = 0;
 	private static int recursionDepth = 0;
 	private static boolean quickstart = false;
+	private static MonitoredClass mc = null;
 
 	private Benchmark() {}
 
@@ -61,10 +63,9 @@ public final class Benchmark {
 
 		// 2. Initialize Threads and Classes
 		final CountDownLatch doneSignal = new CountDownLatch(Benchmark.totalThreads);
-		final MonitoredClass mc = new MonitoredClass();
 		final BenchmarkingThread[] threads = new BenchmarkingThread[Benchmark.totalThreads];
 		for (int i = 0; i < Benchmark.totalThreads; i++) {
-			threads[i] = new BenchmarkingThread(mc, Benchmark.totalCalls, Benchmark.methodTime, Benchmark.recursionDepth, doneSignal);
+			threads[i] = new BenchmarkingThread(Benchmark.mc, Benchmark.totalCalls, Benchmark.methodTime, Benchmark.recursionDepth, doneSignal);
 			threads[i].setName(String.valueOf(i + 1));
 		}
 		if (!quickstart) {
@@ -137,6 +138,9 @@ public final class Benchmark {
 		cmdlOpts.addOption(OptionBuilder.withLongOpt("runnable").withArgName("classname").hasArg(true).isRequired(false)
 				.withDescription("Class implementing the Runnable interface. run() method is executed before the benchmark starts.").withValueSeparator('=')
 				.create("r"));
+		cmdlOpts.addOption(OptionBuilder.withLongOpt("application").withArgName("classname").hasArg(true).isRequired(false)
+				.withDescription("Class implementing the MonitoredClass interface.").withValueSeparator('=')
+				.create("a"));
 		try {
 			CommandLine cmdl = null;
 			final CommandLineParser cmdlParser = new BasicParser();
@@ -148,6 +152,12 @@ public final class Benchmark {
 			Benchmark.recursionDepth = Integer.parseInt(cmdl.getOptionValue("recursiondepth"));
 			Benchmark.quickstart = cmdl.hasOption("quickstart");
 			Benchmark.ps = new PrintStream(new BufferedOutputStream(new FileOutputStream(Benchmark.outputFn, true), 8192 * 8), false, Benchmark.ENCODING);
+			final String application = cmdl.getOptionValue("application");
+			if (null != application) {
+				mc = ((MonitoredClass) Class.forName(application).newInstance());
+			} else {
+				mc = new MonitoredClassThreaded();
+			}
 			final String clazzname = cmdl.getOptionValue("runnable");
 			if (null != clazzname) {
 				((Runnable) Class.forName(clazzname).newInstance()).run();

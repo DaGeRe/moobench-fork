@@ -14,23 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 
-package kieker;
-
-import java.io.IOException;
-
-import mooBench.benchmark.Benchmark;
+package mooBench.monitoredApplication;
 
 /**
  * @author Jan Waller
  */
-public class Logger implements Runnable {
+public final class MonitoredClassSimple implements MonitoredClass {
 
-	public void run() {
-		try {
-			java.util.logging.LogManager.getLogManager().readConfiguration(
-					Benchmark.class.getClassLoader().getResourceAsStream("META-INF/kieker.logging.properties"));
-		} catch (final IOException ex) {
-			java.util.logging.Logger.getAnonymousLogger().log(java.util.logging.Level.SEVERE, "Could not load default logging.properties file", ex);
+	/**
+	 * Default constructor.
+	 */
+	public MonitoredClassSimple() {
+		// empty default constructor
+	}
+
+	public final long monitoredMethod(final long methodTime, final int recDepth) {
+		if (recDepth > 1) {
+			return this.monitoredMethod(methodTime, recDepth - 1);
+		} else {
+			final long exitTime = System.nanoTime() + methodTime;
+			long currentTime;
+			do {
+				currentTime = System.nanoTime();
+			} while (currentTime < exitTime);
+			return currentTime;
 		}
 	}
 }

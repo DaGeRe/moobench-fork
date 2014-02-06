@@ -14,23 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 
-package kieker;
+package mooBench.monitoredApplication;
 
-import java.io.IOException;
-
-import mooBench.benchmark.Benchmark;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 
 /**
  * @author Jan Waller
  */
-public class Logger implements Runnable {
+public final class MonitoredClassThreaded implements MonitoredClass {
+	final ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 
-	public void run() {
-		try {
-			java.util.logging.LogManager.getLogManager().readConfiguration(
-					Benchmark.class.getClassLoader().getResourceAsStream("META-INF/kieker.logging.properties"));
-		} catch (final IOException ex) {
-			java.util.logging.Logger.getAnonymousLogger().log(java.util.logging.Level.SEVERE, "Could not load default logging.properties file", ex);
+	/**
+	 * Default constructor.
+	 */
+	public MonitoredClassThreaded() {
+		// empty default constructor
+	}
+
+	public final long monitoredMethod(final long methodTime, final int recDepth) {
+		if (recDepth > 1) {
+			return this.monitoredMethod(methodTime, recDepth - 1);
+		} else {
+			final long exitTime = this.threadMXBean.getCurrentThreadUserTime() + methodTime;
+			long currentTime;
+			do {
+				currentTime = this.threadMXBean.getCurrentThreadUserTime();
+			} while (currentTime < exitTime);
+			return currentTime;
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright 2013 Kieker Project (http://kieker-monitoring.net)
+ * Copyright 2014 Kieker Project (http://kieker-monitoring.net)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,32 +16,10 @@
 
 package mooBench.monitoredApplication;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
-
 /**
  * @author Jan Waller
  */
-public final class MonitoredClass {
-	private final ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+public interface MonitoredClass {
 
-	/**
-	 * Default constructor.
-	 */
-	public MonitoredClass() {
-		// empty default constructor
-	}
-
-	public final long monitoredMethod(final long methodTime, final int recDepth) {
-		if (recDepth > 1) {
-			return this.monitoredMethod(methodTime, recDepth - 1);
-		} else {
-			final long exitTime = this.threadMXBean.getCurrentThreadUserTime() + methodTime;
-			long currentTime;
-			do {
-				currentTime = this.threadMXBean.getCurrentThreadUserTime();
-			} while (currentTime < exitTime);
-			return currentTime;
-		}
-	}
+	public long monitoredMethod(final long methodTime, final int recDepth);
 }
