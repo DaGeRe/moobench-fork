@@ -125,16 +125,16 @@ public final class Benchmark {
 	public static void parseAndInitializeArguments(final String[] args) {
 		final Options cmdlOpts = new Options();
 		cmdlOpts.addOption(OptionBuilder.withLongOpt("totalcalls").withArgName("calls").hasArg(true).isRequired(true)
-				.withDescription("Number of total Method-Calls performed.").withValueSeparator('=').create("t"));
+				.withDescription("Number of total method calls performed.").withValueSeparator('=').create("t"));
 		cmdlOpts.addOption(OptionBuilder.withLongOpt("methodtime").withArgName("time").hasArg(true).isRequired(true).withDescription("Time a method call takes.")
 				.withValueSeparator('=').create("m"));
 		cmdlOpts.addOption(OptionBuilder.withLongOpt("totalthreads").withArgName("threads").hasArg(true).isRequired(true)
-				.withDescription("Number of Threads started.").withValueSeparator('=').create("h"));
+				.withDescription("Number of threads started.").withValueSeparator('=').create("h"));
 		cmdlOpts.addOption(OptionBuilder.withLongOpt("recursiondepth").withArgName("depth").hasArg(true).isRequired(true)
-				.withDescription("Depth of Recursion performed.").withValueSeparator('=').create("d"));
+				.withDescription("Depth of recursion performed.").withValueSeparator('=').create("d"));
 		cmdlOpts.addOption(OptionBuilder.withLongOpt("output-filename").withArgName("filename").hasArg(true).isRequired(true)
 				.withDescription("Filename of results file. Output is appended if file exists.").withValueSeparator('=').create("o"));
-		cmdlOpts.addOption(OptionBuilder.withLongOpt("quickstart").isRequired(false).withDescription("Skips initial Garbage Collection.").create("q"));
+		cmdlOpts.addOption(OptionBuilder.withLongOpt("quickstart").isRequired(false).withDescription("Skips initial garbage collection.").create("q"));
 		cmdlOpts.addOption(OptionBuilder.withLongOpt("runnable").withArgName("classname").hasArg(true).isRequired(false)
 				.withDescription("Class implementing the Runnable interface. run() method is executed before the benchmark starts.").withValueSeparator('=')
 				.create("r"));
