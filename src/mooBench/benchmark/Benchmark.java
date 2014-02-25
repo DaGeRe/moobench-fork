@@ -63,10 +63,11 @@ public final class Benchmark {
 
 		// 2. Initialize Threads and Classes
 		final CountDownLatch doneSignal = new CountDownLatch(Benchmark.totalThreads);
-		final BenchmarkingThread[] threads = new BenchmarkingThread[Benchmark.totalThreads];
+		final BenchmarkingThread[] benchmarkingThreads = new BenchmarkingThread[Benchmark.totalThreads];
+		final Thread[] threads = new Thread[Benchmark.totalThreads];
 		for (int i = 0; i < Benchmark.totalThreads; i++) {
-			threads[i] = new BenchmarkingThread(Benchmark.mc, Benchmark.totalCalls, Benchmark.methodTime, Benchmark.recursionDepth, doneSignal);
-			threads[i].setName(String.valueOf(i + 1));
+			benchmarkingThreads[i] = new BenchmarkingThreadNano(Benchmark.mc, Benchmark.totalCalls, Benchmark.methodTime, Benchmark.recursionDepth, doneSignal);
+			threads[i] = new Thread(benchmarkingThreads[i], String.valueOf(i + 1));
 		}
 		if (!quickstart) {
 			for (int l = 0; l < 4; l++) {
@@ -108,7 +109,7 @@ public final class Benchmark {
 		// CSV Format: configuration;order_index;Thread-ID;duration_nsec
 		long[] timings;
 		for (int h = 0; h < Benchmark.totalThreads; h++) {
-			timings = threads[h].getTimings();
+			timings = benchmarkingThreads[h].getTimings();
 			for (int i = 0; i < Benchmark.totalCalls; i++) {
 				Benchmark.ps.println(threads[h].getName() + ";" + timings[i]);
 			}
@@ -141,6 +142,9 @@ public final class Benchmark {
 		cmdlOpts.addOption(OptionBuilder.withLongOpt("application").withArgName("classname").hasArg(true).isRequired(false)
 				.withDescription("Class implementing the MonitoredClass interface.").withValueSeparator('=')
 				.create("a"));
+		cmdlOpts.addOption(OptionBuilder.withLongOpt("benchmarkthread").withArgName("classname").hasArg(true).isRequired(false)
+				.withDescription("Class implementing the BenchmarkingThread interface.").withValueSeparator('=')
+				.create("b"));
 		try {
 			CommandLine cmdl = null;
 			final CommandLineParser cmdlParser = new BasicParser();

@@ -16,52 +16,10 @@
 
 package mooBench.benchmark;
 
-import java.util.concurrent.CountDownLatch;
-
-import mooBench.monitoredApplication.MonitoredClass;
-
 /**
  * @author Jan Waller
  */
-public final class BenchmarkingThread extends Thread {
+public interface BenchmarkingThread extends Runnable {
 
-	private final MonitoredClass mc;
-	private final CountDownLatch doneSignal;
-	private final int totalCalls;
-	private final long methodTime;
-	private final int recursionDepth;
-	private final long[] timings;
-
-	public BenchmarkingThread(final MonitoredClass mc, final int totalCalls, final long methodTime, final int recursionDepth, final CountDownLatch doneSignal) {
-		super();
-		this.mc = mc;
-		this.doneSignal = doneSignal;
-		this.totalCalls = totalCalls;
-		this.methodTime = methodTime;
-		this.recursionDepth = recursionDepth;
-		this.timings = new long[totalCalls];
-	}
-
-	public final long[] getTimings() {
-		synchronized (this) {
-			return this.timings;
-		}
-	}
-
-	@Override
-	public final void run() {
-		long start_ns;
-		long stop_ns;
-		for (int i = 0; i < this.totalCalls; i++) {
-			start_ns = System.nanoTime();
-			this.mc.monitoredMethod(this.methodTime, this.recursionDepth);
-			stop_ns = System.nanoTime();
-			this.timings[i] = stop_ns - start_ns;
-			if ((i % 100000) == 0) {
-				System.out.println(i); // NOPMD (System.out)
-			}
-		}
-		this.doneSignal.countDown();
-	}
-
+	public abstract long[] getTimings();
 }
