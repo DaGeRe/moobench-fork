@@ -14,11 +14,13 @@
 		<path id="compile-classpath">
 			<fileset dir="lib/">
 				<include name="commons-cli-*.jar" />
-				<include name="frameworks/Kieker/lib/kieker-*.jar" />
+				<include name="kieker-*.jar" />
 			</fileset>
+			<!--
 			<fileset dir="frameworks/Kieker/lib/">
 				<include name="*.jar" />
 			</fileset>
+			-->
 		</path>
 		<javac source="1.5" target="1.5" destDir="build" debug="true" classpathref="compile-classpath" includeAntRuntime="false">
 			<src path="src" />
