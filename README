@@ -1,20 +1,29 @@
-The MooBench Monitoring Overhead Benchmark
-------------------------------------------
+The MooBench Monitoring Overhead Micro-Benchmark 
+------------------------------------------------------------------------
 
-This micro-benchmarks can be used to quantify the performance
+Website: http://kieker-monitoring.net/MooBench
+Contact: moobench@notme.de
+
+The MooBench micro-benchmarks can be used to quantify the performance 
 overhead caused by monitoring framework components. 
 
-The default experiments employ AspectJ for weaving the monitoring 
-probes into the application.
+Currenly supported monitoring frameworks include:
+* Kieker (http://kieker-monitoring.net)
+* inspectIT (http://inspectit.eu/)
+* SPASSmeter
 
+An ant script (build.xml) is provided to prepare the benchmark for the
+respective monitoring framwork. Corresponding build targets, providing
+preconfigured build for each supported framework, are available.
+For instance, the target "build-kieker" prepares a jar for Kieker 
+benchmarking experiments.
+
+All experiments are started with the provided "External Controller"
+scripts. These scripts are available inside the bin/ directory.
 Currently only shell (.sh) scripts are provided.
 
 The default execution of the benchmark requires a 64Bit JVM!
 This can be changed in the respective .sh scripts.
-
-Files required in /lib:
-  kieker-*_aspectj.jar         (a current build of Kieker)
-  commons-cli-1.2.jar
 
 Initially, the following steps are required:
 1. You should check whether you installed ant (http://ant.apache.org/), 
@@ -22,11 +31,12 @@ Initially, the following steps are required:
    README is based on the run-targets in the ant file build.xml.
 2. Make sure, that you've installed R (http://www.r-project.org/) to 
    generate the results.
-3. Compile the application by calling ant.
+3. Compile the application by calling ant with the appropriate build 
+   target.
 
 Execution of the micro-benchmark:
-All benchmarks are started with calls of .sh scripts in the /bin folder.
-The top of the files include some possibilities for configuration, such as
+All benchmarks are started with calls of .sh scripts in the bin folder.
+The top of the files include some configuration parameters, such as
 * SLEEPTIME between executions
 * NUM_LOOPS number of repetitions
 * THREADS concurrent benchmarking threads
@@ -37,21 +47,23 @@ Furthermore some JVM arguments can be adjusted:
 * JAVAARGS JVM Arguments
 
 Experiments:
-Different recursion depth (with MAXRECURSIONDEPTH=1 one can test without recursion)
+Different recursion depth (with MAXRECURSIONDEPTH=1 without recursion)
 -> bin/run-benchmark-recursive.sh
 
-To check for a linear rise in monitoring overhead, this benchmark increases the 
-recursion depth up to 2^MAXRECURSIONDEPTH in logarithmic steps
+To check for a linear rise in monitoring overhead, this benchmark 
+increases the recursion depth up to 2^MAXRECURSIONDEPTH in logarithmic 
+steps
 -> bin/run-benchmark-recursive-linear.sh
 
 Benchmarking the JMX-writer
 -> bin/run-benchmark-recursive-jmx.sh
 
-The experiments run-cycle*.sh and their used files run-benchmark-cycle-*.sh are 
-currently only supporting Solaris environments and require pfexec permissions to
-assign subsets of cores to the benchmarking system.
+The experiments run-cycle*.sh and their used files 
+run-benchmark-cycle-*.sh are currently only supporting Solaris 
+environments and require pfexec permissions to assign subsets of cores 
+to the benchmarking system.
 
 Analyzing the data:
-in the folder /bin/r-scripts are some R scripts provided to generate graphs to
-visualize the results. In the top the files, one can configure the required paths
-and the configuration used to analyze the data.
+in the folder /bin/r-scripts are some R scripts provided to generate 
+graphs to visualize the results. In the top the files, one can configure
+the required paths and the configuration used to analyze the data.
