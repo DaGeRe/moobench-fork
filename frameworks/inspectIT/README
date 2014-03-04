@@ -1,0 +1,10 @@
+Folder structure:
+
+CMR/                 -> add from download
+config/
+inspectit-agent.jar  -> add from download
+
+
+to clean:
+remove in CMR db/ logs/ storage/
+
