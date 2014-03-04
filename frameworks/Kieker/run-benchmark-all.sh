@@ -9,6 +9,7 @@ METHODTIME=0            ## 0
 MOREPARAMS=""
 #MOREPARAMS="${MOREPARAMS} --quickstart"
 
+source bin/benchmark-disk-writer-1.9-oer.sh
 source bin/benchmark-disk-writer-1.8-oer.sh
 source bin/benchmark-disk-writer-1.7-oer.sh
 source bin/benchmark-disk-writer-1.6-oer.sh
@@ -21,6 +22,7 @@ source bin/benchmark-disk-writer-1.0-oer.sh
 source bin/benchmark-disk-writer-0.95a-oer.sh
 source bin/benchmark-disk-writer-0.91-oer.sh
 
+source bin/benchmark-disk-writer-1.9-event.sh
 source bin/benchmark-disk-writer-1.8-event.sh
 source bin/benchmark-disk-writer-1.7-event.sh
 source bin/benchmark-disk-writer-1.6-event.sh
