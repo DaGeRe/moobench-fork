@@ -19,8 +19,8 @@ For instance, the target "build-kieker" prepares a jar for Kieker
 benchmarking experiments.
 
 All experiments are started with the provided "External Controller"
-scripts. These scripts are available inside the bin/ directory.
-Currently only shell (.sh) scripts are provided.
+scripts. These scripts are available inside the respective bin/ 
+directory. Currently only shell (.sh) scripts are provided.
 
 The default execution of the benchmark requires a 64Bit JVM!
 This can be changed in the respective .sh scripts.
@@ -46,7 +46,7 @@ The top of the files include some configuration parameters, such as
 Furthermore some JVM arguments can be adjusted:
 * JAVAARGS JVM Arguments
 
-Experiments:
+Experiments (outdated):
 Different recursion depth (with MAXRECURSIONDEPTH=1 without recursion)
 -> bin/run-benchmark-recursive.sh
 
@@ -64,6 +64,6 @@ environments and require pfexec permissions to assign subsets of cores
 to the benchmarking system.
 
 Analyzing the data:
-in the folder /bin/r-scripts are some R scripts provided to generate 
+in the folder /bin/r are some R scripts provided to generate 
 graphs to visualize the results. In the top the files, one can configure
 the required paths and the configuration used to analyze the data.

@@ -2,16 +2,16 @@
 
 JAVABIN=""
 
-RSCRIPTDIR=bin/r/
+RSCRIPTDIR=r/
 BASEDIR=./
-RESULTSDIR="${BASEDIR}tmp/results-benchmark-kieker-disk-1.7-event/"
+RESULTSDIR="${BASEDIR}tmp/results-kieker/"
 
-#SLEEPTIME=30            ## 30
-#NUM_LOOPS=10            ## 10
-#THREADS=1               ## 1
-#RECURSIONDEPTH=10       ## 10
-#TOTALCALLS=2000000      ## 2000000
-#METHODTIME=0            ## 0
+SLEEPTIME=30            ## 30
+NUM_LOOPS=10            ## 10
+THREADS=1               ## 1
+RECURSIONDEPTH=10       ## 10
+TOTALCALLS=2000000      ## 2000000
+METHODTIME=500          ## 500
 
 #MOREPARAMS="--quickstart"
 MOREPARAMS="${MOREPARAMS} -r kieker.Logger"
@@ -36,14 +36,13 @@ JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
 #JAVAARGS="${JAVAARGS} -XX:+PrintInlining"
 #JAVAARGS="${JAVAARGS} -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation"
 #JAVAARGS="${JAVAARGS} -Djava.compiler=NONE"
-JAR="-jar dist/OverheadEvaluationMicrobenchmark.jar"
+JAR="-jar OverheadEvaluationMicrobenchmark.jar"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}lib/kieker-1.7_aspectj.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dorg.aspectj.weaver.loadtime.configuration=META-INF/kieker.aop.xml"
+JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}lib/kieker-1.9_aspectj.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dorg.aspectj.weaver.loadtime.configuration=META-INF/kieker.aop.xml"
 JAVAARGS_KIEKER_DEACTV="${JAVAARGS_LTW} -Dkieker.monitoring.enabled=false -Dkieker.monitoring.writer=kieker.monitoring.writer.DummyWriter"
 JAVAARGS_KIEKER_NOLOGGING="${JAVAARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.DummyWriter"
-JAVAARGS_KIEKER_LOGGING1="${JAVAARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncFsWriter -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.storeInJavaIoTmpdir=false -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.customStoragePath=${BASEDIR}tmp"
-JAVAARGS_KIEKER_LOGGING2="${JAVAARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncBinaryFsWriter -Dkieker.monitoring.writer.filesystem.AsyncBinaryFsWriter.storeInJavaIoTmpdir=false -Dkieker.monitoring.writer.filesystem.AsyncBinaryFsWriter.customStoragePath=${BASEDIR}tmp"
+JAVAARGS_KIEKER_LOGGING="${JAVAARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncFsWriter -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.customStoragePath=${BASEDIR}tmp"
 
 ## Write configuration
 uname -a >${RESULTSDIR}configuration.txt
@@ -124,32 +123,12 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     sync
     sleep ${SLEEPTIME}
 
-    # Logging 1
+    # Logging
     k=`expr ${k} + 1`
-    echo " # ${i}.${j}.${k} Logging 1"
-    echo " # ${i}.${j}.${k} Logging 1" >>${BASEDIR}kieker.log
+    echo " # ${i}.${j}.${k} Logging"
+    echo " # ${i}.${j}.${k} Logging" >>${BASEDIR}kieker.log
     sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java  ${JAVAARGS_KIEKER_LOGGING1} ${JAR} \
-        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTALCALLS} \
-        --methodtime ${METHODTIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
-        ${MOREPARAMS}
-    kill %sar
-    rm -rf ${BASEDIR}tmp/kieker-*
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
-    echo >>${BASEDIR}kieker.log
-    echo >>${BASEDIR}kieker.log
-    sync
-    sleep ${SLEEPTIME}
-
-    # Logging 2
-    k=`expr ${k} + 1`
-    echo " # ${i}.${j}.${k} Logging 2"
-    echo " # ${i}.${j}.${k} Logging 2" >>${BASEDIR}kieker.log
-    sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java  ${JAVAARGS_KIEKER_LOGGING2} ${JAR} \
+    ${JAVABIN}java  ${JAVAARGS_KIEKER_LOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
@@ -178,7 +157,7 @@ results_fn="${RAWFN}"
 outtxt_fn="${RESULTSDIR}results-text.txt"
 configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
-configs.labels=c("No Probe","Deactivated Probe","Collecting Data","Writer1","Writer2")
+configs.labels=c("No Probe","Deactivated Probe","Collecting Data","Writer")
 results.count=${TOTALCALLS}
 results.skip=${TOTALCALLS}/2
 source("${RSCRIPTDIR}stats.r")

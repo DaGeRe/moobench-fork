@@ -9,7 +9,7 @@
 		<mkdir dir="build" />
 		<mkdir dir="dist" />
 		<mkdir dir="dist/lib" />
-		<mkdir dir="tmp" />
+		<mkdir dir="dist/tmp" />
 	</target>
 
 	<target name="compile" depends="init">
@@ -43,6 +43,7 @@
         <path refid="compile-classpath"/>
       </path>
 		</copy>
+		<copy file="frameworks/Kieker/bin/benchmark.sh" todir="dist" />
 	</target>
 
 	<target name="jar" depends="compile">
@@ -62,10 +63,12 @@
 			</manifest>
 			<zipfileset src="lib/commons-cli-1.2.jar" />
 		</jar>
+		<copy todir="dist/r">
+			<fileset dir="bin/r" />
+		</copy>
 	</target>
 
 	<target name="clean">
-		<!--<delete dir="tmp"/>-->
 		<delete dir="build" />
 		<delete dir="dist" />
 	</target>

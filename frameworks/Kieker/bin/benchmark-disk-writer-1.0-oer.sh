@@ -2,9 +2,9 @@
 
 JAVABIN=""
 
-RSCRIPTDIR=bin/r/
+RSCRIPTDIR=r/
 BASEDIR=./
-RESULTSDIR="${BASEDIR}tmp/results-benchmark-kieker-disk-1.4-oer/"
+RESULTSDIR="${BASEDIR}tmp/results-benchmark-kieker-disk-1.0-oer/"
 
 #SLEEPTIME=30            ## 30
 #NUM_LOOPS=10            ## 10
@@ -36,13 +36,13 @@ JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
 #JAVAARGS="${JAVAARGS} -XX:+PrintInlining"
 #JAVAARGS="${JAVAARGS} -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation"
 #JAVAARGS="${JAVAARGS} -Djava.compiler=NONE"
-JAR="-jar dist/OverheadEvaluationMicrobenchmark.jar"
+JAR="-jar OverheadEvaluationMicrobenchmark.jar"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}lib/kieker-1.4_aspectj.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false"
-JAVAARGS_KIEKER_DEACTV="${JAVAARGS_LTW} -Dkieker.monitoring.enabled=false -Dkieker.monitoring.writer=kieker.monitoring.writer.DummyWriter"
-JAVAARGS_KIEKER_NOLOGGING="${JAVAARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.DummyWriter"
-JAVAARGS_KIEKER_LOGGING1="${JAVAARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncFsWriter -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.storeInJavaIoTmpdir=false -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.customStoragePath=${BASEDIR}tmp"
+JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}lib/kieker-1.0_aspectj.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false"
+JAVAARGS_KIEKER_DEACTV="${JAVAARGS_LTW} -Dtpmon.configuration=META-INF/tpmon.properties.disabled"
+JAVAARGS_KIEKER_NOLOGGING="${JAVAARGS_LTW} -Dtpmon.configuration=META-INF/tpmon.properties.collect"
+JAVAARGS_KIEKER_LOGGING1="${JAVAARGS_LTW} -Dtpmon.configuration=META-INF/tpmon.properties.writer -Dtpmon.customStoragePath=${BASEDIR}tmp"
 
 ## Write configuration
 uname -a >${RESULTSDIR}configuration.txt
@@ -136,7 +136,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --recursiondepth ${j} \
         ${MOREPARAMS}
     kill %sar
-    rm -rf ${BASEDIR}tmp/kieker-*
+    rm -rf ${BASEDIR}tmp/tpmon-*
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}kieker.log
     echo >>${BASEDIR}kieker.log
