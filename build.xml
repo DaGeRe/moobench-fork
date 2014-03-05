@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="KiekerOverheadEvaluation" default="build-all" basedir=".">
-	<property file="build.properties" />
 
 	<target name="build-all" depends="clean,init,compile,jar" />
 	<target name="build-kieker" depends="clean,init,compile-kieker,jar" />
+	<target name="build-inspectit" depends="clean,init,compile-inspectit,jar" />
 
 	<target name="init" depends="">
 		<mkdir dir="build" />
@@ -19,6 +19,7 @@
 			</fileset>
 		</path>
 		<javac source="1.5" target="1.5" destDir="build" debug="true" classpathref="compile-classpath" includeAntRuntime="false">
+			<compilerarg value="-Xlint:-options"/>
 			<src path="src" />
 		</javac>
 		<copy todir="build/META-INF">
@@ -33,17 +34,24 @@
 			</fileset>
 		</path>
 		<javac source="1.5" target="1.5" destDir="build" debug="true" classpathref="compile-classpath" includeAntRuntime="false">
+			<compilerarg value="-Xlint:-options"/>
 			<src path="frameworks/Kieker/src" />
 		</javac>
 		<copy todir="build/META-INF">
 			<fileset dir="frameworks/Kieker/src/META-INF" />
 		</copy>
 		<copy todir="dist/lib" flatten="true">
-      <path>
-        <path refid="compile-classpath"/>
-      </path>
+			<path>
+				<path refid="compile-classpath"/>
+			</path>
 		</copy>
 		<copy file="frameworks/Kieker/bin/benchmark.sh" todir="dist" />
+	</target>
+
+	<target name="compile-inspectit" depends="compile">
+		<copy todir="dist">
+			<fileset dir="frameworks/inspectIT/" />
+		</copy>
 	</target>
 
 	<target name="jar" depends="compile">
