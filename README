@@ -46,6 +46,9 @@ The top of the files include some configuration parameters, such as
 Furthermore some JVM arguments can be adjusted:
 * JAVAARGS JVM Arguments
 
+Typical call:
+$ nohup ./benchmark.sh & sleep 1;tail +0cf nohup.out
+
 Experiments (outdated):
 Different recursion depth (with MAXRECURSIONDEPTH=1 without recursion)
 -> bin/run-benchmark-recursive.sh

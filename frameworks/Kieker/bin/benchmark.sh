@@ -11,7 +11,7 @@ NUM_LOOPS=10            ## 10
 THREADS=1               ## 1
 RECURSIONDEPTH=10       ## 10
 TOTALCALLS=2000000      ## 2000000
-METHODTIME=500          ## 500
+METHODTIME=500000       ## 500000
 
 #MOREPARAMS="--quickstart"
 MOREPARAMS="${MOREPARAMS} -r kieker.Logger"
@@ -151,6 +151,32 @@ mv ${BASEDIR}kieker.log ${RESULTSDIR}kieker.log
 [ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTSDIR}
 
 ## Generate Results file
+# Timeseries
+R --vanilla --silent <<EOF
+results_fn="${RAWFN}"
+output_fn="${RESULTSDIR}results-timeseries.pdf"
+configs.loop=${NUM_LOOPS}
+configs.recursion=c(${RECURSIONDEPTH})
+configs.labels=c("No Probe","Deactivated Probe","Collecting Data","Writer")
+configs.colors=c("black","red","blue","green")
+results.count=${TOTALCALLS}
+tsconf.min=(${METHODTIME}/1000)
+tsconf.max=(${METHODTIME}/1000)+200
+source("${RSCRIPTDIR}timeseries.r")
+EOF
+# Timeseries-Average
+R --vanilla --silent <<EOF
+results_fn="${RAWFN}"
+output_fn="${RESULTSDIR}results-timeseries-average.pdf"
+configs.loop=${NUM_LOOPS}
+configs.recursion=c(${RECURSIONDEPTH})
+configs.labels=c("No Probe","Deactivated Probe","Collecting Data","Writer")
+configs.colors=c("black","red","blue","green")
+results.count=${TOTALCALLS}
+tsconf.min=(${METHODTIME}/1000)
+tsconf.max=(${METHODTIME}/1000)+200
+source("${RSCRIPTDIR}timeseries-average.r")
+EOF
 # Bars
 R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
