@@ -4,5 +4,5 @@ agent/  -> add from download
 CMR/    -> add from download
 config/ -> present and preconfigured
 
-to clean:
-remove in CMR the folders db/ logs/ storage/
+
+the -inner experiments require a customized version of inspectIT, that is able to deactivate parts of its probes
