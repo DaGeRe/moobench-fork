@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/MooBench/src/mooBench/benchmark/Benchmark.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="mooBench.benchmark.Benchmark"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-d 10 -h 1 -m 0 -t 1000 -o tmp/test.txt -q"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="MooBench"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-javaagent:frameworks/inspectIT/agent/inspectit-agent-mod.jar&#13;&#10;-Dinspectit.config=frameworks/inspectIT/config/isequence/"/>
+</launchConfiguration>

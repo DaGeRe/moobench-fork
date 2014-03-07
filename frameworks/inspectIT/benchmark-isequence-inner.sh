@@ -4,7 +4,7 @@ JAVABIN=""
 
 RSCRIPTDIR=r/
 BASEDIR=./
-RESULTSDIR="${BASEDIR}tmp/results-inspectit/"
+RESULTSDIR="${BASEDIR}tmp/results-inspectit-isequence/"
 
 SLEEPTIME=30           ## 30
 NUM_LOOPS=10           ## 10
