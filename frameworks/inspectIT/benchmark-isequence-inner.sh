@@ -11,7 +11,7 @@ NUM_LOOPS=10           ## 10
 THREADS=1              ## 1
 RECURSIONDEPTH=10      ## 10
 TOTALCALLS=2000000     ## 2000000
-METHODTIME=0           ## 500000
+METHODTIME=0           ## 0
 
 #MOREPARAMS="--quickstart"
 MOREPARAMS="${MOREPARAMS}"
@@ -40,10 +40,12 @@ JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
 JAR="-jar OverheadEvaluationMicrobenchmark.jar"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-agent-mod.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties  -Dinspectit.config=${BASEDIR}config/isequence/"
+JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-agent-mod.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties -Dinspectit.config=${BASEDIR}config/isequence/"
 JAVAARGS_INSPECTIT_DISABLED="${JAVAARGS_LTW} -Dinspectit.disableProbe=true"
 JAVAARGS_INSPECTIT_NOSTORAGE="${JAVAARGS_LTW} -Dinspectit.disableStorage=true"
 JAVAARGS_INSPECTIT_FULL="${JAVAARGS_LTW}"
+
+CMR_ARGS="-d64 -Xms16G -Xmx16G -Xmn5G -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -Dinspectit.logging.config=config/logging-config.xml"
 
 ## Write configuration
 uname -a >${RESULTSDIR}configuration.txt
@@ -91,13 +93,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} InspectIT (disabled)"
     echo " # ${i}.${j}.${k} InspectIT (disabled)" >>${BASEDIR}inspectit.log
     sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java \
-        -Xms1024m -Xmx1024m -Xmn384M -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC \
-        -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC \
-        -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 \
-        -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError \
-        -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution \
-        -Xloggc:${BASEDIR}logs/gc.log -Dinspectit.logging.config=CMR/logging-config.xml -jar CMR/inspectit-cmr.jar 1>>${BASEDIR}logs/out.log 2>&1 &
+    ${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr-mod.jar 1>>${BASEDIR}logs/out.log 2>&1 &
     sleep 10
     ${JAVABIN}java  ${JAVAARGS_INSPECTIT_DISABLED} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
@@ -106,6 +102,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
         ${MOREPARAMS}
+    sleep 10
     kill $!
     sleep 10
     rm -rf ${BASEDIR}storage/
@@ -125,13 +122,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} InspectIT (no storage)"
     echo " # ${i}.${j}.${k} InspectIT (no storage)" >>${BASEDIR}inspectit.log
     sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java \
-        -Xms1024m -Xmx1024m -Xmn384M -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC \
-        -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC \
-        -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 \
-        -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError \
-        -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution \
-        -Xloggc:${BASEDIR}logs/gc.log -Dinspectit.logging.config=CMR/logging-config.xml -jar CMR/inspectit-cmr.jar 1>>${BASEDIR}logs/out.log 2>&1 &
+    ${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr-mod.jar 1>>${BASEDIR}logs/out.log 2>&1 &
     sleep 10
     ${JAVABIN}java  ${JAVAARGS_INSPECTIT_NOSTORAGE} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
@@ -140,6 +131,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
         ${MOREPARAMS}
+    sleep 10
     kill $!
     sleep 10
     rm -rf ${BASEDIR}storage/
@@ -159,13 +151,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} InspectIT (full)"
     echo " # ${i}.${j}.${k} InspectIT (full)" >>${BASEDIR}inspectit.log
     sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java \
-        -Xms1024m -Xmx1024m -Xmn384M -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC \
-        -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC \
-        -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 \
-        -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError \
-        -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution \
-        -Xloggc:${BASEDIR}logs/gc.log -Dinspectit.logging.config=CMR/logging-config.xml -jar CMR/inspectit-cmr.jar 1>>${BASEDIR}logs/out.log 2>&1 &
+    ${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr-mod.jar 1>>${BASEDIR}logs/out.log 2>&1 &
     sleep 10
     ${JAVABIN}java  ${JAVAARGS_INSPECTIT_FULL} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
@@ -174,6 +160,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
         ${MOREPARAMS}
+    sleep 10
     kill $!
     sleep 10
     rm -rf ${BASEDIR}storage/

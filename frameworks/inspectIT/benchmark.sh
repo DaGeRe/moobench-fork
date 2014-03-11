@@ -44,6 +44,8 @@ JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-agent.jar -Djava.
 JAVAARGS_INSPECTIT_MINIMAL="${JAVAARGS_LTW} -Dinspectit.config=${BASEDIR}config/minimal/"
 JAVAARGS_INSPECTIT_FULL="${JAVAARGS_LTW} -Dinspectit.config=${BASEDIR}config/timer/"
 
+CMR_ARGS="-d64 -Xms16G -Xmx16G -Xmn5G -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -Dinspectit.logging.config=config/logging-config.xml"
+
 ## Write configuration
 uname -a >${RESULTSDIR}configuration.txt
 ${JAVABIN}java ${JAVAARGS} -version 2>>${RESULTSDIR}configuration.txt
@@ -90,13 +92,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} InspectIT (minimal)"
     echo " # ${i}.${j}.${k} InspectIT (minimal)" >>${BASEDIR}inspectit.log
     sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java \
-        -Xms1024m -Xmx1024m -Xmn384M -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC \
-        -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC \
-        -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 \
-        -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError \
-        -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution \
-        -Xloggc:${BASEDIR}logs/gc.log -Dinspectit.logging.config=CMR/logging-config.xml -jar CMR/inspectit-cmr.jar 1>>${BASEDIR}logs/out.log 2>&1 &
+    ${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr.jar 1>>${BASEDIR}logs/out.log 2>&1 &
     sleep 10
     ${JAVABIN}java  ${JAVAARGS_INSPECTIT_MINIMAL} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
@@ -105,6 +101,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
         ${MOREPARAMS}
+    sleep 10
     kill $!
     sleep 10
     rm -rf ${BASEDIR}storage/
@@ -143,13 +140,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} InspectIT (with CMR)"
     echo " # ${i}.${j}.${k} InspectIT (with CMR)" >>${BASEDIR}inspectit.log
     sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java \
-        -Xms1024m -Xmx1024m -Xmn384M -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC \
-        -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC \
-        -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 \
-        -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError \
-        -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution \
-        -Xloggc:${BASEDIR}logs/gc.log -Dinspectit.logging.config=CMR/logging-config.xml -jar CMR/inspectit-cmr.jar 1>>${BASEDIR}logs/out.log 2>&1 &
+    ${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr.jar 1>>${BASEDIR}logs/out.log 2>&1 &
     sleep 10
     ${JAVABIN}java  ${JAVAARGS_INSPECTIT_FULL} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
@@ -158,6 +149,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
         ${MOREPARAMS}
+    sleep 10
     kill $!
     sleep 10
     rm -rf ${BASEDIR}storage/
@@ -175,8 +167,8 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
 done
 zip -jqr ${RESULTSDIR}stat.zip ${RESULTSDIR}stat
 rm -rf ${RESULTSDIR}stat/
-mv ${BASEDIR}inspectit.log ${RESULTSDIR}inspectit.log
 mv ${BASEDIR}logs/ ${RESULTSDIR}
+mv ${BASEDIR}inspectit.log ${RESULTSDIR}inspectit.log
 [ -f ${RESULTSDIR}hotspot-1-${RECURSIONDEPTH}-1.log ] && grep "<task " ${RESULTSDIR}hotspot-*.log >${RESULTSDIR}log.log
 [ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTSDIR}
 
