@@ -55,14 +55,14 @@
 	</target>
 
 	<target name="jar" depends="compile">
-		<manifestclasspath property="jar.classpath" jarfile="dist/OverheadEvaluationMicrobenchmark.jar">
+		<manifestclasspath property="jar.classpath" jarfile="dist/MooBench.jar">
 			<classpath>
 				<fileset dir="dist/lib/">
 					<include name="**/*.jar" />
 				</fileset>
 			</classpath>
 		</manifestclasspath>
-		<jar destfile="dist/OverheadEvaluationMicrobenchmark.jar">
+		<jar destfile="dist/MooBench.jar">
 			<fileset dir="build" />
 			<fileset dir="." includes="LICENSE README" />
 			<manifest>
