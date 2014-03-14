@@ -50,7 +50,9 @@
 
 	<target name="compile-inspectit" depends="compile">
 		<copy todir="dist">
-			<fileset dir="frameworks/inspectIT/" />
+			<fileset dir="frameworks/inspectIT/">
+        <exclude name="**/*.launch"/>
+			</fileset>
 		</copy>
 	</target>
 
