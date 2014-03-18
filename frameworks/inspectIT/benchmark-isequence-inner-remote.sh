@@ -1,6 +1,8 @@
 #!/bin/bash
 
-JAVABIN=""
+JAVABIN="/localhome/jwa/jre/bin/"
+REMOTEHOST="blade1"
+REMOTEBASEDIR="/localhome/jwa/MooBench-inspectIT/"
 
 RSCRIPTDIR=r/
 BASEDIR=./
@@ -26,7 +28,6 @@ mkdir ${RESULTSDIR}stat/
 # Clear inspectit.log and initialize logging
 rm -f ${BASEDIR}inspectit.log
 touch ${BASEDIR}inspectit.log
-mkdir ${BASEDIR}logs/
 
 RAWFN="${RESULTSDIR}raw"
 
@@ -37,15 +38,15 @@ JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
 #JAVAARGS="${JAVAARGS} -XX:+PrintInlining"
 #JAVAARGS="${JAVAARGS} -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation"
 #JAVAARGS="${JAVAARGS} -Djava.compiler=NONE"
-JAR="-jar MooBench.jar"
+JAR="-jar OverheadEvaluationMicrobenchmark.jar"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-agent-mod.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties -Dinspectit.config=${BASEDIR}config/isequence/"
+JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-agent-mod.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties  -Dinspectit.config=${BASEDIR}config/isequence-remote/"
 JAVAARGS_INSPECTIT_DISABLED="${JAVAARGS_LTW} -Dinspectit.disableProbe=true"
 JAVAARGS_INSPECTIT_NOSTORAGE="${JAVAARGS_LTW} -Dinspectit.disableStorage=true"
 JAVAARGS_INSPECTIT_FULL="${JAVAARGS_LTW}"
 
-CMR_ARGS="-d64 -Xms12G -Xmx12G -Xmn4G -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -Dinspectit.logging.config=config/logging-config.xml"
+CMR_ARGS="-d64 -Xms12G -Xmx12G -Xmn4G -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -Dinspectit.logging.config=CMR/logging-config.xml"
 
 ## Write configuration
 uname -a >${RESULTSDIR}configuration.txt
@@ -93,7 +94,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} InspectIT (disabled)"
     echo " # ${i}.${j}.${k} InspectIT (disabled)" >>${BASEDIR}inspectit.log
     sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr-mod.jar 1>>${BASEDIR}logs/out.log 2>&1 &
+    ssh ${REMOTEHOST} "nohup ${JAVABIN}java ${CMR_ARGS} -Xloggc:${REMOTEBASEDIR}logs/gc.log -jar ${REMOTEBASEDIR}/CMR/inspectit-cmr-mod.jar 1>>${REMOTEBASEDIR}logs/out.log 2>&1 &"
     sleep 10
     ${JAVABIN}java ${JAVAARGS_INSPECTIT_DISABLED} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
@@ -102,12 +103,8 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
         ${MOREPARAMS}
+    ssh ${REMOTEHOST} "pkill -f 'java'"
     sleep 10
-    kill $!
-    sleep 10
-    kill -9 $!
-    rm -rf ${BASEDIR}storage/
-    rm -rf ${BASEDIR}db/
     kill %sar
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}inspectit.log
@@ -120,7 +117,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} InspectIT (no storage)"
     echo " # ${i}.${j}.${k} InspectIT (no storage)" >>${BASEDIR}inspectit.log
     sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr-mod.jar 1>>${BASEDIR}logs/out.log 2>&1 &
+    ssh ${REMOTEHOST} "nohup ${JAVABIN}java ${CMR_ARGS} -Xloggc:${REMOTEBASEDIR}logs/gc.log -jar ${REMOTEBASEDIR}/CMR/inspectit-cmr-mod.jar 1>>${REMOTEBASEDIR}logs/out.log 2>&1 &"
     sleep 10
     ${JAVABIN}java ${JAVAARGS_INSPECTIT_NOSTORAGE} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
@@ -129,12 +126,8 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
         ${MOREPARAMS}
+    ssh ${REMOTEHOST} "pkill -f 'java'"
     sleep 10
-    kill $!
-    sleep 10
-    kill -9 $!
-    rm -rf ${BASEDIR}storage/
-    rm -rf ${BASEDIR}db/
     kill %sar
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}inspectit.log
@@ -147,9 +140,9 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} InspectIT (full)"
     echo " # ${i}.${j}.${k} InspectIT (full)" >>${BASEDIR}inspectit.log
     sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr-mod.jar 1>>${BASEDIR}logs/out.log 2>&1 &
+    ssh ${REMOTEHOST} "nohup ${JAVABIN}java ${CMR_ARGS} -Xloggc:${REMOTEBASEDIR}logs/gc.log -jar ${REMOTEBASEDIR}/CMR/inspectit-cmr-mod.jar 1>>${REMOTEBASEDIR}logs/out.log 2>&1 &"
     sleep 10
-    ${JAVABIN}java  ${JAVAARGS_INSPECTIT_FULL} ${JAR} \
+    ${JAVABIN}java ${JAVAARGS_INSPECTIT_FULL} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
@@ -157,11 +150,8 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --recursiondepth ${j} \
         ${MOREPARAMS}
     sleep 10
-    kill $!
+    ssh ${REMOTEHOST} "pkill -f 'java'"
     sleep 10
-    kill -9 $!
-    rm -rf ${BASEDIR}storage/
-    rm -rf ${BASEDIR}db/
     kill %sar
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}inspectit.log
@@ -172,7 +162,6 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
 done
 zip -jqr ${RESULTSDIR}stat.zip ${RESULTSDIR}stat
 rm -rf ${RESULTSDIR}stat/
-mv ${BASEDIR}logs/ ${RESULTSDIR}
 mv ${BASEDIR}inspectit.log ${RESULTSDIR}inspectit.log
 [ -f ${RESULTSDIR}hotspot-1-${RECURSIONDEPTH}-1.log ] && grep "<task " ${RESULTSDIR}hotspot-*.log >${RESULTSDIR}log.log
 [ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTSDIR}

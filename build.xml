@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="KiekerOverheadEvaluation" default="build-all" basedir=".">
+<project name="MooBench" default="build-all" basedir=".">
 
 	<target name="build-all" depends="clean,init,compile,jar" />
 	<target name="build-kieker" depends="clean,init,compile-kieker,jar" />

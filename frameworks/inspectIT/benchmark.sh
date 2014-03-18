@@ -44,7 +44,7 @@ JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-agent.jar -Djava.
 JAVAARGS_INSPECTIT_MINIMAL="${JAVAARGS_LTW} -Dinspectit.config=${BASEDIR}config/minimal/"
 JAVAARGS_INSPECTIT_FULL="${JAVAARGS_LTW} -Dinspectit.config=${BASEDIR}config/timer/"
 
-CMR_ARGS="-d64 -Xms16G -Xmx16G -Xmn5G -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -Dinspectit.logging.config=config/logging-config.xml"
+CMR_ARGS="-d64 -Xms12G -Xmx12G -Xmn4G -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -Dinspectit.logging.config=config/logging-config.xml"
 
 ## Write configuration
 uname -a >${RESULTSDIR}configuration.txt
@@ -73,7 +73,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} No instrumentation"
     echo " # ${i}.${j}.${k} No instrumentation" >>${BASEDIR}inspectit.log
     sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java  ${JAVAARGS_NOINSTR} ${JAR} \
+    ${JAVABIN}java ${JAVAARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
@@ -92,9 +92,9 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} InspectIT (minimal)"
     echo " # ${i}.${j}.${k} InspectIT (minimal)" >>${BASEDIR}inspectit.log
     sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr.jar 1>>${BASEDIR}logs/out.log 2>&1 &
+    ${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr-mod.jar 1>>${BASEDIR}logs/out.log 2>&1 &
     sleep 10
-    ${JAVABIN}java  ${JAVAARGS_INSPECTIT_MINIMAL} ${JAR} \
+    ${JAVABIN}java ${JAVAARGS_INSPECTIT_MINIMAL} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
@@ -104,11 +104,9 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     sleep 10
     kill $!
     sleep 10
+    kill -9 $!
     rm -rf ${BASEDIR}storage/
     rm -rf ${BASEDIR}db/
-    #[ -f ${BASEDIR}tmp/gc.log ] && rm -f ${BASEDIR}tmp/gc.log
-    #[ -f ${RESULTSDIR}cmr.log ] && rm -f ${RESULTSDIR}cmr.log
-    #rm -rf ${BASEDIR}logs/
     kill %sar
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}inspectit.log
@@ -121,7 +119,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} InspectIT (without CMR)"
     echo " # ${i}.${j}.${k} InspectIT (without CMR)" >>${BASEDIR}inspectit.log
     sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java  ${JAVAARGS_INSPECTIT_FULL} ${JAR} \
+    ${JAVABIN}java ${JAVAARGS_INSPECTIT_FULL} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
@@ -140,9 +138,9 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} InspectIT (with CMR)"
     echo " # ${i}.${j}.${k} InspectIT (with CMR)" >>${BASEDIR}inspectit.log
     sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr.jar 1>>${BASEDIR}logs/out.log 2>&1 &
+    ${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr-mod.jar 1>>${BASEDIR}logs/out.log 2>&1 &
     sleep 10
-    ${JAVABIN}java  ${JAVAARGS_INSPECTIT_FULL} ${JAR} \
+    ${JAVABIN}java ${JAVAARGS_INSPECTIT_FULL} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
@@ -152,11 +150,9 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     sleep 10
     kill $!
     sleep 10
+    kill -9 $!
     rm -rf ${BASEDIR}storage/
     rm -rf ${BASEDIR}db/
-    #[ -f ${BASEDIR}tmp/gc.log ] && rm -f ${BASEDIR}tmp/gc.log
-    #[ -f ${RESULTSDIR}cmr.log ] && rm -f ${RESULTSDIR}cmr.log
-    #rm -rf ${BASEDIR}logs/
     kill %sar
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}inspectit.log
@@ -167,8 +163,8 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
 done
 zip -jqr ${RESULTSDIR}stat.zip ${RESULTSDIR}stat
 rm -rf ${RESULTSDIR}stat/
-mv ${BASEDIR}logs/ ${RESULTSDIR}
 mv ${BASEDIR}inspectit.log ${RESULTSDIR}inspectit.log
+mv ${BASEDIR}logs/ ${RESULTSDIR}
 [ -f ${RESULTSDIR}hotspot-1-${RECURSIONDEPTH}-1.log ] && grep "<task " ${RESULTSDIR}hotspot-*.log >${RESULTSDIR}log.log
 [ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTSDIR}
 

@@ -6,12 +6,12 @@ RSCRIPTDIR=r/
 BASEDIR=./
 RESULTSDIR="${BASEDIR}tmp/results-inspectit-isequence/"
 
-SLEEPTIME=30           ## 30
-NUM_LOOPS=10           ## 10
-THREADS=1              ## 1
-RECURSIONDEPTH=10      ## 10
-TOTALCALLS=2000000     ## 2000000
-METHODTIME=0           ## 0
+SLEEPTIME=30          ## 30
+NUM_LOOPS=10          ## 10
+THREADS=32            ## 32
+RECURSIONDEPTH=10     ## 10
+TOTALCALLS=200000     ## 2000000
+METHODTIME=0          ## 0
 
 #MOREPARAMS="--quickstart"
 MOREPARAMS="${MOREPARAMS}"
@@ -37,15 +37,15 @@ JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
 #JAVAARGS="${JAVAARGS} -XX:+PrintInlining"
 #JAVAARGS="${JAVAARGS} -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation"
 #JAVAARGS="${JAVAARGS} -Djava.compiler=NONE"
-JAR="-jar MooBench.jar"
+JAR="-jar OverheadEvaluationMicrobenchmark.jar"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-agent-mod.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties -Dinspectit.config=${BASEDIR}config/isequence/"
+JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-agent-mod.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties  -Dinspectit.config=${BASEDIR}config/isequence/"
 JAVAARGS_INSPECTIT_DISABLED="${JAVAARGS_LTW} -Dinspectit.disableProbe=true"
 JAVAARGS_INSPECTIT_NOSTORAGE="${JAVAARGS_LTW} -Dinspectit.disableStorage=true"
 JAVAARGS_INSPECTIT_FULL="${JAVAARGS_LTW}"
 
-CMR_ARGS="-d64 -Xms12G -Xmx12G -Xmn4G -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -Dinspectit.logging.config=config/logging-config.xml"
+CMR_ARGS="-d64 -Xms12G -Xmx12G -Xmn4G -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -Dinspectit.logging.config=CMR/logging-config.xml"
 
 ## Write configuration
 uname -a >${RESULTSDIR}configuration.txt
@@ -63,8 +63,8 @@ echo "RECURSIONDEPTH=${RECURSIONDEPTH}" >>${RESULTSDIR}configuration.txt
 sync
 
 ## Execute Benchmark
+for ((j=1;i<=${THREADS};j+=1)); do
 for ((i=1;i<=${NUM_LOOPS};i+=1)); do
-    j=${RECURSIONDEPTH}
     k=0
     echo "## Starting iteration ${i}/${NUM_LOOPS}"
     echo "## Starting iteration ${i}/${NUM_LOOPS}" >>${BASEDIR}inspectit.log
@@ -78,8 +78,8 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --totalthreads ${j} \
+        --recursiondepth ${RECURSIONDEPTH} \
         ${MOREPARAMS}
     kill %sar
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
@@ -99,10 +99,9 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --totalthreads ${j} \
+        --recursiondepth ${RECURSIONDEPTH} \
         ${MOREPARAMS}
-    sleep 10
     kill $!
     sleep 10
     kill -9 $!
@@ -126,10 +125,9 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --totalthreads ${j} \
+        --recursiondepth ${RECURSIONDEPTH} \
         ${MOREPARAMS}
-    sleep 10
     kill $!
     sleep 10
     kill -9 $!
@@ -149,12 +147,12 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr-mod.jar 1>>${BASEDIR}logs/out.log 2>&1 &
     sleep 10
-    ${JAVABIN}java  ${JAVAARGS_INSPECTIT_FULL} ${JAR} \
+    ${JAVABIN}java ${JAVAARGS_INSPECTIT_FULL} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --totalthreads ${j} \
+        --recursiondepth ${RECURSIONDEPTH} \
         ${MOREPARAMS}
     sleep 10
     kill $!
@@ -170,6 +168,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     sleep ${SLEEPTIME}
 
 done
+done
 zip -jqr ${RESULTSDIR}stat.zip ${RESULTSDIR}stat
 rm -rf ${RESULTSDIR}stat/
 mv ${BASEDIR}logs/ ${RESULTSDIR}
@@ -184,12 +183,13 @@ results_fn="${RAWFN}"
 output_fn="${RESULTSDIR}results-timeseries.pdf"
 configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
+configs.threads=c(1:${THREADS})
 configs.labels=c("No Probe","InspectIT (disabled)","InspectIT (no storage)","InspectIT (full)")
 configs.colors=c("black","red","blue","green")
 results.count=${TOTALCALLS}
 tsconf.min=(${METHODTIME}/1000)
 tsconf.max=(${METHODTIME}/1000)+100
-source("${RSCRIPTDIR}timeseries.r")
+source("${RSCRIPTDIR}timeseries-threads.r")
 EOF
 # Timeseries-Average
 R --vanilla --silent <<EOF
@@ -197,6 +197,7 @@ results_fn="${RAWFN}"
 output_fn="${RESULTSDIR}results-timeseries-average.pdf"
 configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
+configs.threads=c(1:${THREADS})
 configs.labels=c("No Probe","InspectIT (disabled)","InspectIT (no storage)","InspectIT (full)")
 configs.colors=c("black","red","blue","green")
 results.count=${TOTALCALLS}
@@ -210,6 +211,7 @@ results_fn="${RAWFN}"
 outtxt_fn="${RESULTSDIR}results-text.txt"
 configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
+configs.threads=c(1:${THREADS})
 configs.labels=c("No Probe","InspectIT (disabled)","InspectIT (no storage)","InspectIT (full)")
 configs.colors=c("black","red","blue","green")
 results.count=${TOTALCALLS}
