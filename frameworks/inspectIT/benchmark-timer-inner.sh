@@ -40,7 +40,7 @@ JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
 JAR="-jar MooBench.jar"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-agent-mod.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties -Dinspectit.config=${BASEDIR}config/timer/
+JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-agent-mod.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties -Dinspectit.config=${BASEDIR}config/timer/"
 JAVAARGS_INSPECTIT_DISABLED="${JAVAARGS_LTW} -Dinspectit.disableProbe=true"
 JAVAARGS_INSPECTIT_NOSTORAGE="${JAVAARGS_LTW} -Dinspectit.disableStorage=true"
 JAVAARGS_INSPECTIT_FULL="${JAVAARGS_LTW}"
