@@ -202,7 +202,7 @@ configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","InspectIT (disabled)","InspectIT (no storage)","InspectIT (full)")
 configs.colors=c("black","red","blue","green")
 results.count=${TOTALCALLS}
-results.skip=${TOTALCALLS}/2
+results.skip=${TOTALCALLS}*3/4
 source("${RSCRIPTDIR}stats.r")
 EOF
 

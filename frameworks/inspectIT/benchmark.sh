@@ -203,7 +203,7 @@ configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","InspectIT (minimal)","InspectIT (without CMR)","InspectIT (with CMR)")
 results.count=${TOTALCALLS}
-results.skip=${TOTALCALLS}/2
+results.skip=${TOTALCALLS}*3/4
 source("${RSCRIPTDIR}stats.r")
 EOF
 
