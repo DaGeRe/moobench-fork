@@ -119,7 +119,7 @@ public final class Benchmark {
 		System.out.println("done"); // NOPMD (System.out)
 		System.out.println(" # "); // NOPMD (System.out)
 
-		System.exit(0);
+		// System.exit(0);
 	}
 
 	@SuppressWarnings("static-access")
