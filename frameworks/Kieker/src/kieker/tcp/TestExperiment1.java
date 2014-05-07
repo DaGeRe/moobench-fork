@@ -46,12 +46,9 @@ import kieker.common.util.registry.ILookup;
 import kieker.common.util.registry.Lookup;
 
 // Command-Line:
-// java -javaagent:lib/kieker-1.9-SNAPSHOT_aspectj.jar -Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.TCPWriter -Dkieker.monitoring.writer.tcp.TCPWriter.QueueFullBehavior=1 -jar dist\OverheadEvaluationMicrobenchmark.jar --recursiondepth 10 --totalthreads 1 --methodtime 0 --output-filename raw.csv --totalcalls 10000000
+// java -javaagent:lib/kieker-1.10-SNAPSHOT_aspectj.jar -Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.TCPWriter -Dkieker.monitoring.writer.tcp.TCPWriter.QueueFullBehavior=1 -jar dist\OverheadEvaluationMicrobenchmark.jar --recursiondepth 10 --totalthreads 1 --methodtime 0 --output-filename raw.csv --totalcalls 10000000
 /**
- * 
  * @author Jan Waller
- * 
- * @since 1.8
  */
 public final class TestExperiment1 {
 	private static final Log LOG = LogFactory.getLog(TestExperiment1.class);
