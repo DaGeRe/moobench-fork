@@ -3,12 +3,13 @@
 	<namespace name="mooBench.monitoredApplication">
 		<module name="MonitoredClassThreaded">
 			<behavior signature="monitoredMethod(long,int)">
-				<monitor id="monitoredMethod"/>
+				<monitor id="monitoredMethod" />
+				<Timer id="monitoredMethodTimer" state="START_FINISH" affectAt="DEFAULT" considerThreads="false" />
 			</behavior>
 		</module>
 		<module name="MonitoredClassSimple">
 			<behavior signature="monitoredMethod(long,int)">
-				<monitor id="monitoredMethod"/>
+				<monitor id="monitoredMethod" />
 			</behavior>
 		</module>
 	</namespace>

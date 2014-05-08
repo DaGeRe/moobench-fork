@@ -4,6 +4,7 @@
 	<target name="build-all" depends="clean,init,compile,jar" />
 	<target name="build-kieker" depends="clean,init,compile-kieker,jar" />
 	<target name="build-inspectit" depends="clean,init,compile-inspectit,jar" />
+	<target name="build-spassmeter" depends="clean,init,compile-spassmeter,jar" />
 
 	<target name="init" depends="">
 		<mkdir dir="build" />
@@ -51,7 +52,15 @@
 	<target name="compile-inspectit" depends="compile">
 		<copy todir="dist">
 			<fileset dir="frameworks/inspectIT/">
-        <exclude name="**/*.launch"/>
+				<exclude name="**/*.launch"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="compile-spassmeter" depends="compile">
+		<copy todir="dist">
+			<fileset dir="frameworks/SPASSmeter/">
+				<exclude name="**/*.launch"/>
 			</fileset>
 		</copy>
 	</target>

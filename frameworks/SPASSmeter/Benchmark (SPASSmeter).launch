@@ -18,5 +18,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="mooBench.benchmark.Benchmark"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-d 10 -h 1 -m 0 -t 1000 -o tmp/test.txt -q"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="MooBench"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-javaagent:frameworks/SPASSmeter/lib/win/spass-meter-ia.jar=logLevel=ALL,xmlconfig=frameworks/SPASSmeter/config.xml,out=tmp/program.log,mainDefault=START_END"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-javaagent:frameworks/SPASSmeter/lib/win/spass-meter-ia.jar=xmlconfig=frameworks/SPASSmeter/lib/config.xml,out=tmp/program.log,logLevel=ALL,debuglog=tmp/debug.log"/>
 </launchConfiguration>
