@@ -1,4 +1,5 @@
 #!/bin/bash
+# This file is configured for linux instead of solaris!!!
 
 JAVABIN=""
 
@@ -11,7 +12,7 @@ NUM_LOOPS=10           ## 10
 THREADS=1              ## 1
 RECURSIONDEPTH=10      ## 10
 TOTALCALLS=2000000     ## 2000000
-METHODTIME=500000      ## 500000
+METHODTIME=0      ## 500000
 
 #MOREPARAMS="--quickstart"
 MOREPARAMS="${MOREPARAMS}"
@@ -21,12 +22,11 @@ echo "Experiment will take circa ${TIME} seconds."
 
 echo "Removing and recreating '$RESULTSDIR'"
 (rm -rf ${RESULTSDIR}) && mkdir ${RESULTSDIR}
-mkdir ${RESULTSDIR}stat/
+#mkdir ${RESULTSDIR}stat/
 
 # Clear spassmeter.log and initialize logging
 rm -f ${BASEDIR}spassmeter.log
 touch ${BASEDIR}spassmeter.log
-mkdir ${BASEDIR}logs/
 
 RAWFN="${RESULTSDIR}raw"
 
@@ -40,7 +40,8 @@ JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
 JAR="-jar MooBench.jar"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}lib/linux/spass-meter-ia.jar=xmlconfig=${BASEDIR}lib/config.xml,out=${RESULTSDIR}spassmeter.txt"
+CLASSPATH="-classpath ${BASEDIR}lib/linux/spass-meter-ia.jar:${BASEDIR}lib/linux/spass-meter-boot.jar:${BASEDIR}lib/linux/spass-meter-rt.jar"
+JAVAARGS_LTW="${JAVAARGS} ${CLASSPATH} -javaagent:${BASEDIR}lib/linux/spass-meter-ia.jar=xmlconfig=${BASEDIR}lib/config.xml,out=${RESULTSDIR}spassmeter.txt"
 
 ## Write configuration
 uname -a >${RESULTSDIR}configuration.txt
@@ -68,7 +69,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} No instrumentation"
     echo " # ${i}.${j}.${k} No instrumentation" >>${BASEDIR}spassmeter.log
-    sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+    #sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java ${JAVAARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
@@ -76,7 +77,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
         ${MOREPARAMS}
-    kill %sar
+    #kill %sar
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}spassmeter.log
     echo >>${BASEDIR}spassmeter.log
@@ -87,7 +88,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} SPASSmeter"
     echo " # ${i}.${j}.${k} SPASSmeter" >>${BASEDIR}spassmeter.log
-    sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+    #sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java ${JAVAARGS_LTW} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
@@ -95,7 +96,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
         ${MOREPARAMS}
-    kill %sar
+    #kill %sar
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}spassmeter.log
     echo >>${BASEDIR}spassmeter.log
@@ -103,55 +104,14 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     sleep ${SLEEPTIME}
 
 done
-zip -jqr ${RESULTSDIR}stat.zip ${RESULTSDIR}stat
-rm -rf ${RESULTSDIR}stat/
+#zip -jqr ${RESULTSDIR}stat.zip ${RESULTSDIR}stat
+#rm -rf ${RESULTSDIR}stat/
 mv ${BASEDIR}spassmeter.log ${RESULTSDIR}spassmeter.log
-mv ${BASEDIR}logs/ ${RESULTSDIR}
 [ -f ${RESULTSDIR}hotspot-1-${RECURSIONDEPTH}-1.log ] && grep "<task " ${RESULTSDIR}hotspot-*.log >${RESULTSDIR}log.log
 [ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTSDIR}
 
-## Generate Results file
-# Timeseries
-R --vanilla --silent <<EOF
-results_fn="${RAWFN}"
-output_fn="${RESULTSDIR}results-timeseries.pdf"
-configs.loop=${NUM_LOOPS}
-configs.recursion=c(${RECURSIONDEPTH})
-configs.labels=c("No Probe","SPASSmeter")
-configs.colors=c("black","red")
-results.count=${TOTALCALLS}
-tsconf.min=(${METHODTIME}/1000)
-tsconf.max=(${METHODTIME}/1000)+300
-source("${RSCRIPTDIR}timeseries.r")
-EOF
-# Timeseries-Average
-R --vanilla --silent <<EOF
-results_fn="${RAWFN}"
-output_fn="${RESULTSDIR}results-timeseries-average.pdf"
-configs.loop=${NUM_LOOPS}
-configs.recursion=c(${RECURSIONDEPTH})
-configs.labels=c("No Probe","SPASSmeter")
-configs.colors=c("black","red")
-results.count=${TOTALCALLS}
-tsconf.min=(${METHODTIME}/1000)
-tsconf.max=(${METHODTIME}/1000)+300
-source("${RSCRIPTDIR}timeseries-average.r")
-EOF
-# Bars
-R --vanilla --silent <<EOF
-results_fn="${RAWFN}"
-outtxt_fn="${RESULTSDIR}results-text.txt"
-configs.loop=${NUM_LOOPS}
-configs.recursion=c(${RECURSIONDEPTH})
-configs.labels=c("No Probe","SPASSmeter")
-configs.colors=c("black","red")
-results.count=${TOTALCALLS}
-results.skip=${TOTALCALLS}*3/4
-source("${RSCRIPTDIR}stats.r")
-EOF
-
 ## Clean up raw results
-zip -jqr ${RESULTSDIR}results.zip ${RAWFN}*
-rm -f ${RAWFN}*
+#gzip -qr ${RESULTSDIR}results.zip ${RAWFN}*
+#rm -f ${RAWFN}*
 [ -f ${BASEDIR}nohup.out ] && cp ${BASEDIR}nohup.out ${RESULTSDIR}
 [ -f ${BASEDIR}nohup.out ] && > ${BASEDIR}nohup.out
