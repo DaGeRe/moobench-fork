@@ -1,0 +1,10 @@
+
+Change instrumentation:
+-----------------------
+ASM
+-Dspass-meter.iFactory=de.uni_hildesheim.sse.monitoring.runtime.instrumentation.asmTree.Factory
+
+Javassist (default)
+-Dspass-meter.iFactory=de.uni_hildesheim.sse.monitoring.runtime.instrumentation.javassist.Factory
+
+
