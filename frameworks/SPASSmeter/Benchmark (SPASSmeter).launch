@@ -16,7 +16,7 @@
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="mooBench.benchmark.Benchmark"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-d 10 -h 1 -m 0 -t 1000 -o tmp/test.txt -q"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-d 10 -h 1 -m 0 -t 1000 -o tmp/test.txt -q --application mooBench.monitoredApplication.MonitoredClassSimple"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="MooBench"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-javaagent:frameworks/SPASSmeter/lib/win/spass-meter-ia.jar=xmlconfig=frameworks/SPASSmeter/lib/config.xml,out=tmp/program.log,logLevel=ALL,debuglog=tmp/debug.log"/>
 </launchConfiguration>

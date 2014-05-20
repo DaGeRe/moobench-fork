@@ -15,7 +15,7 @@ TOTALCALLS=2000000     ## 2000000
 METHODTIME=0      ## 500000
 
 #MOREPARAMS="--quickstart"
-MOREPARAMS="${MOREPARAMS}"
+MOREPARAMS="--application mooBench.monitoredApplication.MonitoredClassSimple ${MOREPARAMS}"
 
 TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEPTIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSIONDEPTH} + 50 \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
@@ -42,6 +42,8 @@ JAR="-jar MooBench.jar"
 JAVAARGS_NOINSTR="${JAVAARGS}"
 CLASSPATH="-classpath ${BASEDIR}lib/linux/spass-meter-ia.jar:${BASEDIR}lib/linux/spass-meter-boot.jar:${BASEDIR}lib/linux/spass-meter-rt.jar"
 JAVAARGS_LTW="${JAVAARGS} ${CLASSPATH} -javaagent:${BASEDIR}lib/linux/spass-meter-ia.jar=xmlconfig=${BASEDIR}lib/config.xml,out=${RESULTSDIR}spassmeter.txt"
+JAVAARGS_LTW_ASM="${JAVAARGS_LTW} -Dspass-meter.iFactory=de.uni_hildesheim.sse.monitoring.runtime.instrumentation.asmTree.Factory"
+
 
 ## Write configuration
 uname -a >${RESULTSDIR}configuration.txt
@@ -84,12 +86,31 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     sync
     sleep ${SLEEPTIME}
 
-    # SPASSmeter
+    # SPASSmeter Javassist
     k=`expr ${k} + 1`
-    echo " # ${i}.${j}.${k} SPASSmeter"
-    echo " # ${i}.${j}.${k} SPASSmeter" >>${BASEDIR}spassmeter.log
+    echo " # ${i}.${j}.${k} SPASSmeter Javassist"
+    echo " # ${i}.${j}.${k} SPASSmeter Javassist" >>${BASEDIR}spassmeter.log
     #sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java ${JAVAARGS_LTW} ${JAR} \
+        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
+        --totalcalls ${TOTALCALLS} \
+        --methodtime ${METHODTIME} \
+        --totalthreads ${THREADS} \
+        --recursiondepth ${j} \
+        ${MOREPARAMS}
+    #kill %sar
+    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
+    echo >>${BASEDIR}spassmeter.log
+    echo >>${BASEDIR}spassmeter.log
+    sync
+    sleep ${SLEEPTIME}
+    
+    # SPASSmeter ASM
+    k=`expr ${k} + 1`
+    echo " # ${i}.${j}.${k} SPASSmeter ASM"
+    echo " # ${i}.${j}.${k} SPASSmeter ASM" >>${BASEDIR}spassmeter.log
+    #sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+    ${JAVABIN}java ${JAVAARGS_LTW_ASM} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
