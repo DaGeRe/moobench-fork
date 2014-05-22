@@ -40,8 +40,7 @@ JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
 JAR="-jar MooBench.jar"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
-CLASSPATH="-classpath ${BASEDIR}lib/linux/spass-meter-ia.jar:${BASEDIR}lib/linux/spass-meter-boot.jar:${BASEDIR}lib/linux/spass-meter-rt.jar"
-JAVAARGS_LTW="${JAVAARGS} ${CLASSPATH} -javaagent:${BASEDIR}lib/linux/spass-meter-ia.jar=xmlconfig=${BASEDIR}lib/config.xml,out=${RESULTSDIR}spassmeter.txt"
+JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}lib/linux/spass-meter-ia.jar=xmlconfig=${BASEDIR}lib/config.xml,out=${RESULTSDIR}spassmeter.txt"
 JAVAARGS_LTW_ASM="${JAVAARGS_LTW} -Dspass-meter.iFactory=de.uni_hildesheim.sse.monitoring.runtime.instrumentation.asmTree.Factory"
 
 
