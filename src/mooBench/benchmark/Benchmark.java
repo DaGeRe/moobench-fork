@@ -45,6 +45,7 @@ public final class Benchmark {
 	private static long methodTime = 0;
 	private static int recursionDepth = 0;
 	private static boolean quickstart = false;
+	private static boolean forceTerminate = false;
 	private static MonitoredClass mc = null;
 
 	private Benchmark() {}
@@ -119,7 +120,9 @@ public final class Benchmark {
 		System.out.println("done"); // NOPMD (System.out)
 		System.out.println(" # "); // NOPMD (System.out)
 
-		// System.exit(0);
+		if (forceTerminate) {
+			System.exit(0);
+		}
 	}
 
 	@SuppressWarnings("static-access")
@@ -136,6 +139,8 @@ public final class Benchmark {
 		cmdlOpts.addOption(OptionBuilder.withLongOpt("output-filename").withArgName("filename").hasArg(true).isRequired(true)
 				.withDescription("Filename of results file. Output is appended if file exists.").withValueSeparator('=').create("o"));
 		cmdlOpts.addOption(OptionBuilder.withLongOpt("quickstart").isRequired(false).withDescription("Skips initial garbage collection.").create("q"));
+		cmdlOpts.addOption(OptionBuilder.withLongOpt("forceTerminate").isRequired(false).withDescription("Forces a termination at the end of the benchmark.")
+				.create("f"));
 		cmdlOpts.addOption(OptionBuilder.withLongOpt("runnable").withArgName("classname").hasArg(true).isRequired(false)
 				.withDescription("Class implementing the Runnable interface. run() method is executed before the benchmark starts.").withValueSeparator('=')
 				.create("r"));
@@ -155,6 +160,7 @@ public final class Benchmark {
 			Benchmark.totalThreads = Integer.parseInt(cmdl.getOptionValue("totalthreads"));
 			Benchmark.recursionDepth = Integer.parseInt(cmdl.getOptionValue("recursiondepth"));
 			Benchmark.quickstart = cmdl.hasOption("quickstart");
+			Benchmark.forceTerminate = cmdl.hasOption("forceTerminate");
 			Benchmark.ps = new PrintStream(new BufferedOutputStream(new FileOutputStream(Benchmark.outputFn, true), 8192 * 8), false, Benchmark.ENCODING);
 			final String application = cmdl.getOptionValue("application");
 			if (null != application) {
