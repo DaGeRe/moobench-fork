@@ -4,7 +4,6 @@
 		<module name="MonitoredClassThreaded">
 			<behavior signature="monitoredMethod(long,int)">
 				<monitor id="monitoredMethod" />
-				<Timer id="monitoredMethodTimer" state="START_FINISH" affectAt="DEFAULT" considerThreads="false" />
 			</behavior>
 		</module>
 		<module name="MonitoredClassSimple">
