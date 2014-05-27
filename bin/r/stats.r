@@ -3,6 +3,8 @@
 #folder_fn="results-benchmark-binary"
 #results_fn=paste(data_fn,folder_fn,"/raw",sep="")
 #outtxt_fn=paste(data_fn,folder_fn,"/results-text.txt",sep="")
+#results_fn="raw"
+#outtxt_fn="results-text.txt"
 
 configs.threads=1
 #configs.loop=10

@@ -32,7 +32,7 @@ RAWFN="${RESULTSDIR}raw"
 
 JAVAARGS="-server"
 JAVAARGS="${JAVAARGS} -d64"
-JAVAARGS="${JAVAARGS} -Xms1G -Xmx4G"
+JAVAARGS="${JAVAARGS} -Xms1G -Xmx12G"
 JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
 #JAVAARGS="${JAVAARGS} -XX:+PrintInlining"
 #JAVAARGS="${JAVAARGS} -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation"
