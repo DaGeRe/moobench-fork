@@ -31,7 +31,7 @@
 	<target name="compile-kieker" depends="compile">
 		<path id="compile-classpath">
 			<fileset dir="frameworks/Kieker/lib/">
-				<include name="kieker-1.9-SNAPSHOT_aspectj.jar" />
+				<include name="kieker-1.10-SNAPSHOT_aspectj.jar" />
 			</fileset>
 		</path>
 		<javac source="1.5" target="1.5" destDir="build" debug="true" classpathref="compile-classpath" includeAntRuntime="false">
