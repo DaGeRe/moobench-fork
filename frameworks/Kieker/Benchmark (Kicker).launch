@@ -8,7 +8,7 @@
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="mooBench.benchmark.Benchmark"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-d 10 -h 1 -m 0 -t 1000 -o tmp/test.txt -q"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-d 10 -h 1 -m 0 -t 10 -o tmp/test.txt -q -a mooBench.monitoredApplication.MonitoredClassManualInstrumentation"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="MooBench"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-javaagent:frameworks/Kieker/lib/kicker-1.10_aspectj.jar"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-javaagent:frameworks/Kieker/lib/kicker-1.10_aspectj.jar&#13;&#10;-Dkicker.monitoring.debug=true&#13;&#10;-Dkicker.monitoring.skipDefaultAOPConfiguration=true"/>
 </launchConfiguration>

@@ -7,11 +7,11 @@ RESULTSDIR="${BASEDIR}results/"
 
 THREADS=1            ## 1
 RECURSIONDEPTH=10    ## 10
-TOTALCALLS=10000     ## 10000
+TOTALCALLS=1000      ## 2000000
 METHODTIME=500000    ## 500000
 
 #MOREPARAMS="--quickstart"
-MOREPARAMS="${MOREPARAMS} -r kieker.Logger"
+MOREPARAMS="${MOREPARAMS} -r kieker.Logger -a mooBench.monitoredApplication.MonitoredClassManualInstrumentation"
 
 echo "Removing and recreating '$RESULTSDIR'"
 (rm -rf ${RESULTSDIR}) && mkdir ${RESULTSDIR}
@@ -28,6 +28,7 @@ JAVAAGENT="-javaagent:lib/kicker-1.10_aspectj.jar"
 
 JAVAARGS="${JAVAARGS} -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.customStoragePath=${RESULTSDIR}"
 JAVAARGS="${JAVAARGS} -Dkicker.monitoring.writer.filesystem.AsyncBinaryFsWriter.customStoragePath=${RESULTSDIR}"
+JAVAARGS="${JAVAARGS} -Dkicker.monitoring.debug=true -Dkicker.monitoring.skipDefaultAOPConfiguration=true"
 
 ## Write configuration
 uname -a >${RESULTSDIR}configuration.txt
@@ -51,5 +52,5 @@ sync
 mv ${BASEDIR}kieker.log ${RESULTSDIR}kieker.log
 
 [ -f ${BASEDIR}nohup.out ] && cp ${BASEDIR}nohup.out ${RESULTSDIR}
-zip -jqr ${BASEDIR}results.zip ${RESULTSDIR}*
+zip -qr ${BASEDIR}results.zip ${RESULTSDIR}*
 [ -f ${BASEDIR}nohup.out ] && > ${BASEDIR}nohup.out
