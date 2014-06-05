@@ -21,7 +21,6 @@ import java.lang.management.ThreadMXBean;
 
 import kieker.common.record.flow.trace.TraceMetadata;
 import kieker.common.record.flow.trace.operation.AfterOperationEvent;
-import kieker.common.record.flow.trace.operation.AfterOperationFailedEvent;
 import kieker.common.record.flow.trace.operation.BeforeOperationEvent;
 import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.core.controller.MonitoringController;
@@ -32,6 +31,9 @@ import kieker.monitoring.timer.ITimeSource;
  * @author Jan Waller
  */
 public final class MonitoredClassManualInstrumentation implements MonitoredClass {
+
+	private static final String SIGNATURE = "public final long mooBench.monitoredApplication.MonitoredClass.monitoredMethod(long, int)";
+	private static final String CLAZZ = "mooBench.monitoredApplication.MonitoredClass";
 
 	private static final IMonitoringController CTRLINST = MonitoringController.getInstance();
 	private static final ITimeSource TIME = CTRLINST.getTimeSource();
@@ -47,14 +49,30 @@ public final class MonitoredClassManualInstrumentation implements MonitoredClass
 	}
 
 	public final long monitoredMethod(final long methodTime, final int recDepth) {
+		final TraceMetadata trace = MonitoredClassManualInstrumentation.triggerBefore();
+		long retval;
+		if (recDepth > 1) {
+			retval = this.monitoredMethod(methodTime, recDepth - 1);
+		} else {
+			final long exitTime = this.threadMXBean.getCurrentThreadUserTime() + methodTime;
+			long currentTime;
+			do {
+				currentTime = this.threadMXBean.getCurrentThreadUserTime();
+			} while (currentTime < exitTime);
+			retval = currentTime;
+		}
+		MonitoredClassManualInstrumentation.triggerAfter(trace);
+		return retval;
+	}
+
+	private final static TraceMetadata triggerBefore() {
 		if (!CTRLINST.isMonitoringEnabled()) {
-			return this.monitoredMethod_actual(methodTime, recDepth);
+			return null;
 		}
-		final String signature = "public final long mooBench.monitoredApplication.MonitoredClassThreaded.monitoredMethod(long, int)";
+		final String signature = SIGNATURE;
 		if (!CTRLINST.isProbeActivated(signature)) {
-			return this.monitoredMethod_actual(methodTime, recDepth);
+			return null;
 		}
-		// common fields
 		TraceMetadata trace = TRACEREGISTRY.getTrace();
 		final boolean newTrace = trace == null;
 		if (newTrace) {
@@ -62,39 +80,14 @@ public final class MonitoredClassManualInstrumentation implements MonitoredClass
 			CTRLINST.newMonitoringRecord(trace);
 		}
 		final long traceId = trace.getTraceId();
-		final String clazz = this.getClass().getName();
-		// measure before execution
+		final String clazz = CLAZZ;
 		CTRLINST.newMonitoringRecord(new BeforeOperationEvent(TIME.getTime(), traceId, trace.getNextOrderId(), signature, clazz));
-		// execution of the called method
-		final Object retval;
-		try {
-			retval = this.monitoredMethod_actual(methodTime, recDepth);
-		} catch (final Throwable th) { // NOPMD NOCS (catch throw might ok here)
-			// measure after failed execution
-			CTRLINST.newMonitoringRecord(new AfterOperationFailedEvent(TIME.getTime(), traceId, trace.getNextOrderId(), signature, clazz,
-					th.toString()));
-			throw new RuntimeException(th);
-		} finally {
-			if (newTrace) { // close the trace
-				TRACEREGISTRY.unregisterTrace();
-			}
-		}
-		// measure after successful execution
-		CTRLINST.newMonitoringRecord(new AfterOperationEvent(TIME.getTime(), traceId, trace.getNextOrderId(), signature, clazz));
-		return (Long) retval;
+		return trace;
 	}
 
-	public final long monitoredMethod_actual(final long methodTime, final int recDepth) {
-		if (recDepth > 1) {
-			return this.monitoredMethod(methodTime, recDepth - 1);
-		} else {
-			final long exitTime = this.threadMXBean.getCurrentThreadUserTime() + methodTime;
-			long currentTime;
-			do {
-				currentTime = this.threadMXBean.getCurrentThreadUserTime();
-			} while (currentTime < exitTime);
-			return currentTime;
-		}
+	private final static void triggerAfter(final TraceMetadata trace) {
+		final String signature = SIGNATURE;
+		final String clazz = CLAZZ;
+		CTRLINST.newMonitoringRecord(new AfterOperationEvent(TIME.getTime(), trace.getTraceId(), trace.getNextOrderId(), signature, clazz));
 	}
-
 }
