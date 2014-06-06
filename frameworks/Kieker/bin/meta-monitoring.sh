@@ -7,8 +7,8 @@ RESULTSDIR="${BASEDIR}results/"
 
 THREADS=1            ## 1
 RECURSIONDEPTH=10    ## 10
-TOTALCALLS=1000      ## 2000000
-METHODTIME=500000    ## 500000
+TOTALCALLS=20000     ## 20000
+METHODTIME=0         ## 0
 
 #MOREPARAMS="--quickstart"
 MOREPARAMS="${MOREPARAMS} -r kieker.Logger -a mooBench.monitoredApplication.MonitoredClassManualInstrumentation"

@@ -49,7 +49,7 @@ public final class MonitoredClassManualInstrumentation implements MonitoredClass
 	}
 
 	public final long monitoredMethod(final long methodTime, final int recDepth) {
-		final TraceMetadata trace = MonitoredClassManualInstrumentation.triggerBefore();
+		final boolean newTrace = MonitoredClassManualInstrumentation.triggerBefore();
 		long retval;
 		if (recDepth > 1) {
 			retval = this.monitoredMethod(methodTime, recDepth - 1);
@@ -61,17 +61,17 @@ public final class MonitoredClassManualInstrumentation implements MonitoredClass
 			} while (currentTime < exitTime);
 			retval = currentTime;
 		}
-		MonitoredClassManualInstrumentation.triggerAfter(trace);
+		MonitoredClassManualInstrumentation.triggerAfter(newTrace);
 		return retval;
 	}
 
-	private final static TraceMetadata triggerBefore() {
+	private final static boolean triggerBefore() {
 		if (!CTRLINST.isMonitoringEnabled()) {
-			return null;
+			return false;
 		}
 		final String signature = SIGNATURE;
 		if (!CTRLINST.isProbeActivated(signature)) {
-			return null;
+			return false;
 		}
 		TraceMetadata trace = TRACEREGISTRY.getTrace();
 		final boolean newTrace = trace == null;
@@ -82,12 +82,16 @@ public final class MonitoredClassManualInstrumentation implements MonitoredClass
 		final long traceId = trace.getTraceId();
 		final String clazz = CLAZZ;
 		CTRLINST.newMonitoringRecord(new BeforeOperationEvent(TIME.getTime(), traceId, trace.getNextOrderId(), signature, clazz));
-		return trace;
+		return newTrace;
 	}
 
-	private final static void triggerAfter(final TraceMetadata trace) {
+	private final static void triggerAfter(final boolean newTrace) {
+		final TraceMetadata trace = TRACEREGISTRY.getTrace();
 		final String signature = SIGNATURE;
 		final String clazz = CLAZZ;
 		CTRLINST.newMonitoringRecord(new AfterOperationEvent(TIME.getTime(), trace.getTraceId(), trace.getNextOrderId(), signature, clazz));
+		if (newTrace) { // close the trace
+			TRACEREGISTRY.unregisterTrace();
+		}
 	}
 }
