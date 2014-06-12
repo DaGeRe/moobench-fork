@@ -87,11 +87,13 @@ public final class MonitoredClassManualInstrumentation implements MonitoredClass
 
 	private final static void triggerAfter(final boolean newTrace) {
 		final TraceMetadata trace = TRACEREGISTRY.getTrace();
-		final String signature = SIGNATURE;
-		final String clazz = CLAZZ;
-		CTRLINST.newMonitoringRecord(new AfterOperationEvent(TIME.getTime(), trace.getTraceId(), trace.getNextOrderId(), signature, clazz));
-		if (newTrace) { // close the trace
-			TRACEREGISTRY.unregisterTrace();
+		if (null != trace) {
+			final String signature = SIGNATURE;
+			final String clazz = CLAZZ;
+			CTRLINST.newMonitoringRecord(new AfterOperationEvent(TIME.getTime(), trace.getTraceId(), trace.getNextOrderId(), signature, clazz));
+			if (newTrace) { // close the trace
+				TRACEREGISTRY.unregisterTrace();
+			}
 		}
 	}
 }
