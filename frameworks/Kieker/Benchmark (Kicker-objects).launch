@@ -10,5 +10,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="mooBench.benchmark.Benchmark"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-d 10 -h 1 -m 0 -t 10 -o tmp/test.txt -q -a mooBench.monitoredApplication.MonitoredClassManualInstrumentation"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="MooBench"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-javaagent:frameworks/Kieker/lib/kicker-1.10_aspectj.jar&#13;&#10;-Dkicker.monitoring.debug=true&#13;&#10;-Dkicker.monitoring.skipDefaultAOPConfiguration=true&#13;&#10;-Dkicker.monitoring.writer=kicker.monitoring.writer.filesystem.AsyncFsWriter"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-javaagent:frameworks/Kieker/lib/kicker-1.10_aspectj.jar&#13;&#10;-Dkicker.monitoring.debug=true&#13;&#10;-Dkicker.monitoring.skipDefaultAOPConfiguration=true&#13;&#10;-Dkicker.monitoring.writer=kicker.monitoring.writer.filesystem.AsyncFsWriter&#13;&#10;-Dorg.aspectj.weaver.loadtime.configuration=META-INF/aop-objects.xml"/>
 </launchConfiguration>
