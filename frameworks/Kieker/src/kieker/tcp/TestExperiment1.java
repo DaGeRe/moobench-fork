@@ -109,19 +109,20 @@ final class TCPCountingReader extends AbstractReaderPlugin {
 	private final ILookup<String> stringRegistry = new Lookup<String>();
 
 	final AtomicInteger counter = new AtomicInteger(0);
+	final ScheduledExecutorService executorService;
 
 	public TCPCountingReader(final Configuration configuration, final IProjectContext projectContext) {
 		super(configuration, projectContext);
 		this.port1 = this.configuration.getIntProperty(CONFIG_PROPERTY_NAME_PORT1);
 		this.port2 = this.configuration.getIntProperty(CONFIG_PROPERTY_NAME_PORT2);
+		this.executorService = new ScheduledThreadPoolExecutor(1);
 	}
 
 	@Override
 	public boolean init() {
-		final ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1);
-		executorService.scheduleAtFixedRate(new Runnable() {
+		this.executorService.scheduleAtFixedRate(new Runnable() {
 			public void run() {
-				LOG.info("Records/s: " + TCPCountingReader.this.counter.getAndSet(0));
+				System.out.println("Records/s: " + TCPCountingReader.this.counter.getAndSet(0));
 			}
 		}, 0, 1, TimeUnit.SECONDS);
 
@@ -196,6 +197,7 @@ final class TCPCountingReader extends AbstractReaderPlugin {
 
 	public void terminate(final boolean error) {
 		LOG.info("Shutdown of TCPReader requested.");
+		this.executorService.shutdown();
 	}
 }
 
