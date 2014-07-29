@@ -1,0 +1,13 @@
+MooBench  http://kieker-monitoring.net/MooBench
+
+-----------------------------------------------
+
+This folder contains an example script showing how to include MooBench into continuous integration.
+
+The script copies a pre-compiled version of MooBench and the jar file to be benchmarked to a given remote server. It executes MooBench and retrieves the results. These results can, for instance, be visualized in the web application of the continuous integration server.
+
+-----------------------------------------------
+
+The remote server should be provided with Java (>= 1.6) and R (> 3.0). We recommend to use SSH keys for the access.
+
+The client server should contain a prepared folder with a pre-compiled version of MooBench, as created by the build script.
