@@ -1,13 +1,26 @@
 MooBench  http://kieker-monitoring.net/MooBench
-
 -----------------------------------------------
 
-This folder contains an example script showing how to include MooBench into continuous integration.
+This folder contains an example script showing how to include 
+MooBench into continuous integration.
 
-The script copies a pre-compiled version of MooBench and the jar file to be benchmarked to a given remote server. It executes MooBench and retrieves the results. These results can, for instance, be visualized in the web application of the continuous integration server.
+The script copies a pre-compiled version of MooBench and the 
+jar file to be benchmarked to a given remote server. It executes 
+MooBench and retrieves the results. These results can be visualized 
+in the web application of the continuous integration server.
+
+We have successfully employed the script on a Jenkins server (v. 1.554)
+with the Plot plugin (v. 1.7). The results are availabe under:
+* http://build.kieker-monitoring.net/job/kieker-nightly-release/plot/
 
 -----------------------------------------------
+The remote server should be provided with Java (>= 1.6) and R (> 3.0).
+We recommend to use SSH keys for the access.
 
-The remote server should be provided with Java (>= 1.6) and R (> 3.0). We recommend to use SSH keys for the access.
+The client server should contain a prepared folder with a pre-compiled 
+version of MooBench, as created by the build script with the appropriate
+build target, e.g., 'build-kieker' for Kieker.
 
-The client server should contain a prepared folder with a pre-compiled version of MooBench, as created by the build script.
+Refer to the Kieker git (http://git.kieker-monitoring.net/kieker.git)
+in folder '/examples/OverheadEvaluationMicrobenchmark' for a full example 
+of using this script.
