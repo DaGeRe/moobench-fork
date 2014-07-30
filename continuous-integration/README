@@ -19,7 +19,7 @@ We recommend to use SSH keys for the access.
 
 The client server should contain a prepared folder with a pre-compiled 
 version of MooBench, as created by the build script with the appropriate
-build target, e.g., 'build-kieker' for Kieker.
+build target, e.g., 'build-kieker-ci' for Kieker.
 
 Refer to the Kieker git (http://git.kieker-monitoring.net/kieker.git)
 in folder '/examples/OverheadEvaluationMicrobenchmark' for a full example 

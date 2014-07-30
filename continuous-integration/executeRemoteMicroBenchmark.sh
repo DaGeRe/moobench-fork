@@ -22,7 +22,7 @@ scp -r ${MOOBENCH_FOLDER} ${REMOTE_NODE}:MooBench
 scp ${BENCHMARKED_JAR} ${REMOTE_NODE}:MooBench/lib
 
 # Execute MooBench
-ssh ${REMOTE_NODE} 'cd MooBench; chmod +x benchmark.sh; ./benchmark.sh; exit'
+ssh ${REMOTE_NODE} 'cd MooBench; chmod +x benchmark-ci.sh; ./benchmark-ci.sh; exit'
 
 # Copy results to workspace
 scp ${REMOTE_NODE}:MooBench/tmp/${RESULTS_FOLDER_NAME}/results-text.csv ${RESULTS_TARGET_FILE}

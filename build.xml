@@ -5,6 +5,7 @@
 	<target name="build-kieker" depends="clean,init,compile-kieker,jar" />
 	<target name="build-inspectit" depends="clean,init,compile-inspectit,jar" />
 	<target name="build-spassmeter" depends="clean,init,compile-spassmeter,jar" />
+	<target name="build-kieker-ci" depends="clean,init,compile-kieker,jar,jar-kieker-ci" />
 
 	<target name="init" depends="">
 		<mkdir dir="build" />
@@ -86,6 +87,18 @@
 		<copy todir="dist/r">
 			<fileset dir="bin/r" />
 		</copy>
+	</target>
+	
+	<target name="jar-kieker-ci" depends="jar">
+		<copy file="frameworks/Kieker/bin/benchmark-ci.sh" todir="dist" />
+		<mkdir dir="dist/MooBench" />
+		<move todir="dist/MooBench">
+			<fileset dir="dist">
+				<exclude name="MooBench"/>
+			</fileset>
+		</move>
+		<delete file="dist/MooBench/lib/kieker-1.10-SNAPSHOT_aspectj.jar" />
+		<copy file="continuous-integration/executeRemoteMicroBenchmark.sh" todir="dist" />
 	</target>
 
 	<target name="clean">
