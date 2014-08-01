@@ -72,7 +72,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} No instrumentation"
     echo " # ${i}.${j}.${k} No instrumentation" >>${BASEDIR}kieker.log
-   # sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+    #sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java  ${JAVAARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
@@ -110,7 +110,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} No logging (null writer)"
     echo " # ${i}.${j}.${k} No logging (null writer)" >>${BASEDIR}kieker.log
-  #  sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+    #sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java  ${JAVAARGS_KIEKER_NOLOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
@@ -118,7 +118,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
         ${MOREPARAMS}
-   # kill %sar
+    #kill %sar
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}kieker.log
     echo >>${BASEDIR}kieker.log
@@ -129,7 +129,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Logging (ASCII)"
     echo " # ${i}.${j}.${k} Logging (ASCII)" >>${BASEDIR}kieker.log
-	#  sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+    #  sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java  ${JAVAARGS_KIEKER_LOGGING_ASCII} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
@@ -138,7 +138,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --recursiondepth ${j} \
         ${MOREPARAMS}
     #pkill sar
-	du -h ${BASEDIR}tmp/kieker-*
+    du -h ${BASEDIR}tmp/kieker-*
     rm -rf ${BASEDIR}tmp/kieker-*
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}kieker.log
@@ -146,10 +146,10 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     sync
     sleep ${SLEEPTIME}
 
-	k=`expr ${k} + 1`
+    k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Logging (Bin)"
     echo " # ${i}.${j}.${k} Logging (Bin)" >>${BASEDIR}kieker.log
-	#  sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+    #  sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java  ${JAVAARGS_KIEKER_LOGGING_BIN} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
@@ -158,19 +158,19 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --recursiondepth ${j} \
         ${MOREPARAMS}
     #pkill sar
-	du -h ${BASEDIR}tmp/kieker-*
+    du -h ${BASEDIR}tmp/kieker-*
     rm -rf ${BASEDIR}tmp/kieker-*
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}kieker.log
     echo >>${BASEDIR}kieker.log
     sync
     sleep ${SLEEPTIME}
-	
-	k=`expr ${k} + 1`
+
+    k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Logging (TCP)"
     echo " # ${i}.${j}.${k} Logging (TCP)" >>${BASEDIR}kieker.log
-	#  sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-	${JAVABIN}java -classpath MooBench.jar kieker.tcp.TestExperiment0 >> ${BASEDIR}kieker.tcp.log &
+    #  sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+    ${JAVABIN}java -classpath MooBench.jar kieker.tcp.TestExperiment0 >> ${BASEDIR}kieker.tcp.log &
     ${JAVABIN}java  ${JAVAARGS_KIEKER_LOGGING_TCP} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
@@ -184,8 +184,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo >>${BASEDIR}kieker.log
     sync
     sleep ${SLEEPTIME}
-	
-	
+
 done
 #zip -jqr ${RESULTSDIR}stat.zip ${RESULTSDIR}stat
 #rm -rf ${RESULTSDIR}stat/
