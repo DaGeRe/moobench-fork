@@ -7,23 +7,33 @@ Contact: moobench@notme.de
 The MooBench micro-benchmarks can be used to quantify the performance 
 overhead caused by monitoring framework components. 
 
-Currenly supported monitoring frameworks include:
+Currenly (directly) supported monitoring frameworks include:
 * Kieker (http://kieker-monitoring.net)
 * inspectIT (http://inspectit.eu/)
-* SPASSmeter
+* SPASS-meter (https://github.com/SSEHUB/spassMeter.git)
 
 An ant script (build.xml) is provided to prepare the benchmark for the
 respective monitoring framwork. Corresponding build targets, providing
-preconfigured build for each supported framework, are available.
+preconfigured builds for each supported framework, are available.
 For instance, the target "build-kieker" prepares a jar for Kieker 
 benchmarking experiments.
 
+The relevant build targets are:
+* build-all (framework independant benchmark)
+* build-kieker (Kieker)
+* build-inspectit (inspectIT)
+* build-spassmeter (SPASS-meter)
+
 All experiments are started with the provided "External Controller"
 scripts. These scripts are available inside the respective bin/ 
-directory. Currently only shell (.sh) scripts are provided.
+directory. Currently only shell (.sh) scripts are provided. These 
+scripts have been developed on Solaris environments. Thus, minor
+adjustments might be required for common Linux operatong systems,
+such as Ubuntu. Additionally, several Eclipse launch targets are 
+provided for debugging purposes.
 
 The default execution of the benchmark requires a 64Bit JVM!
-This can be changed in the respective .sh scripts.
+However, this behavior can be changed in the respective .sh scripts.
 
 Initially, the following steps are required:
 1. You should check whether you installed ant (http://ant.apache.org/), 
@@ -37,19 +47,30 @@ Initially, the following steps are required:
 Execution of the micro-benchmark:
 All benchmarks are started with calls of .sh scripts in the bin folder.
 The top of the files include some configuration parameters, such as
-* SLEEPTIME between executions
-* NUM_LOOPS number of repetitions
-* THREADS concurrent benchmarking threads
-* MAXRECURSIONDEPTH recursion up to this depth
-* TOTALCALLS the duration of the benchmark
-* METHODTIME the time per monitored call
-Furthermore some JVM arguments can be adjusted:
-* JAVAARGS JVM Arguments
+* SLEEPTIME           between executions (default 30 seconds)
+* NUM_LOOPS           number of repetitions (default 10)
+* THREADS             concurrent benchmarking threads (default 1)
+* MAXRECURSIONDEPTH   recursion up to this depth (default 10)
+* TOTALCALLS          the duration of the benchmark (deafult 2,000,000 calls)
+* METHODTIME          the time per monitored call (default 0 ns or 500 us)
 
-Typical call:
+Furthermore some JVM arguments can be adjusted:
+* JAVAARGS            JVM Arguments (e.g., available memory)
+
+Typical call (using Solaris):
 $ nohup ./benchmark.sh & sleep 1;tail +0cf nohup.out
 
-Experiments (outdated):
+
+Analyzing the data:
+===================
+In the folder /bin/r are some R scripts provided to generate graphs to 
+visualize the results. In the top the files, one can configure the 
+required paths and the configuration used to analyze the data.
+
+
+(Outdated) Documentation of additional experiments:
+===================================================
+
 Different recursion depth (with MAXRECURSIONDEPTH=1 without recursion)
 -> bin/run-benchmark-recursive.sh
 
@@ -65,8 +86,3 @@ The experiments run-cycle*.sh and their used files
 run-benchmark-cycle-*.sh are currently only supporting Solaris 
 environments and require pfexec permissions to assign subsets of cores 
 to the benchmarking system.
-
-Analyzing the data:
-in the folder /bin/r are some R scripts provided to generate 
-graphs to visualize the results. In the top the files, one can configure
-the required paths and the configuration used to analyze the data.

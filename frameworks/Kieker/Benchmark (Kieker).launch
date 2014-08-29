@@ -10,5 +10,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="mooBench.benchmark.Benchmark"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-d 10 -h 1 -m 0 -t 1000 -o tmp/test.txt -q"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="MooBench"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-javaagent:frameworks/Kieker/lib/kieker-1.9-SNAPSHOT_aspectj.jar&#13;&#10;-Dorg.aspectj.weaver.loadtime.configuration=META-INF/kieker.aop.xml&#13;&#10;-Dorg.aspectj.weaver.showWeaveInfo=true -Daj.weaving.verbose=true"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-javaagent:frameworks/Kieker/lib/kieker-1.10-SNAPSHOT_aspectj.jar&#13;&#10;-Dorg.aspectj.weaver.loadtime.configuration=META-INF/kieker.aop.xml&#13;&#10;-Dorg.aspectj.weaver.showWeaveInfo=true -Daj.weaving.verbose=true"/>
 </launchConfiguration>
