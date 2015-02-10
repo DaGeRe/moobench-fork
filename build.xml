@@ -20,7 +20,7 @@
 				<include name="commons-cli-*.jar" />
 			</fileset>
 		</path>
-		<javac source="1.5" target="1.5" destDir="build" debug="true" classpathref="compile-classpath" includeAntRuntime="false">
+		<javac source="1.6" target="1.6" destDir="build" debug="true" classpathref="compile-classpath" includeAntRuntime="false">
 			<compilerarg value="-Xlint:-options"/>
 			<src path="src" />
 		</javac>
@@ -35,7 +35,7 @@
 				<include name="kieker-1.11-SNAPSHOT_aspectj.jar" />
 			</fileset>
 		</path>
-		<javac source="1.5" target="1.5" destDir="build" debug="true" classpathref="compile-classpath" includeAntRuntime="false">
+		<javac source="1.6" target="1.6" destDir="build" debug="true" classpathref="compile-classpath" includeAntRuntime="false">
 			<compilerarg value="-Xlint:-options"/>
 			<src path="frameworks/Kieker/src" />
 		</javac>
@@ -97,7 +97,7 @@
 				<exclude name="MooBench"/>
 			</fileset>
 		</move>
-		<delete file="dist/MooBench/lib/kieker-1.10-SNAPSHOT_aspectj.jar" />
+		<delete file="dist/MooBench/lib/kieker-1.11-SNAPSHOT_aspectj.jar" />
 		<copy file="continuous-integration/executeRemoteMicroBenchmark.sh" todir="dist" />
 	</target>
 
