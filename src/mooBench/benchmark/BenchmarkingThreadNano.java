@@ -16,50 +16,91 @@
 
 package mooBench.benchmark;
 
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import mooBench.monitoredApplication.MonitoredClass;
 
 /**
- * @author Jan Waller
+ * @author Jan Waller, Aike Sass, Christian Wulf
  */
 public final class BenchmarkingThreadNano implements BenchmarkingThread {
 
-	private final MonitoredClass mc;
-	private final CountDownLatch doneSignal;
-	private final int totalCalls;
-	private final long methodTime;
-	private final int recursionDepth;
-	private final long[] timings;
+  private final MonitoredClass mc;
+  private final CountDownLatch doneSignal;
+  private final int totalCalls;
+  private final long methodTime;
+  private final int recursionDepth;
 
-	public BenchmarkingThreadNano(final MonitoredClass mc, final int totalCalls, final long methodTime, final int recursionDepth, final CountDownLatch doneSignal) {
-		this.mc = mc;
-		this.doneSignal = doneSignal;
-		this.totalCalls = totalCalls;
-		this.methodTime = methodTime;
-		this.recursionDepth = recursionDepth;
-		this.timings = new long[totalCalls];
-	}
+  private final long[] timings;
 
-	public final long[] getTimings() {
-		synchronized (this) {
-			return this.timings;
-		}
-	}
+  private final long[] usedHeapMemory;
+  private final MemoryMXBean memory;
 
-	public final void run() {
-		long start_ns;
-		long stop_ns;
-		for (int i = 0; i < this.totalCalls; i++) {
-			start_ns = System.nanoTime();
-			this.mc.monitoredMethod(this.methodTime, this.recursionDepth);
-			stop_ns = System.nanoTime();
-			this.timings[i] = stop_ns - start_ns;
-			if ((i % 100000) == 0) {
-				System.out.println(i); // NOPMD (System.out)
-			}
-		}
-		this.doneSignal.countDown();
-	}
+  private final List<GarbageCollectorMXBean> collector;
+
+  public BenchmarkingThreadNano(final MonitoredClass mc, final int totalCalls,
+      final long methodTime, final int recursionDepth, final CountDownLatch doneSignal) {
+    this.mc = mc;
+    this.doneSignal = doneSignal;
+    this.totalCalls = totalCalls;
+    this.methodTime = methodTime;
+    this.recursionDepth = recursionDepth;
+    // for monitoring execution times
+    this.timings = new long[totalCalls];
+    // for monitoring memory consumption
+    this.memory = ManagementFactory.getMemoryMXBean();
+    this.usedHeapMemory = new long[totalCalls];
+    // for monitoring the garbage collector
+    this.collector = ManagementFactory.getGarbageCollectorMXBeans();
+  }
+
+  public String print(final int index, final String separatorString) {
+    return "" + this.timings[index] /* + separatorString + this.usedHeapMemory[index] */;
+  }
+
+  public final void run() {
+    long start_ns;
+    long stop_ns;
+    final long gcBefore;
+    final long gcAfter;
+
+    for (int i = 0; i < this.totalCalls; i++) {
+      // gcBefore = this.computeGcCollectionCount();
+      start_ns = this.getCurrentTimestamp();
+
+      this.mc.monitoredMethod(this.methodTime, this.recursionDepth);
+
+      stop_ns = this.getCurrentTimestamp();
+      // gcAfter = this.computeGcCollectionCount();
+
+      // save execution time
+      this.timings[i] = stop_ns - start_ns;
+      if ((i % 100000) == 0) {
+        System.out.println(i); // NOPMD (System.out)
+      }
+      // save heap memory
+      this.usedHeapMemory[i] = this.memory.getHeapMemoryUsage().getUsed();
+    }
+
+    this.doneSignal.countDown();
+  }
+
+  private long computeGcCollectionCount() {
+    long count = 0;
+    for (final GarbageCollectorMXBean bean : this.collector) {
+      count += bean.getCollectionCount();
+      // bean.getCollectionTime()
+    }
+    return count;
+  }
+
+  private long getCurrentTimestamp() {
+    // alternatively: System.currentTimeMillis();
+    return System.nanoTime();
+  }
 
 }

@@ -17,9 +17,17 @@
 package mooBench.benchmark;
 
 /**
- * @author Jan Waller
+ * @author Jan Waller, Christian Wulf
  */
 public interface BenchmarkingThread extends Runnable {
 
-	public abstract long[] getTimings();
+  /**
+   * @param index
+   *          of the monitored call
+   * @param separatorString
+   *          used to separate the monitored entries
+   * @return all monitored entries for the given <code>index</code> separated by the given
+   *         <code>separatorString</code>
+   */
+  public String print(final int index, final String separatorString);
 }
