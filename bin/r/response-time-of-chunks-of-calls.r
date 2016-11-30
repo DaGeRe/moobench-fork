@@ -7,14 +7,17 @@ numFirstValuesToIgnore = 10000000
 chunkSize = 10000
 
 colors = c("red", "blue", "green", "black")
-yVerticals = c(NA, 2, NA, 2)
 
 # returns a data.table (by default) 
 ## which enhances/extends a data.frame
 ### which in turn is a list of vectors.
 #### Each vector in the list represents a row with its column values.
 csvTable = fread(filename, skip=numFirstValuesToIgnore)
-# csvTable with an additional column "id" which contains the row numbers
+
+rowCount = csvTable[, .N]
+cat(sprintf("\nYour input file contains %d lines.\n\n", rowCount))
+
+# csvTable with an additional column "id" which contains the row numbers (necessary for grouping; see below)
 csvTable[, id:=1:.N]
 
 print(csvTable)
@@ -22,13 +25,14 @@ print(csvTable)
 # default column name: "V" followed by the column number
 thread <- csvTable[["V1"]]
 time <- csvTable[["V2"]]
-# groupedTime is a table with "id" and "V1"
+memory <- csvTable[["V3"]]
+gcActivity <- csvTable[["V4"]]
+
+# grouped*Time is a table with "id" and "V1"
 groupedMaxTime <- csvTable[, max(V2), by=.((id-1)%/%chunkSize)]
 groupedMeanTime <- csvTable[, mean(V2), by=.((id-1)%/%chunkSize)]
 groupedMedianTime <- csvTable[, median(V2), by=.((id-1)%/%chunkSize)]
 groupedMinTime <- csvTable[, min(V2), by=.((id-1)%/%chunkSize)]
-memory <- csvTable[["V3"]]
-gcActivity <- csvTable[["V4"]]
 
 maxTimes <- groupedMaxTime[["V1"]]
 meanTimes <- groupedMeanTime[["V1"]]
