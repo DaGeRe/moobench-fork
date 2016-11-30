@@ -35,11 +35,12 @@ public final class BenchmarkingThreadNano implements BenchmarkingThread {
   private final long methodTime;
   private final int recursionDepth;
 
-  private final long[] timings;
+  private final long[] executionTimes;
 
-  private final long[] usedHeapMemory;
   private final MemoryMXBean memory;
+  private final long[] usedHeapMemory;
 
+  private final long[] gcCollectionCountDiffs;
   private final List<GarbageCollectorMXBean> collector;
 
   public BenchmarkingThreadNano(final MonitoredClass mc, final int totalCalls,
@@ -50,40 +51,47 @@ public final class BenchmarkingThreadNano implements BenchmarkingThread {
     this.methodTime = methodTime;
     this.recursionDepth = recursionDepth;
     // for monitoring execution times
-    this.timings = new long[totalCalls];
+    this.executionTimes = new long[totalCalls];
     // for monitoring memory consumption
     this.memory = ManagementFactory.getMemoryMXBean();
     this.usedHeapMemory = new long[totalCalls];
     // for monitoring the garbage collector
+    this.gcCollectionCountDiffs = new long[totalCalls];
     this.collector = ManagementFactory.getGarbageCollectorMXBeans();
   }
 
   public String print(final int index, final String separatorString) {
-    return "" + this.timings[index] /* + separatorString + this.usedHeapMemory[index] */;
+    return String.format("%d%s%d%s%d",
+        this.executionTimes[index], separatorString,
+        this.usedHeapMemory[index], separatorString,
+        this.gcCollectionCountDiffs[index]);
   }
 
   public final void run() {
     long start_ns;
     long stop_ns;
-    final long gcBefore;
-    final long gcAfter;
+    long lastGcCount = this.computeGcCollectionCount();
+    long currentGcCount;
 
     for (int i = 0; i < this.totalCalls; i++) {
-      // gcBefore = this.computeGcCollectionCount();
       start_ns = this.getCurrentTimestamp();
 
       this.mc.monitoredMethod(this.methodTime, this.recursionDepth);
 
       stop_ns = this.getCurrentTimestamp();
-      // gcAfter = this.computeGcCollectionCount();
+      currentGcCount = this.computeGcCollectionCount();
 
       // save execution time
-      this.timings[i] = stop_ns - start_ns;
+      this.executionTimes[i] = stop_ns - start_ns;
+      // save heap memory
+      this.usedHeapMemory[i] = this.memory.getHeapMemoryUsage().getUsed();
+      // save gc collection count
+      this.gcCollectionCountDiffs[i] = currentGcCount - lastGcCount;
+      lastGcCount = currentGcCount;
+      // print progress
       if ((i % 100000) == 0) {
         System.out.println(i); // NOPMD (System.out)
       }
-      // save heap memory
-      this.usedHeapMemory[i] = this.memory.getHeapMemoryUsage().getUsed();
     }
 
     this.doneSignal.countDown();
