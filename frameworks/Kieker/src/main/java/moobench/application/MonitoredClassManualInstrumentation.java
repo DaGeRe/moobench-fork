@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-package mooBench.monitoredApplication;
+package moobench.application;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -32,8 +32,8 @@ import kieker.monitoring.timer.ITimeSource;
  */
 public final class MonitoredClassManualInstrumentation implements MonitoredClass {
 
-	private static final String SIGNATURE = "public final long mooBench.monitoredApplication.MonitoredClass.monitoredMethod(long, int)";
-	private static final String CLAZZ = "mooBench.monitoredApplication.MonitoredClass";
+	private static final String SIGNATURE = "public final long moobench.application.MonitoredClass.monitoredMethod(long, int)";
+	private static final String CLAZZ = "moobench.application.MonitoredClass";
 
 	private static final IMonitoringController CTRLINST = MonitoringController.getInstance();
 	private static final ITimeSource TIME = CTRLINST.getTimeSource();

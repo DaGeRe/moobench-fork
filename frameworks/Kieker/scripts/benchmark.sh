@@ -48,7 +48,7 @@ information "----------------------------------"
 information "Running benchmark..."
 information "----------------------------------"
 
-FIXED_PARAMETERS="--quickstart -a moobench.monitoredApplication.MonitoredClassSimple"
+FIXED_PARAMETERS="--quickstart -a moobench.application.MonitoredClassSimple"
 
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 information "Experiment will take circa ${TIME} seconds."
@@ -95,10 +95,6 @@ WRITER_CONFIG[3]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=ki
 
 TITLE[4]="Logging (Generic Bin)"
 WRITER_CONFIG[4]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.FileWriter -Dkieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.BinaryLogStreamHandler -Dkieker.monitoring.writer.filesystem.FileWriter.bufferSize=8192 -Dkieker.monitoring.writer.filesystem.FileWriter.customStoragePath=${DATA_DIR}/"
-
-TITLE[5]="Logging (Dual TCP)"
-WRITER_CONFIG[5]="-Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.DualSocketTcpWriter -Dkieker.monitoring.writer.tcp.DualSocketTcpWriter.port1=2345 -Dkieker.monitoring.writer.tcp.DualSocketTcpWriter.port2=2346"
-RECEIVER[5]="${BASE_DIR}/collector-2.0/bin/collector -p 2345 -p 2346"
 
 TITLE[6]="Logging (Single TCP)"
 WRITER_CONFIG[6]="-Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.SingleSocketTcpWriter -Dkieker.monitoring.writer.tcp.SingleSocketTcpWriter.port=2345"

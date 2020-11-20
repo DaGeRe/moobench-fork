@@ -9,8 +9,12 @@
 
 rootProject.name = 'moobench'
 
-include 'moobench'
+include 'benchmark'
 include 'frameworks:inspectIT'
-include 'frameworks:Kieker'
+include 'frameworks:Kieker:application'
+include 'frameworks:Kieker:experiment-0'
+include 'frameworks:Kieker:experiment-1'
+include 'frameworks:Kieker:experiment-2'
+include 'frameworks:Kieker:experiment-3'
 include 'frameworks:SPASSmeter'
 
