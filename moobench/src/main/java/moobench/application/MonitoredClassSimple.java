@@ -14,12 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 
-package mooBench.monitoredApplication;
+package moobench.application;
 
 /**
  * @author Jan Waller
  */
-public interface MonitoredClass {
+public final class MonitoredClassSimple implements MonitoredClass {
 
-	public long monitoredMethod(final long methodTime, final int recDepth);
+	/**
+	 * Default constructor.
+	 */
+	public MonitoredClassSimple() {
+		// empty default constructor
+	}
+
+	public final long monitoredMethod(final long methodTime, final int recDepth) {
+		if (recDepth > 1) {
+			return this.monitoredMethod(methodTime, recDepth - 1);
+		} else {
+			final long exitTime = System.nanoTime() + methodTime;
+			long currentTime;
+			do {
+				currentTime = System.nanoTime();
+			} while (currentTime < exitTime);
+			return currentTime;
+		}
+	}
 }

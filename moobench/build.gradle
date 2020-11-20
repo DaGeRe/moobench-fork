@@ -1,0 +1,12 @@
+plugins {
+	id 'java'
+	id 'application'
+}
+
+dependencies {
+    implementation 'com.beust:jcommander:1.72'
+}
+
+application {
+    mainClass = 'moobench.benchmark.BenchmarkMain'
+}

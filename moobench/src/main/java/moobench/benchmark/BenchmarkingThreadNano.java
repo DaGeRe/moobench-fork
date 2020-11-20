@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-package mooBench.benchmark;
+package moobench.benchmark;
 
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
@@ -22,7 +22,7 @@ import java.lang.management.MemoryMXBean;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import mooBench.monitoredApplication.MonitoredClass;
+import moobench.application.MonitoredClass;
 
 /**
  * @author Jan Waller, Aike Sass, Christian Wulf

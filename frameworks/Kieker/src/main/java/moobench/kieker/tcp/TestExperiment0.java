@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-package kieker.tcp;
+package moobench.kieker.tcp;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-package mooBench.benchmark;
+package moobench.benchmark;
 
 import java.util.concurrent.CountDownLatch;
 
-import mooBench.monitoredApplication.MonitoredClass;
+import moobench.application.MonitoredClass;
 
 /**
  * @author Jan Waller

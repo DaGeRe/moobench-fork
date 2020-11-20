@@ -14,34 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-package mooBench.monitoredApplication;
+package moobench.kieker.tcp;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
+import java.util.concurrent.TimeUnit;
 
+import teetime.framework.Execution;
+
+// Command-Line:
+// java -javaagent:lib/kieker-1.10-SNAPSHOT_aspectj.jar -Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.TCPWriter -Dkieker.monitoring.writer.tcp.TCPWriter.QueueFullBehavior=1 -jar dist\OverheadEvaluationMicrobenchmark.jar --recursiondepth 10 --totalthreads 1 --methodtime 0 --output-filename raw.csv --totalcalls 10000000
 /**
  * @author Jan Waller
  */
-public final class MonitoredClassThreaded implements MonitoredClass {
-	final ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+public final class TestExperiment3 {
 
-	/**
-	 * Default constructor.
-	 */
-	public MonitoredClassThreaded() {
-		// empty default constructor
+	private TestExperiment3() {}
+
+	public static void main(final String[] args) {
+		TestConfiguration3 config = new TestConfiguration3(Integer.parseInt(args[0]), 8192);
+		Execution<TestConfiguration3> execution = new Execution<TestConfiguration3>(config);
+		execution.executeBlocking();
 	}
 
-	public final long monitoredMethod(final long methodTime, final int recDepth) {
-		if (recDepth > 1) {
-			return this.monitoredMethod(methodTime, recDepth - 1);
-		} else {
-			final long exitTime = this.threadMXBean.getCurrentThreadUserTime() + methodTime;
-			long currentTime;
-			do {
-				currentTime = this.threadMXBean.getCurrentThreadUserTime();
-			} while (currentTime < exitTime);
-			return currentTime;
-		}
-	}
 }

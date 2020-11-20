@@ -14,23 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-package kieker;
+package moobench.kieker.tcp;
 
-import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
-import mooBench.benchmark.Benchmark;
+import teetime.framework.Execution;
 
+// Command-Line:
+// java -javaagent:lib/kieker-1.10-SNAPSHOT_aspectj.jar -Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.TCPWriter -Dkieker.monitoring.writer.tcp.TCPWriter.QueueFullBehavior=1 -jar dist\OverheadEvaluationMicrobenchmark.jar --recursiondepth 10 --totalthreads 1 --methodtime 0 --output-filename raw.csv --totalcalls 10000000
 /**
  * @author Jan Waller
  */
-public class Logger implements Runnable {
+public final class TestExperiment2 {
+	
+	private TestExperiment2() {}
 
-	public void run() {
-		try {
-			java.util.logging.LogManager.getLogManager().readConfiguration(
-					Benchmark.class.getClassLoader().getResourceAsStream("META-INF/kieker.logging.properties"));
-		} catch (final IOException ex) {
-			java.util.logging.Logger.getAnonymousLogger().log(java.util.logging.Level.SEVERE, "Could not load default logging.properties file", ex);
-		}
+	public static void main(final String[] args) {
+		TestConfiguration2 config = new TestConfiguration2(Integer.parseInt(args[0]), 8192);
+		Execution<TestConfiguration2> execution = new Execution<TestConfiguration2>(config);
+		execution.executeBlocking();
 	}
+
 }

@@ -14,17 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-package mooBench.monitoredApplication;
+package moobench.application;
+
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 
 /**
  * @author Jan Waller
  */
-public final class MonitoredClassSimple implements MonitoredClass {
+public final class MonitoredClassThreaded implements MonitoredClass {
+	final ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 
 	/**
 	 * Default constructor.
 	 */
-	public MonitoredClassSimple() {
+	public MonitoredClassThreaded() {
 		// empty default constructor
 	}
 
@@ -32,10 +36,10 @@ public final class MonitoredClassSimple implements MonitoredClass {
 		if (recDepth > 1) {
 			return this.monitoredMethod(methodTime, recDepth - 1);
 		} else {
-			final long exitTime = System.nanoTime() + methodTime;
+			final long exitTime = this.threadMXBean.getCurrentThreadUserTime() + methodTime;
 			long currentTime;
 			do {
-				currentTime = System.nanoTime();
+				currentTime = this.threadMXBean.getCurrentThreadUserTime();
 			} while (currentTime < exitTime);
 			return currentTime;
 		}

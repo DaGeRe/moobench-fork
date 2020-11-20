@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+package moobench.kieker;
 
-package mooBench.benchmark;
+import java.io.IOException;
+
+import moobench.benchmark.BenchmarkMain;
 
 /**
- * @author Jan Waller, Christian Wulf
+ * @author Jan Waller
  */
-public interface BenchmarkingThread extends Runnable {
+public class Logger implements Runnable {
 
-  /**
-   * @param index
-   *          of the monitored call
-   * @param separatorString
-   *          used to separate the monitored entries
-   * @return all monitored entries for the given <code>index</code> separated by the given
-   *         <code>separatorString</code>
-   */
-  public String print(final int index, final String separatorString);
+	public void run() {
+		try {
+			java.util.logging.LogManager.getLogManager().readConfiguration(
+					BenchmarkMain.class.getClassLoader().getResourceAsStream("META-INF/kieker.logging.properties"));
+		} catch (final IOException ex) {
+			java.util.logging.Logger.getAnonymousLogger().log(java.util.logging.Level.SEVERE, "Could not load default logging.properties file", ex);
+		}
+	}
 }
