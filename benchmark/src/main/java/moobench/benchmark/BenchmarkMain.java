@@ -35,16 +35,10 @@ public final class BenchmarkMain {
 	private static final String ENCODING = "UTF-8";
 
 	private static PrintStream ps = null;
-	private static String outputFn = null;
-	private static int totalThreads = 0;
-	private static int totalCalls = 0;
-	private static long methodTime = 0;
-	private static int recursionDepth = 0;
-	private static boolean quickstart = false;
-	private static boolean forceTerminate = false;
-	private static MonitoredClass mc = null;
 
 	private static BenchmarkParameter parameter = new BenchmarkParameter();
+
+	private static MonitoredClass monitoredClass;
 
 	private BenchmarkMain() {
 	}
@@ -55,22 +49,22 @@ public final class BenchmarkMain {
 		BenchmarkMain.parseAndInitializeArguments(args);
 
 		System.out.println(" # Experiment run configuration:"); // NOPMD (System.out)
-		System.out.println(" # 1. Output filename " + BenchmarkMain.outputFn); // NOPMD (System.out)
-		System.out.println(" # 2. Recursion Depth " + BenchmarkMain.recursionDepth); // NOPMD (System.out)
-		System.out.println(" # 3. Threads " + BenchmarkMain.totalThreads); // NOPMD (System.out)
-		System.out.println(" # 4. Total-Calls " + BenchmarkMain.totalCalls); // NOPMD (System.out)
-		System.out.println(" # 5. Method-Time " + BenchmarkMain.methodTime); // NOPMD (System.out)
+		System.out.println(" # 1. Output filename " + parameter.getOutputFile().toPath().toString()); // NOPMD (System.out)
+		System.out.println(" # 2. Recursion Depth " + parameter.getRecursionDepth()); // NOPMD (System.out)
+		System.out.println(" # 3. Threads " + parameter.getTotalThreads()); // NOPMD (System.out)
+		System.out.println(" # 4. Total-Calls " + parameter.getTotalCalls()); // NOPMD (System.out)
+		System.out.println(" # 5. Method-Time " + parameter.getMethodTime()); // NOPMD (System.out)
 
 		// 2. Initialize Threads and Classes
-		final CountDownLatch doneSignal = new CountDownLatch(BenchmarkMain.totalThreads);
-		final BenchmarkingThread[] benchmarkingThreads = new BenchmarkingThread[BenchmarkMain.totalThreads];
-		final Thread[] threads = new Thread[BenchmarkMain.totalThreads];
-		for (int i = 0; i < BenchmarkMain.totalThreads; i++) {
-			benchmarkingThreads[i] = new BenchmarkingThreadNano(BenchmarkMain.mc, BenchmarkMain.totalCalls,
-					BenchmarkMain.methodTime, BenchmarkMain.recursionDepth, doneSignal);
+		final CountDownLatch doneSignal = new CountDownLatch(parameter.getTotalThreads());
+		final BenchmarkingThread[] benchmarkingThreads = new BenchmarkingThread[parameter.getTotalThreads()];
+		final Thread[] threads = new Thread[parameter.getTotalThreads()];
+		for (int i = 0; i < parameter.getTotalThreads(); i++) {
+			benchmarkingThreads[i] = new BenchmarkingThreadNano(BenchmarkMain.monitoredClass, parameter.getTotalCalls(),
+					parameter.getMethodTime(), parameter.getRecursionDepth(), doneSignal);
 			threads[i] = new Thread(benchmarkingThreads[i], String.valueOf(i + 1));
 		}
-		if (!quickstart) {
+		if (!parameter.isQuickstart()) {
 			for (int l = 0; l < 4; l++) {
 				{ // NOCS (reserve mem only within the block)
 					final long freeMemChunks = Runtime.getRuntime().freeMemory() >> 27;
@@ -91,7 +85,7 @@ public final class BenchmarkMain {
 		final long startTime = System.currentTimeMillis();
 		System.out.println(" # 6. Starting benchmark ..."); // NOPMD (System.out)
 		// 3. Starting Threads
-		for (int i = 0; i < BenchmarkMain.totalThreads; i++) {
+		for (int i = 0; i < parameter.getTotalThreads(); i++) {
 			threads[i].start();
 		}
 
@@ -109,9 +103,9 @@ public final class BenchmarkMain {
 		// 5. Print experiment statistics
 		System.out.print(" # 7. Writing results ... "); // NOPMD (System.out)
 		// CSV Format: configuration;order_index;Thread-ID;duration_nsec
-		for (int h = 0; h < BenchmarkMain.totalThreads; h++) {
+		for (int h = 0; h < parameter.getTotalThreads(); h++) {
 			final BenchmarkingThread thread = benchmarkingThreads[h];
-			for (int i = 0; i < BenchmarkMain.totalCalls; i++) {
+			for (int i = 0; i < parameter.getTotalCalls(); i++) {
 				final String line = threads[h].getName() + ";" + thread.print(i, ";");
 				BenchmarkMain.ps.println(line);
 			}
@@ -121,7 +115,7 @@ public final class BenchmarkMain {
 		System.out.println("done"); // NOPMD (System.out)
 		System.out.println(" # "); // NOPMD (System.out)
 
-		if (forceTerminate) {
+		if (parameter.isForceTerminate()) {
 			System.exit(0);
 		}
 	}
@@ -136,9 +130,9 @@ public final class BenchmarkMain {
 					new BufferedOutputStream(Files.newOutputStream(parameter.getOutputFile().toPath()), 8192 * 8),
 					false, BenchmarkMain.ENCODING);
 			if (null != parameter.getApplicationClassname()) {
-				mc = ((MonitoredClass) Class.forName(parameter.getApplicationClassname()).newInstance());
+				monitoredClass = ((MonitoredClass) Class.forName(parameter.getApplicationClassname()).newInstance());
 			} else {
-				mc = new MonitoredClassThreaded();
+				monitoredClass = new MonitoredClassThreaded();
 			}
 			if (null != parameter.getRunnableClassname()) {
 				((Runnable) Class.forName(parameter.getRunnableClassname()).newInstance()).run();
@@ -146,6 +140,8 @@ public final class BenchmarkMain {
 		} catch (ParameterException ex) {
 			if (commander != null)
 				commander.usage();
+			System.out.println(ex.getLocalizedMessage());
+			System.exit(-1);
 		} catch (final Exception ex) { // NOCS (e.g., IOException, ParseException,
 										// NumberFormatException)
 			if (commander != null) {

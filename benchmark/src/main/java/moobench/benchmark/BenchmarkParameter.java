@@ -14,17 +14,17 @@ import com.beust.jcommander.converters.FileConverter;
  */
 public class BenchmarkParameter {
 	
-	@Parameter(names = { "--totalCalls", "-c" }, required = true, description = "Number of total method calls performed.")
-	long totalCalls;
+	@Parameter(names = { "--total-calls", "-c" }, required = true, description = "Number of total method calls performed.")
+	int totalCalls;
 	
-	@Parameter(names = { "--methodtime", "-m" }, required = true, description = "Time a method call takes.")
-	long methodTime;
+	@Parameter(names = { "--method-time", "-m" }, required = true, description = "Time a method call takes.")
+	int methodTime;
 	
-	@Parameter(names = { "--totalthreads", "-t" }, required = true, description = "Number of threads started.")
-	long totalThreads;
+	@Parameter(names = { "--total-threads", "-t" }, required = true, description = "Number of threads started.")
+	int totalThreads;
 			
-	@Parameter(names = { "--recursiondepth", "-d" }, required = true, description = "Depth of recursion performed.")
-	long recursionDepth;
+	@Parameter(names = { "--recursion-depth", "-d" }, required = true, description = "Depth of recursion performed.")
+	int recursionDepth;
 
 	@Parameter(names = { "--output-filename", "-o" }, required = true, converter = FileConverter.class, 
 			description = "Filename of results file. Output is appended if file exists.")
@@ -33,7 +33,7 @@ public class BenchmarkParameter {
 	@Parameter(names = { "--quickstart", "-q" }, required = false, description = "Skips initial garbage collection.")
 	boolean quickstart;
 	
-	@Parameter(names = { "--forceTerminate", "-f" }, required = false, description = "Forces a termination at the end of the benchmark.")
+	@Parameter(names = { "--force-terminate", "-f" }, required = false, description = "Forces a termination at the end of the benchmark.")
 	boolean forceTerminate;
     
 	@Parameter(names = { "--runnable", "-r" }, required = false,
@@ -43,22 +43,22 @@ public class BenchmarkParameter {
     @Parameter(names = { "--application", "-a" }, required = false, description = "Class implementing the MonitoredClass interface.")
     String applicationClassname;
     
-    @Parameter(names = { "--benchmarkthread", "-b" }, required = false, description = "Class implementing the BenchmarkingThread interface.")
+    @Parameter(names = { "--benchmark-thread", "-b" }, required = false, description = "Class implementing the BenchmarkingThread interface.")
     String benchmarkClassname;
 
-	public long getTotalCalls() {
+	public int getTotalCalls() {
 		return totalCalls;
 	}
 
-	public long getMethodTime() {
+	public int getMethodTime() {
 		return methodTime;
 	}
 
-	public long getTotalThreads() {
+	public int getTotalThreads() {
 		return totalThreads;
 	}
 
-	public long getRecursionDepth() {
+	public int getRecursionDepth() {
 		return recursionDepth;
 	}
 

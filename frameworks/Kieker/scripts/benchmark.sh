@@ -36,13 +36,13 @@ else
 fi
 
 # test input parameters and configuration
-checkFile R-script "${RSCRIPT_PATH}"
+#checkFile R-script "${RSCRIPT_PATH}"
 checkDirectory DATA_DIR "${DATA_DIR}" create
 
 PARENT=`dirname "${RESULTS_DIR}"`
 checkDirectory result-base "$PARENT"
 checkFile ApsectJ-Agent "${AGENT}"
-checkFile moobench "${MOOBENCH}"
+checkFile moobench "${BENCHMARK}"
 
 information "----------------------------------"
 information "Running benchmark..."
@@ -67,13 +67,13 @@ JAVA_ARGS="-server"
 JAVA_ARGS="${JAVA_ARGS} -d64"
 JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx4G"
 
-JAVA_PROGRAM="-jar ${MOOBENCH} ${FIXED_PARAMETERS}"
+JAVA_OPTS="${FIXED_PARAMETERS}"
 
 LTW_ARGS="-javaagent:${AGENT} -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dkieker.monitoring.skipDefaultAOPConfiguration=true -Dorg.aspectj.weaver.loadtime.configuration=${AOP}"
 
 KIEKER_ARGS="-Dlog4j.configuration=log4j.cfg -Dkieker.monitoring.name=KIEKER-BENCHMARK -Dkieker.monitoring.adaptiveMonitoring.enabled=false -Dkieker.monitoring.periodicSensorsExecutorPoolSize=0"
 
-# JAVAARGS used to configure and setup a specific writer
+# JAVA_ARGS used to configure and setup a specific writer
 declare -a WRITER_CONFIG
 # Receiver setup if necessary
 declare -a RECEIVER
@@ -96,11 +96,10 @@ WRITER_CONFIG[3]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=ki
 TITLE[4]="Logging (Generic Bin)"
 WRITER_CONFIG[4]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.FileWriter -Dkieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.BinaryLogStreamHandler -Dkieker.monitoring.writer.filesystem.FileWriter.bufferSize=8192 -Dkieker.monitoring.writer.filesystem.FileWriter.customStoragePath=${DATA_DIR}/"
 
-TITLE[6]="Logging (Single TCP)"
-WRITER_CONFIG[6]="-Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.SingleSocketTcpWriter -Dkieker.monitoring.writer.tcp.SingleSocketTcpWriter.port=2345"
-RECEIVER[6]="${BASE_DIR}/collector-2.0/bin/collector -p 2345"
-
-export COLLECTOR_OPTS="-Dlog4j.configuration=file://${BASE_DIR}/log4j.cfg"
+TITLE[5]="Logging (Single TCP)"
+WRITER_CONFIG[5]="-Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.SingleSocketTcpWriter -Dkieker.monitoring.writer.tcp.SingleSocketTcpWriter.port=2345"
+#RECEIVER[5]="${BASE_DIR}/collector-2.0/bin/collector -p 2345"
+RECEIVER[5]="${BASE_DIR}/receiver/bin/receiver 2345"
 
 # Create R labels
 LABELS=""
@@ -115,9 +114,9 @@ done
 
 ## Write configuration
 uname -a >${RESULTS_DIR}/configuration.txt
-${JAVA_BIN} ${JAVAARGS} -version 2>>${RESULTS_DIR}/configuration.txt
+${JAVA_BIN} ${JAVA_ARGS} -version 2>>${RESULTS_DIR}/configuration.txt
 cat << EOF >>${RESULTS_DIR}/configuration.txt
-JAVAARGS: ${JAVAARGS}
+JAVA_ARGS: ${JAVA_ARGS}
 
 Runtime: circa ${TIME} seconds
 
@@ -149,12 +148,12 @@ function execute-experiment() {
     echo " # ${loop}.${recursion}.${index} ${title}" >> ${DATA_DIR}/kieker.log
 
     if [  "${kieker_parameters}" = "" ] ; then
-       COMPLETE_ARGS=${JAVA_ARGS}
+       BENCHMARK_OPTS=${JAVA_ARGS}
     else
-       COMPLETE_ARGS="${JAVA_ARGS} ${LTW_ARGS} ${KIEKER_ARGS} ${kieker_parameters}"
+       BENCHMARK_OPTS="${JAVA_ARGS} ${LTW_ARGS} ${KIEKER_ARGS} ${kieker_parameters}"
     fi
 
-    ${JAVA_BIN} ${COMPLETE_ARGS} ${JAVA_PROGRAM} \
+    ${BENCHMARK} \
         --output-filename ${RAWFN}-${loop}-${recursion}-${index}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \

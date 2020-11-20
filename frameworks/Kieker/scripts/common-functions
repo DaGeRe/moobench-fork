@@ -53,6 +53,7 @@ function checkDirectory() {
 	if [ ! -d "$2" ] ; then
 		if [ "$3" == "create" ] ; then
 			information "$1: directory does not exist, creating it"
+			mkdir $2
 		else
 			error "$1: directory $2 does not exist."
 			exit 1
