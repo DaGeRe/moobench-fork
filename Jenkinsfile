@@ -3,7 +3,6 @@
 pipeline {
 
   agent {
-    label 'build-node8'
     docker {
       image 'kieker/kieker-build:openjdk8'
       alwaysPull true
