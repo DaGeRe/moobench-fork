@@ -2,13 +2,7 @@
 
 pipeline {
 
-  agent {
-    docker {
-      image 'kieker/kieker-build:openjdk8'
-      alwaysPull true
-      args env.DOCKER_ARGS
-    }
-  }
+  agent build-node8
 
   environment {
     DOCKER_ARGS = ''
