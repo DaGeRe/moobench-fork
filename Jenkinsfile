@@ -42,12 +42,11 @@ pipeline {
        steps {
           sh 'frameworks/Kieker/scripts/run-benchmark.sh'
        }
-    }
-
-    post {
-       cleanup {
-         deleteDir()
-         cleanWs()
+       post {
+         cleanup {
+           deleteDir()
+           cleanWs()
+         }
        }
     }
   }
