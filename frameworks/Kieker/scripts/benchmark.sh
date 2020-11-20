@@ -177,12 +177,13 @@ function execute-benchmark-body() {
      echo "receiver ${RECEIVER[$index]}"
      ${RECEIVER[$index]} & #>> ${DATA_DIR}/kieker.receiver-$i-$index.log &
      RECEIVER_PID=$!
+     echo "PID $RECEIVER_PID"
   fi
 
   execute-experiment "$loop" "$recursion" "$index" "${TITLE[$index]}" "${WRITER_CONFIG[$index]}"
 
   if [[ $RECEIVER_PID ]] ; then
-     wait $RECEIVER_PID
+     kill -TERM $RECEIVER_PID
      unset RECEIVER_PID
   fi
 }
