@@ -21,6 +21,9 @@ export RESULT_FILE="${BASE_DIR}/results-kieker/results-text.csv"
 COLLECTED_DATA_FILE="${BASE_DIR}/results.csv"
 BENCHMARK="${BASE_DIR}/benchmark.sh"
 
+##
+cd ${BASE_DIR}
+
 ## setup
 # install benchmark
 tar -xvpf ${BASE_DIR}/../../../benchmark/build/distributions/benchmark.tar
