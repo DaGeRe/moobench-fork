@@ -11,6 +11,8 @@ RESULTS_DIR="${BASE_DIR}/results-kieker"
 AGENT="${BASE_DIR}/kieker-1.15-SNAPSHOT-aspectj.jar"
 BENCHMARK="${BASE_DIR}/benchmark/bin/benchmark"
 
+BATCH_MODE="yes"
+
 # in-jar locations
 AOP="kieker.aop.xml"
 
