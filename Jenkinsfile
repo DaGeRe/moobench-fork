@@ -2,10 +2,6 @@
 
 pipeline {
 
-  options {
-      timeout(time: 4, unit: 'HOURS') 
-  }
-
   agent { label "build-node8" }
 
   environment {
@@ -14,7 +10,7 @@ pipeline {
 
   options {
     buildDiscarder logRotator(artifactNumToKeepStr: '10')
-    timeout(time: 150, unit: 'MINUTES')
+    timeout(time: 4, unit: 'HOURS') 
     retry(1)
     parallelsAlwaysFailFast()
   }
