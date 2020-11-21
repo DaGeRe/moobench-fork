@@ -36,8 +36,6 @@ mkdir -p ${BASE_DIR}/results-kieker
 
 rm -f ${COLLECTED_DATA_FILE}
 
-ls ${BASE_DIR}
-
 ## run loop
 for ((v=1;v<=${NUM_OF_REPEATS};v+=1)); do
 	echo "++++++++++++++++++++++++++"

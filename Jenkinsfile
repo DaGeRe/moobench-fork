@@ -2,6 +2,10 @@
 
 pipeline {
 
+  options {
+      timeout(time: 4, unit: 'HOURS') 
+  }
+
   agent { label "build-node8" }
 
   environment {
