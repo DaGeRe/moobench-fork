@@ -16,7 +16,24 @@ else
 	exit 1
 fi
 
-NUM_OF_REPEATS=1
+# parse parameters
+
+if [ -f "$1" ] ; then
+	KEYSTORE="$1"
+else
+	echo "Missing key"
+	exit 1
+fi
+
+if [ "$2" != "" ] ; then
+	URL="$2"
+else
+	echo "Missing URL"
+	exit 1
+fi
+
+## setup
+
 export RESULT_FILE="${BASE_DIR}/results-kieker/results-text.csv"
 COLLECTED_DATA_FILE="${BASE_DIR}/results.csv"
 BENCHMARK="${BASE_DIR}/benchmark.sh"
@@ -31,25 +48,28 @@ tar -xvpf ${BASE_DIR}/../../../benchmark/build/distributions/benchmark.tar
 curl "https://oss.sonatype.org/service/local/repositories/snapshots/content/net/kieker-monitoring/kieker/1.15-SNAPSHOT/kieker-1.15-20201102.131525-117-aspectj.jar" > "${AGENT}"
 # copy receiver
 tar -xvpf ${BASE_DIR}/../../../tools/receiver/build/distributions/receiver.tar
+# copy result compiler
+tar -xvpf ${BASE_DIR}/../../../tools/compile-results/build/distributions/compile-results.tar
 
+# Create benchmark results
 mkdir -p ${BASE_DIR}/results-kieker
 
 rm -f ${COLLECTED_DATA_FILE}
 
-## run loop
-for ((v=1;v<=${NUM_OF_REPEATS};v+=1)); do
-	echo "++++++++++++++++++++++++++"
-	echo "Rerun $v"
-	echo "++++++++++++++++++++++++++"
-	${BENCHMARK} # > /dev/null 2>&1
-	HEAD=`head -1 $RESULT_FILE`
-	VALUE=`tail -1 $RESULT_FILE`
-	if [ -f "${COLLECTED_DATA_FILE}" ] ; then
-		echo "$VALUE" >> ${COLLECTED_DATA_FILE}
-	else
-		echo "$HEAD" > ${COLLECTED_DATA_FILE}
-                echo "$VALUE" >> ${COLLECTED_DATA_FILE}
-	fi
-done
+## running the benchmark
+${BENCHMARK} # > /dev/null 2>&1
+HEAD=`head -1 $RESULT_FILE`
+VALUE=`tail -1 $RESULT_FILE`
+
+## summary results
+
+## fetch old results
+sftp -i "${KEYSTORE}" "${URL}/all-results.json"
+
+## compile results into json
+${BASE_DIR}/compile-results/bin/compile-results "${BASE_DIR}/results-kieker/results-text.csv" "${BASE_DIR}/all-results.json"
+
+## push results
+sftp -i "${KEYSTORE}" "${URL}/all-results.json" <<< $'put all-results.json'
 
 # end

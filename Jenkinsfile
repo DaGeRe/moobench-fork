@@ -5,6 +5,9 @@ pipeline {
   agent { label "build-node8" }
 
   environment {
+    KEYSTORE = credentials('kieker-irl-key')
+    UPDATE_SITE_URL = "sftp://repo@repo.se.internal/var/www/html/moobench"
+
     DOCKER_ARGS = ''
   }
 
@@ -34,7 +37,7 @@ pipeline {
 
     stage('Run Benchmark') {
        steps {
-          sh 'frameworks/Kieker/scripts/run-benchmark.sh'
+          sh 'frameworks/Kieker/scripts/run-benchmark.sh ${KEYSTORE} ${UPDATE_SITE_URL}'
        }
        post {
          cleanup {
