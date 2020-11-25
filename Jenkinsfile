@@ -2,7 +2,13 @@
 
 pipeline {
 
-  agent { label "build-node8" }
+  agent { 
+     docker {
+          image 'kieker/kieker-build:openjdk8'
+          alwaysPull true
+          args env.DOCKER_ARGS
+     }
+  }
 
   environment {
     KEYSTORE = credentials('kieker-irl-key')
