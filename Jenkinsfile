@@ -4,7 +4,7 @@ pipeline {
 
   agent { 
      docker {
-          image 'kieker/kieker-build:openjdk8'
+          image 'prefec2/moobench:latest'
           alwaysPull true
           args env.DOCKER_ARGS
      }
