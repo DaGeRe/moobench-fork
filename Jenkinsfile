@@ -49,20 +49,20 @@ pipeline {
                     #!/usr/bin/env bash
                     set +x
                     ## fetch old results
-                    information "Fetch old results file."
+                    echo "Fetch old results file."
                     sftp -oStrictHostKeyChecking=no -i "${KEYSTORE}" "${UPDATE_SITE_URL}/all-results.json"
-                    information "Got file"
+                    echo "Got file"
                     cat all-results.json
 
                     ## compile results into json
-                    information "Compile results"
+                    echo "Compile results"
                     frameworks/Kieker/scripts/compile-results/bin/compile-results "${BASE_DIR}/results-kieker/results-text.csv" "${BASE_DIR}/all-results.json"
-                    information "Done"
+                    echo "Done"
 
                     ## push results
-                    information "Push results back"
+                    echo "Push results back"
                     sftp -oStrictHostKeyChecking=no -i "${KEYSTORE}" "${UPDATE_SITE_URL}/all-results.json" <<< $'put all-results.json'
-                    information "Done"
+                    echo "Done"
                  ''')
             }       
        }
