@@ -50,9 +50,11 @@ pipeline {
     
     stage('Upload') {
        agent { label 'build-node4' }
-       sshagent(credentials: ['kieker-irl-key']) {
-          sh 'sftp -i ${KEYSTORE} ${UPDATE_SITE_URL}'
-          sh '${BASE_DIR}/compile-results/bin/compile-results "${BASE_DIR}/results-kieker/results-text.csv" "${BASE_DIR}/all-results.json"'
+       steps {
+          sshagent(credentials: ['kieker-irl-key']) {
+             sh 'sftp -i ${KEYSTORE} ${UPDATE_SITE_URL}'
+             sh '${BASE_DIR}/compile-results/bin/compile-results "${BASE_DIR}/results-kieker/results-text.csv" "${BASE_DIR}/all-results.json"'
+          }
        }
        post {
          cleanup {
