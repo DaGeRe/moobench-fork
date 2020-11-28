@@ -46,6 +46,7 @@ pipeline {
        steps {
           sh '${BASE_DIR}/run-benchmark.sh ${KEYSTORE} ${UPDATE_SITE_URL}'
           sh 'echo before'
+          sh 'echo ${KEYSTORE}'
           script {
              def remote = [name: 'repo.se.internal', host: 'repo.se.internal', user: 'repo', identityFile: ${KEYSTORE}, allowAnyHosts: true]
              sshGet remote: remote, from: 'all-results.json', into: '${BASE_DIR}'
