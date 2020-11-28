@@ -32,7 +32,7 @@ pipeline {
   stages {
     stage('Initial Cleanup') {
        steps {
-          sh './gradlew clean'
+          sh 'GRADLE_USER_HOME=. && ./gradlew clean'
        }
     }
 
