@@ -61,4 +61,6 @@ ${BENCHMARK} # > /dev/null 2>&1
 HEAD=`head -1 $RESULT_FILE`
 VALUE=`tail -1 $RESULT_FILE`
 
+echo ${KEYSTORE}
+
 # end
