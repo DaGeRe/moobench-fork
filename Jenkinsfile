@@ -44,6 +44,27 @@ pipeline {
     stage('Run Benchmark') {
        steps {
           sh 'frameworks/Kieker/scripts/run-benchmark.sh ${KEYSTORE} ${UPDATE_SITE_URL}'
+          sshagent(credentials: ['kieker-irl-key']) {
+              sh('''
+                    #!/usr/bin/env bash
+                    set +x
+                    ## fetch old results
+                    information "Fetch old results file."
+                    sftp -oStrictHostKeyChecking=no -i "${KEYSTORE}" "${UPDATE_SITE_URL}/all-results.json"
+                    information "Got file"
+                    cat all-results.json
+
+                    ## compile results into json
+                    information "Compile results"
+                    frameworks/Kieker/scripts/compile-results/bin/compile-results "${BASE_DIR}/results-kieker/results-text.csv" "${BASE_DIR}/all-results.json"
+                    information "Done"
+
+                    ## push results
+                    information "Push results back"
+                    sftp -oStrictHostKeyChecking=no -i "${KEYSTORE}" "${UPDATE_SITE_URL}/all-results.json" <<< $'put all-results.json'
+                    information "Done"
+                 ''')
+            }       
        }
        post {
          cleanup {
