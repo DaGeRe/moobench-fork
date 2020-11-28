@@ -13,6 +13,7 @@ pipeline {
   environment {
     KEYSTORE = credentials('kieker-irl-key')
     UPDATE_SITE_URL = "sftp://repo@repo.se.internal/var/www/html/moobench"
+    BASE_DIR = "frameworks/Kieker/scripts"
 
     DOCKER_ARGS = ''
   }
@@ -43,28 +44,12 @@ pipeline {
 
     stage('Run Benchmark') {
        steps {
-          sh 'frameworks/Kieker/scripts/run-benchmark.sh ${KEYSTORE} ${UPDATE_SITE_URL}'
-          sshagent(credentials: ['kieker-irl-key']) {
-              sh('''
-                    #!/usr/bin/env bash
-                    set +x
-                    ## fetch old results
-                    echo "Fetch old results file."
-                    sftp -oStrictHostKeyChecking=no -i "${KEYSTORE}" "${UPDATE_SITE_URL}/all-results.json"
-                    echo "Got file"
-                    cat all-results.json
-
-                    ## compile results into json
-                    echo "Compile results"
-                    frameworks/Kieker/scripts/compile-results/bin/compile-results "${BASE_DIR}/results-kieker/results-text.csv" "${BASE_DIR}/all-results.json"
-                    echo "Done"
-
-                    ## push results
-                    echo "Push results back"
-                    sftp -oStrictHostKeyChecking=no -i "${KEYSTORE}" "${UPDATE_SITE_URL}/all-results.json" <<< $'put all-results.json'
-                    echo "Done"
-                 ''')
-            }       
+          sh '${BASE_DIR}/run-benchmark.sh ${KEYSTORE} ${UPDATE_SITE_URL}'
+          script {
+             def remote = [name: 'repo.se.internal', host: 'repo.se.internal', user: 'repo', identityFile: ${KEYSTORE}, allowAnyHosts: true]
+             sshGet remote: remote, from: 'all-results.json', into: '${BASE_DIR}'
+          }
+          sh '${BASE_DIR}/compile-results/bin/compile-results "${BASE_DIR}/results-kieker/results-text.csv" "${BASE_DIR}/all-results.json"'
        }
        post {
          cleanup {
