@@ -51,7 +51,7 @@ pipeline {
     stage('Upload') {
        steps {
           sshagent(credentials: ['kieker-irl-key']) {
-             sh 'sftp -i ${KEYSTORE} ${UPDATE_SITE_URL}'
+             sh 'sftp -o StrictHostKeyChecking=no -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}'
              sh '${BASE_DIR}/compile-results/bin/compile-results "${BASE_DIR}/results-kieker/results-text.csv" "${BASE_DIR}/all-results.json"'
           }
        }
