@@ -49,7 +49,6 @@ pipeline {
     }
     
     stage('Upload') {
-       agent { label 'build-node8' }
        steps {
           sshagent(credentials: ['kieker-irl-key']) {
              sh 'sftp -i ${KEYSTORE} ${UPDATE_SITE_URL}'
