@@ -45,10 +45,12 @@ pipeline {
     stage('Run Benchmark') {
        steps {
           sh '${BASE_DIR}/run-benchmark.sh ${KEYSTORE} ${UPDATE_SITE_URL}'
+          sh 'echo before'
           script {
              def remote = [name: 'repo.se.internal', host: 'repo.se.internal', user: 'repo', identityFile: ${KEYSTORE}, allowAnyHosts: true]
              sshGet remote: remote, from: 'all-results.json', into: '${BASE_DIR}'
           }
+          sh 'echo after'
           sh '${BASE_DIR}/compile-results/bin/compile-results "${BASE_DIR}/results-kieker/results-text.csv" "${BASE_DIR}/all-results.json"'
        }
        post {
