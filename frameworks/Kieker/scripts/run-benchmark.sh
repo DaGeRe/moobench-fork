@@ -64,12 +64,19 @@ VALUE=`tail -1 $RESULT_FILE`
 ## summary results
 
 ## fetch old results
+information "Fetch old results file."
 sftp -i "${KEYSTORE}" "${URL}/all-results.json"
+information "Got file"
+cat all-results.json
 
 ## compile results into json
+information "Compile results"
 ${BASE_DIR}/compile-results/bin/compile-results "${BASE_DIR}/results-kieker/results-text.csv" "${BASE_DIR}/all-results.json"
+information "Done"
 
 ## push results
+information "Push results back"
 sftp -i "${KEYSTORE}" "${URL}/all-results.json" <<< $'put all-results.json'
+information "Done"
 
 # end
