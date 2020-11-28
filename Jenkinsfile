@@ -12,7 +12,7 @@ pipeline {
 
   environment {
     KEYSTORE = credentials('kieker-irl-key')
-    UPDATE_SITE_URL = "sftp://repo@repo.se.internal/var/www/html/moobench"
+    UPDATE_SITE_URL = "sftp://repo@repo.se.internal/moobench"
     BASE_DIR = "frameworks/Kieker/scripts"
 
     DOCKER_ARGS = ''
@@ -51,7 +51,7 @@ pipeline {
     stage('Upload') {
        steps {
           sshagent(credentials: ['kieker-irl-key']) {
-             sh 'sftp -o StrictHostKeyChecking=no -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}'
+             sh 'sftp -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}'
              sh '${BASE_DIR}/compile-results/bin/compile-results "${BASE_DIR}/results-kieker/results-text.csv" "${BASE_DIR}/all-results.json"'
           }
        }
