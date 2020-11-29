@@ -16,22 +16,6 @@ else
 	exit 1
 fi
 
-# parse parameters
-
-if [ -f "$1" ] ; then
-	KEYSTORE="$1"
-else
-	echo "Missing key"
-	exit 1
-fi
-
-if [ "$2" != "" ] ; then
-	URL="$2"
-else
-	echo "Missing URL"
-	exit 1
-fi
-
 ## setup
 
 export RESULT_FILE="${BASE_DIR}/results-kieker/results-text.csv"
@@ -58,7 +42,5 @@ rm -f ${COLLECTED_DATA_FILE}
 
 ## running the benchmark
 ${BENCHMARK} # > /dev/null 2>&1
-HEAD=`head -1 $RESULT_FILE`
-VALUE=`tail -1 $RESULT_FILE`
 
 # end
