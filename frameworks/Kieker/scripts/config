@@ -20,7 +20,7 @@ AOP="kieker.aop.xml"
 SLEEP_TIME=1                    ## 30
 NUM_OF_LOOPS=10                 ## 10
 RECURSION_DEPTH=10              ## 10
-TOTAL_NUM_OF_CALLS=20000        ## 2 000 000
+TOTAL_NUM_OF_CALLS=2000 #0        ## 2 000 000
 METHOD_TIME=5 #00               ## 500000
 
 # end
