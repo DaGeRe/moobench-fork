@@ -53,20 +53,18 @@ public class CompileResultsMain {
 			
 			ArrayNode arrayResultsNode = (ArrayNode)resultsNode;
 			
-			long build = arrayResultsNode.size();
+			long build = 0;
 			
-			/** Fix old data in necessary. */
+			/** Handle old data in necessary. */
 			for (int i=0;i<arrayResultsNode.size();i++) {
 				JsonNode node = arrayResultsNode.get(i);
 				if (node instanceof ObjectNode) {
 					ObjectNode objectNode = (ObjectNode)node;
-					JsonNode timeValue = objectNode.get("time");
-					if (timeValue == null) {
-						objectNode.put("time", new Date().getTime());
-					}
 					JsonNode buildValue = objectNode.get("build");
-					if (buildValue == null) {
-						objectNode.put("build", i);
+					if (buildValue != null) {
+						if (build <= buildValue) {
+							build = buildValue + 1;
+						}
 					}
 				}
 			}
