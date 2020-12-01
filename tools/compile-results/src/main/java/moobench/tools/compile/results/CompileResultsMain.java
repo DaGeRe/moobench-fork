@@ -62,8 +62,8 @@ public class CompileResultsMain {
 					ObjectNode objectNode = (ObjectNode)node;
 					JsonNode buildValue = objectNode.get("build");
 					if (buildValue != null) {
-						if (build <= buildValue) {
-							build = buildValue + 1;
+						if (build <= buildValue.asLong()) {
+							build = buildValue.asLong() + 1;
 						}
 					}
 				}
