@@ -53,15 +53,11 @@ pipeline {
           sshagent(credentials: ['kieker-irl-key']) {
              sh '''
                  cd ${BASE_DIR}
-                 ls
 	         sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}/all-results.json
-	         cat all-results.json
-	         ls
                  compile-results/bin/compile-results results-kieker/results-text.csv all-results.json
-                 ls
-                 cat all-results.json
                  echo "put all-results.json" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
-                 ls
+                 echo "put partial-results.json" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
+                 echo "put relative-results.json" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
                 '''
           }
        }
