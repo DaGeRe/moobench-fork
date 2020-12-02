@@ -30,10 +30,6 @@ pipeline {
     parallelsAlwaysFailFast()
   }
 
-  triggers {
-    cron(env.BRANCH_NAME == 'master' ? '@daily' : '')
-  }
-
   stages {
     stage('Initial Cleanup') {
        steps {
