@@ -41,11 +41,15 @@ public class CompileResultsMain {
 	private static final String NO_INSTRUMENTATION = "No instrumentation";
 	private static final String PARTIAL_RESULT_FILENAME = "partial-results.json";
 	private static final String RELATIVE_RESULT_FILENAME = "relative-results.json";
-
+	private static final int WINDOW_LENGTH = 100;
+	private static final String BUILD_LABEL = "build";
+	private static final String TIME_LABEL = "time";
+	private static final String RESULTS_LABEL = "results";
+	
 	public static void main(String[] args) {
 		try {
 			final JsonNode rootNode;
-			
+							
 			File jsonMainFile = Paths.get(args[1]).toFile();
 			
 			if (jsonMainFile.exists()) {
@@ -58,7 +62,7 @@ public class CompileResultsMain {
 			File jsonPartialFile = new File(jsonMainFile.getParentFile().getPath() + File.separator + PARTIAL_RESULT_FILENAME);
 			File jsonRelativeFile = new File(jsonMainFile.getParentFile().getPath() + File.separator + RELATIVE_RESULT_FILENAME);
 
-			JsonNode resultsNode = rootNode.get("results");
+			JsonNode resultsNode = rootNode.get(RESULTS_LABEL);
 			
 			if (!(resultsNode instanceof ArrayNode)) {
 				System.exit(1);
@@ -78,8 +82,8 @@ public class CompileResultsMain {
 			/** Put CSV data in main JSON. */
 			for (CSVRecord record : csvParser.getRecords()) {
 				Map<String, JsonNode> recordMap = new HashMap<>();
-				recordMap.put("time",new LongNode(new Date().getTime()));
-				recordMap.put("build",new LongNode(build++));
+				recordMap.put(TIME_LABEL, new LongNode(new Date().getTime()));
+				recordMap.put(BUILD_LABEL, new LongNode(build++));
 				for (int i=0; i < record.size(); i++) {
 					recordMap.put(header.get(i).trim(), new DoubleNode(Double.parseDouble(record.get(i))));
 				}
@@ -88,7 +92,7 @@ public class CompileResultsMain {
 			
 			/** Produce alternative outputs. */
 			JsonNode partialRootNode = createPartialResultList(arrayResultsNode);
-			JsonNode relativeRootNode = createRelativeResultList((ArrayNode)partialRootNode.get("results"));
+			JsonNode relativeRootNode = createRelativeResultList((ArrayNode)partialRootNode.get(RESULTS_LABEL));
 
 			/** Write JSON files. */
 			new ObjectMapper().writeValue(jsonMainFile, rootNode);
@@ -116,12 +120,14 @@ public class CompileResultsMain {
 				ObjectNode objectNode = (ObjectNode)node;
 				
 				Iterator<Entry<String, JsonNode>> iterator = objectNode.fields();
-				while (iterator.hasNext()) {
+				Map<String, JsonNode> map = new HashMap<>();
+ 				while (iterator.hasNext()) {
 					Entry<String, JsonNode> entry = iterator.next();
-					objectNode.remove(entry.getKey());
-					objectNode.set(entry.getKey().trim(), entry.getValue());
+					map.put(entry.getKey().trim(), entry.getValue());
 				}
-				
+				objectNode.removeAll();
+				objectNode.setAll(map);
+ 				
 				JsonNode buildValue = objectNode.get("build");
 				if (buildValue != null) {
 					if (build <= buildValue.asLong()) {
@@ -147,12 +153,17 @@ public class CompileResultsMain {
 			Iterator<Entry<String, JsonNode>> elementValueIterator = element.fields();
 			while (elementValueIterator.hasNext()) {
 				Entry<String, JsonNode> value = elementValueIterator.next();
-				valueMap.put(value.getKey(), new DoubleNode((value.getValue().asDouble()-baseline)/baseline));
+				if (BUILD_LABEL.equals(value.getKey()) || TIME_LABEL.equals(value.getKey())) {
+					valueMap.put(value.getKey(), value.getValue());					
+				} else {
+					valueMap.put(value.getKey(), new DoubleNode(value.getValue().asDouble()/baseline));
+				}
 			}
+			relativeResultsNode.add(new ObjectNode(factory, valueMap));
 		}
 
 		Map<String, JsonNode> map = new HashMap<>();
-		map.put("results", relativeResultsNode);
+		map.put(RESULTS_LABEL, relativeResultsNode);
 
 		return new ObjectNode(factory, map);
 	}
@@ -162,7 +173,8 @@ public class CompileResultsMain {
 
 		ArrayNode partialResultsNode = new ArrayNode(factory);
 
-		for (int i=0; i < arrayNode.size(); i++) {
+		int start = arrayNode.size()>WINDOW_LENGTH?arrayNode.size()-WINDOW_LENGTH:0;
+		for (int i=start; i < arrayNode.size(); i++) {
 			JsonNode element = arrayNode.get(i);
 			Map<String, JsonNode> valueMap = new HashMap<>();
 			Iterator<Entry<String, JsonNode>> elementValueIterator = element.fields();
@@ -170,10 +182,11 @@ public class CompileResultsMain {
 				Entry<String, JsonNode> value = elementValueIterator.next();
 				valueMap.put(value.getKey(), value.getValue());
 			}
+			partialResultsNode.add(new ObjectNode(factory, valueMap));
 		}
 		
 		Map<String, JsonNode> map = new HashMap<>();
-		map.put("results", partialResultsNode);
+		map.put(RESULTS_LABEL, partialResultsNode);
 
 		return new ObjectNode(factory, map);
 	}
