@@ -10,6 +10,11 @@ pipeline {
      }
   }
 
+  triggers {
+    cron('0 1 * * *')
+    upstream(upstreamProjects: 'kieker-dev/master', threshold: hudson.model.Result.SUCCESS)
+  }
+
   environment {
     KEYSTORE = credentials('kieker-irl-key')
     UPDATE_SITE_URL = "sftp://repo@repo.se.internal/moobench"
