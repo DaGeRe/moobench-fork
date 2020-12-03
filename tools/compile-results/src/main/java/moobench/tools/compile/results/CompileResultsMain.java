@@ -59,10 +59,10 @@ public class CompileResultsMain {
 				rootNode = readJsonString();
 			}
 			
-			String basePath=jsonMainFile.getParentFile()==null?"":jsonMainFile.getParentFile().getPath();
+			String basePath=jsonMainFile.getParentFile()==null?"":jsonMainFile.getParentFile().getPath() + File.separator;
 			
-			File jsonPartialFile = new File(basePath + File.separator + PARTIAL_RESULT_FILENAME);
-			File jsonRelativeFile = new File(basePath + File.separator + RELATIVE_RESULT_FILENAME);
+			File jsonPartialFile = new File(basePath  + PARTIAL_RESULT_FILENAME);
+			File jsonRelativeFile = new File(basePath + RELATIVE_RESULT_FILENAME);
 
 			JsonNode resultsNode = rootNode.get(RESULTS_LABEL);
 			
