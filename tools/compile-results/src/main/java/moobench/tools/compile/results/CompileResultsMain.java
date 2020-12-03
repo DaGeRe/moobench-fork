@@ -158,7 +158,7 @@ public class CompileResultsMain {
 				if (BUILD_LABEL.equals(value.getKey()) || TIME_LABEL.equals(value.getKey())) {
 					valueMap.put(value.getKey(), value.getValue());					
 				} else {
-					valueMap.put(value.getKey(), new DoubleNode(value.getValue().asDouble()/baseline));
+					valueMap.put(value.getKey(), new DoubleNode((value.getValue().asDouble()-baseline)/baseline));
 				}
 			}
 			relativeResultsNode.add(new ObjectNode(factory, valueMap));
