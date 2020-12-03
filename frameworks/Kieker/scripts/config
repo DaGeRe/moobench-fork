@@ -18,9 +18,9 @@ AOP="kieker.aop.xml"
 
 # execution parameter
 SLEEP_TIME=1                    ## 30
-NUM_OF_LOOPS=1 #0                 ## 10
-RECURSION_DEPTH=1 #0              ## 10
-TOTAL_NUM_OF_CALLS=2 #000 #0        ## 2 000 000
+NUM_OF_LOOPS=10                 ## 10
+RECURSION_DEPTH=10              ## 10
+TOTAL_NUM_OF_CALLS=2000 #0        ## 2 000 000
 METHOD_TIME=5 #00               ## 500000
 
 # end
