@@ -2,7 +2,9 @@ The MooBench Monitoring Overhead Micro-Benchmark
 ------------------------------------------------------------------------
 
 Website: http://kieker-monitoring.net/MooBench
-Contact: moobench@notme.de
+
+Note: Please note that we are currently reorganizing the project structure.
+Thus, the documentation might be outdated.
 
 The MooBench micro-benchmarks can be used to quantify the performance 
 overhead caused by monitoring framework components. 
