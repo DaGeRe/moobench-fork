@@ -12,3 +12,6 @@ frameworks/Kieker/scripts/data/
 frameworks/Kieker/scripts/kieker-*-aspectj.jar
 frameworks/Kieker/scripts/receiver/
 frameworks/Kieker/scripts/results-kieker/
+
+frameworks/Kieker/scripts/kieker-1.15-SNAPSHOT.jar
+frameworks/Kieker/scripts/compile-results/
