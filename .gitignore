@@ -2,6 +2,8 @@
 # Ignore Gradle project-specific cache directory
 **/.gradle/**
 
+.classpath
+.settings
 **/.classpath
 **/.project
 **/.settings/**
@@ -15,3 +17,4 @@ frameworks/Kieker/scripts/results-kieker/
 
 frameworks/Kieker/scripts/kieker-1.15-SNAPSHOT.jar
 frameworks/Kieker/scripts/compile-results/
+/.gradle/
