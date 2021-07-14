@@ -8,7 +8,6 @@ dependencies {
 }
 
 jar {
-    
     manifest {
         attributes 'Implementation-Title': 'Moobench Benchmark',
                    'Implementation-Version': '0.1-SNAPSHOT',
@@ -21,4 +20,12 @@ jar {
 	from {
     	configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
 	}
+}
+
+task copyJarToBin(type:Copy,dependsOn:[jar]) {
+   copy {
+     from jar
+     into "../frameworks/SPASSmeter/"
+     rename('benchmark.jar', 'MooBench.jar')
+    }
 }
