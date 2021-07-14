@@ -28,4 +28,9 @@ task copyJarToBin(type:Copy,dependsOn:[jar]) {
      into "../frameworks/SPASSmeter/"
      rename('benchmark.jar', 'MooBench.jar')
     }
+    copy {
+     from jar
+     into "../frameworks/opentelemetry/"
+     rename('benchmark.jar', 'MooBench.jar')
+    }
 }
