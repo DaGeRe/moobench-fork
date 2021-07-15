@@ -20,17 +20,17 @@ jar {
 	from {
     	configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
 	}
-}
-
-task copyJarToBin(type:Copy,dependsOn:[jar]) {
-   copy {
-     from jar
-     into "../frameworks/SPASSmeter/"
-     rename('benchmark.jar', 'MooBench.jar')
-    }
-    copy {
-     from jar
-     into "../frameworks/opentelemetry/"
-     rename('benchmark.jar', 'MooBench.jar')
-    }
+	
+	doLast {
+		copy {
+		    from jar
+		    into "../frameworks/SPASSmeter/"
+		    rename('benchmark.jar', 'MooBench.jar')
+	    }
+	    copy {
+		    from jar
+		    into "../frameworks/opentelemetry/"
+		    rename('benchmark.jar', 'MooBench.jar')
+	    }
+	}
 }
