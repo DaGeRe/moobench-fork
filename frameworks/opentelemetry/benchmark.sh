@@ -1,6 +1,23 @@
 #!/bin/bash
 # This file is configured for linux instead of solaris!!!
 
+function startZipkin {
+	if [ ! -d zipkin ]
+	then
+		mkdir zipkin
+		cd zipkin
+		curl -sSL https://zipkin.io/quickstart.sh | bash -s
+	fi
+	cd zipkin
+	java -Xmx6g -jar zipkin.jar &> zipkin.txt &
+	sleep 5
+	cd ..
+}
+
+function stopZipkin {
+	kill %1
+}
+
 JAVABIN=""
 
 RSCRIPTDIR=r/
@@ -77,7 +94,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --method-time ${METHODTIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${j} \
-        ${MOREPARAMS}
+        ${MOREPARAMS} &> output_"$i"_pure.txt
     #kill %sar
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}opentelemetry.log
@@ -87,6 +104,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
 
     # OpenTelemetry Instrumentation
     k=`expr ${k} + 1`
+    startZipkin
     echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation"
     echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation" >>${BASEDIR}opentelemetry.log
     #sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
@@ -96,11 +114,12 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --method-time ${METHODTIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${j} \
-        ${MOREPARAMS}
+        ${MOREPARAMS} &> output_"$i"_opentelemetry.txt
     #kill %sar
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}opentelemetry.log
     echo >>${BASEDIR}opentelemetry.log
+    stopZipkin
     sync
     sleep ${SLEEPTIME}
 
