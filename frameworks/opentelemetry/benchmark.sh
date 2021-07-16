@@ -94,7 +94,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --method-time ${METHODTIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${j} \
-        ${MOREPARAMS} &> output_"$i"_pure.txt
+        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_pure.txt
     #kill %sar
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}opentelemetry.log
