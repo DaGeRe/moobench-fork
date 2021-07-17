@@ -18,6 +18,11 @@ function stopZipkin {
 	kill %1
 }
 
+function getSum {
+  awk '{sum += $1; square += $1^2} END {print "Average: "sum/NR" Standard Deviation: "sqrt(square / NR - (sum/NR)^2)" Count: "NR}'
+}
+
+
 JAVABIN=""
 
 RSCRIPTDIR=r/
@@ -64,8 +69,7 @@ then
 fi
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}lib/opentelemetry-javaagent-all.jar"
-JAVAARGS_LTW_ASM="${JAVAARGS_LTW} -Dspass-meter.iFactory=de.uni_hildesheim.sse.monitoring.runtime.instrumentation.asmTree.Factory"
+JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}lib/opentelemetry-javaagent-all.jar -Dotel.traces.exporter=zipkin -Dotel.resource.attributes=service.name=moobench -Dotel.instrumentation.methods.include=moobench.application.MonitoredClassSimple[monitoredMethod];moobench.application.MonitoredClassThreaded[monitoredMethod]"
 
 
 ## Write configuration
@@ -101,7 +105,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --method-time ${METHODTIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${j} \
-        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_pure.txt
+        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_uninstrumented.txt
     #kill %sar
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}opentelemetry.log
@@ -130,6 +134,11 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     sync
     sleep ${SLEEPTIME}
 
+    echo -n "Intermediary results uninstrumented"
+    cat tmp/results-opentelemetry/raw-*-100-1.csv | awk -F';' '{print $2}' | getSum
+    
+    echo -n "Intermediary results opentelemetry zipkin"
+    cat tmp/results-opentelemetry/raw-*-100-2.csv | awk -F';' '{print $2}' | getSum
 done
 #zip -jqr ${RESULTSDIR}stat.zip ${RESULTSDIR}stat
 #rm -rf ${RESULTSDIR}stat/
