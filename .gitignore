@@ -22,6 +22,7 @@ frameworks/inspectIT/MooBench.jar
 frameworks/opentelemetry/opentelemetry.log
 frameworks/opentelemetry/tmp/
 frameworks/opentelemetry/*.txt
+frameworks/opentelemetry/MooBench.jar
 frameworks/opentelemetry/zipkin/
 
 frameworks/Kieker/scripts/kieker-1.15-SNAPSHOT.jar
