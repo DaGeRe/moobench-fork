@@ -18,6 +18,22 @@ function stopZipkin {
 	kill %1
 }
 
+function startPrometheus {
+	if [ ! -d prometheus-2.28.1.linux-amd64 ]
+	then
+		wget https://github.com/prometheus/prometheus/releases/download/v2.28.1/prometheus-2.28.1.linux-amd64.tar.gz
+		tar -xvf prometheus-2.28.1.linux-amd64.tar.gz
+	fi
+	cd prometheus-2.28.1.linux-amd64
+	./prometheus > prometheus.log &
+	cd ..
+}
+
+function stopPrometheus {
+	kill %1
+}
+
+
 function getSum {
   awk '{sum += $1; square += $1^2} END {print "Average: "sum/NR" Standard Deviation: "sqrt(square / NR - (sum/NR)^2)" Count: "NR}'
 }
@@ -69,7 +85,11 @@ then
 fi
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}lib/opentelemetry-javaagent-all.jar -Dotel.traces.exporter=zipkin -Dotel.resource.attributes=service.name=moobench -Dotel.instrumentation.methods.include=moobench.application.MonitoredClassSimple[monitoredMethod];moobench.application.MonitoredClassThreaded[monitoredMethod]"
+JAVAARGS_OPENTELEMETRY_BASIC="${JAVAARGS} -javaagent:${BASEDIR}lib/opentelemetry-javaagent-all.jar -Dotel.resource.attributes=service.name=moobench -Dotel.instrumentation.methods.include=moobench.application.MonitoredClassSimple[monitoredMethod];moobench.application.MonitoredClassThreaded[monitoredMethod]"
+JAVAARGS_OPENTELEMETRY_LOGGING_DEACTIVATED="${JAVAARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=logging -Dotel.traces.sampler=always_off"
+JAVAARGS_OPENTELEMETRY_LOGGING="${JAVAARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=logging"
+JAVAARGS_OPENTELEMETRY_ZIPKIN="${JAVAARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=zipkin"
+JAVAARGS_OPENTELEMETRY_PROMETHEUS="${JAVAARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=prometheus"
 
 
 ## Write configuration
@@ -113,13 +133,12 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     sync
     sleep ${SLEEPTIME}
 
-    # OpenTelemetry Instrumentation
+    # OpenTelemetry Instrumentation Logging Deactivated
     k=`expr ${k} + 1`
-    startZipkin
-    echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation"
-    echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation" >>${BASEDIR}opentelemetry.log
+    echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Logging Deactivated"
+    echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Logging Deactivated" >>${BASEDIR}opentelemetry.log
     #sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java ${JAVAARGS_LTW} ${JAR} \
+    ${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_LOGGING_DEACTIVATED} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --total-calls ${TOTALCALLS} \
         --method-time ${METHODTIME} \
@@ -130,15 +149,78 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}opentelemetry.log
     echo >>${BASEDIR}opentelemetry.log
+    sync
+    sleep ${SLEEPTIME}
+
+    # OpenTelemetry Instrumentation Logging
+    k=`expr ${k} + 1`
+    echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Logging"
+    echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Logging" >>${BASEDIR}opentelemetry.log
+    ${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_LOGGING} ${JAR} \
+        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
+        --total-calls ${TOTALCALLS} \
+        --method-time ${METHODTIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
+        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_opentelemetry_logging.txt
+    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
+    echo >>${BASEDIR}opentelemetry.log
+    echo >>${BASEDIR}opentelemetry.log
+    sync
+    sleep ${SLEEPTIME}
+    
+    # OpenTelemetry Instrumentation Zipkin
+    k=`expr ${k} + 1`
+    startZipkin
+    echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Zipkin"
+    echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Zipkin" >>${BASEDIR}opentelemetry.log
+    ${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_ZIPKIN} ${JAR} \
+        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
+        --total-calls ${TOTALCALLS} \
+        --method-time ${METHODTIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
+        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_opentelemetry_zipkin.txt
+    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
+    echo >>${BASEDIR}opentelemetry.log
+    echo >>${BASEDIR}opentelemetry.log
     stopZipkin
+    sync
+    sleep ${SLEEPTIME}
+    
+    # OpenTelemetry Instrumentation Prometheus
+    k=`expr ${k} + 1`
+    startPrometheus
+    echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Prometheus"
+    echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Prometheus" >>${BASEDIR}opentelemetry.log
+    ${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_PROMETHEUS} ${JAR} \
+        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
+        --total-calls ${TOTALCALLS} \
+        --method-time ${METHODTIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
+        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_opentelemetry_prometheus.txt
+    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
+    echo >>${BASEDIR}opentelemetry.log
+    echo >>${BASEDIR}opentelemetry.log
+    stopPrometheus
     sync
     sleep ${SLEEPTIME}
 
     echo -n "Intermediary results uninstrumented"
-    cat tmp/results-opentelemetry/raw-*-100-1.csv | awk -F';' '{print $2}' | getSum
+    cat tmp/results-opentelemetry/raw-*-$RECURSIONDEPTH-1.csv | awk -F';' '{print $2}' | getSum
     
-    echo -n "Intermediary results opentelemetry zipkin"
-    cat tmp/results-opentelemetry/raw-*-100-2.csv | awk -F';' '{print $2}' | getSum
+    echo -n "Intermediary results opentelemetry Logging Deactivated"
+    cat tmp/results-opentelemetry/raw-*-$RECURSIONDEPTH-2.csv | awk -F';' '{print $2}' | getSum
+    
+    echo -n "Intermediary results opentelemetry Logging"
+    cat tmp/results-opentelemetry/raw-*-$RECURSIONDEPTH-3.csv | awk -F';' '{print $2}' | getSum
+    
+    echo -n "Intermediary results opentelemetry Zipkin"
+    cat tmp/results-opentelemetry/raw-*-$RECURSIONDEPTH-4.csv | awk -F';' '{print $2}' | getSum
+    
+    echo -n "Intermediary results opentelemetry Prometheus"
+    cat tmp/results-opentelemetry/raw-*-$RECURSIONDEPTH-5.csv | awk -F';' '{print $2}' | getSum
 done
 #zip -jqr ${RESULTSDIR}stat.zip ${RESULTSDIR}stat
 #rm -rf ${RESULTSDIR}stat/
