@@ -150,22 +150,22 @@ function getSum {
 }
 
 function printIntermediaryResults {
-    echo -n "Intermediary results uninstrumented"
+    echo -n "Intermediary results uninstrumented "
     cat tmp/results-opentelemetry/raw-*-$RECURSIONDEPTH-1.csv | awk -F';' '{print $2}' | getSum
     
-    echo -n "Intermediary results opentelemetry Logging Deactivated"
+    echo -n "Intermediary results opentelemetry Logging Deactivated "
     cat tmp/results-opentelemetry/raw-*-$RECURSIONDEPTH-2.csv | awk -F';' '{print $2}' | getSum
     
-    echo -n "Intermediary results opentelemetry Logging"
+    echo -n "Intermediary results opentelemetry Logging "
     cat tmp/results-opentelemetry/raw-*-$RECURSIONDEPTH-3.csv | awk -F';' '{print $2}' | getSum
     
-    echo -n "Intermediary results opentelemetry Zipkin"
+    echo -n "Intermediary results opentelemetry Zipkin "
     cat tmp/results-opentelemetry/raw-*-$RECURSIONDEPTH-4.csv | awk -F';' '{print $2}' | getSum
     
     MACHINE_TYPE=`uname -m`; 
     if [ ${MACHINE_TYPE} == 'x86_64' ]
     then
-        echo -n "Intermediary results opentelemetry Jaeger"
+        echo -n "Intermediary results opentelemetry Jaeger "
     	cat tmp/results-opentelemetry/raw-*-$RECURSIONDEPTH-5.csv | awk -F';' '{print $2}' | getSum
     
     	# Prometheus does not work currently
