@@ -152,7 +152,7 @@ function execute-experiment() {
        BENCHMARK_OPTS="${JAVA_ARGS} ${LTW_ARGS} ${KIEKER_ARGS} ${kieker_parameters}"
     fi
 
-    ${BENCHMARK} moobench.benchmark.BenchmarkMain \
+    ${BENCHMARK} ${BENCHMARK_OPTS} moobench.benchmark.BenchmarkMain \
     	--application moobench.application.MonitoredClassSimple \
         --output-filename ${RAWFN}-${loop}-${recursion}-${index}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
