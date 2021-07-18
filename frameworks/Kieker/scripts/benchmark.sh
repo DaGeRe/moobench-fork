@@ -153,11 +153,12 @@ function execute-experiment() {
     fi
 
     ${BENCHMARK} moobench.benchmark.BenchmarkMain \
+    	--application moobench.application.MonitoredClassSimple \
         --output-filename ${RAWFN}-${loop}-${recursion}-${index}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads 1 \
-        --recursion-depth ${recursion}
+        --recursion-depth ${recursion} &> benchmark_${loop}.txt
 
     rm -rf ${DATA_DIR}/kieker-*
 
@@ -187,6 +188,17 @@ function execute-benchmark-body() {
   fi
 }
 
+function getSum {
+  awk '{sum += $1; square += $1^2} END {print "Average: "sum/NR" Standard Deviation: "sqrt(square / NR - (sum/NR)^2)" Count: "NR}'
+}
+
+function printIntermediaryResults {
+   for ((index=0;index<${#WRITER_CONFIG[@]};index+=1)); do
+      echo -n "Intermediary results $TITLE[$index] "
+      cat tmp/results-opentelemetry/raw-*-${RECURSION_DEPTH}-${index}.csv | awk -F';' '{print $2}' | getSum
+   done
+}
+
 ## Execute Benchmark
 function execute-benchmark() {
   for ((loop=1;loop<=${NUM_OF_LOOPS};loop+=1)); do
@@ -198,6 +210,8 @@ function execute-benchmark() {
     for ((index=0;index<${#WRITER_CONFIG[@]};index+=1)); do
       execute-benchmark-body $index $loop $recursion
     done
+    
+    printIntermediaryResults
   done
 
   mv ${DATA_DIR}/kieker.log ${RESULTS_DIR}/kieker.log
