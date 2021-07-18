@@ -195,7 +195,7 @@ function getSum {
 function printIntermediaryResults {
    for ((index=0;index<${#WRITER_CONFIG[@]};index+=1)); do
       echo -n "Intermediary results $TITLE[$index] "
-      cat tmp/results-opentelemetry/raw-*-${RECURSION_DEPTH}-${index}.csv | awk -F';' '{print $2}' | getSum
+      cat results-kieker/raw-*-${RECURSION_DEPTH}-${index}.csv | awk -F';' '{print $2}' | getSum
    done
 }
 
