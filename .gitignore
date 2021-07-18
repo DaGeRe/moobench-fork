@@ -24,6 +24,8 @@ frameworks/opentelemetry/tmp/
 frameworks/opentelemetry/*.txt
 frameworks/opentelemetry/MooBench.jar
 frameworks/opentelemetry/zipkin/
+frameworks/opentelemetry/prometheus-2.28.1.linux-amd64/
+frameworks/opentelemetry/prometheus-2.28.1.linux-amd64.tar.gz
 
 frameworks/Kieker/scripts/kieker-1.15-SNAPSHOT.jar
 frameworks/Kieker/scripts/compile-results/
