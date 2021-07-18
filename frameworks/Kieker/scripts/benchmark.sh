@@ -95,10 +95,10 @@ WRITER_CONFIG[3]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=ki
 TITLE[4]="Logging (Generic Bin)"
 WRITER_CONFIG[4]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.FileWriter -Dkieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.BinaryLogStreamHandler -Dkieker.monitoring.writer.filesystem.FileWriter.bufferSize=8192 -Dkieker.monitoring.writer.filesystem.FileWriter.customStoragePath=${DATA_DIR}/"
 
-TITLE[5]="Logging (Single TCP)"
-WRITER_CONFIG[5]="-Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.SingleSocketTcpWriter -Dkieker.monitoring.writer.tcp.SingleSocketTcpWriter.port=2345"
+#TITLE[5]="Logging (Single TCP)"
+#WRITER_CONFIG[5]="-Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.SingleSocketTcpWriter -Dkieker.monitoring.writer.tcp.SingleSocketTcpWriter.port=2345"
 #RECEIVER[5]="${BASE_DIR}/collector-2.0/bin/collector -p 2345"
-RECEIVER[5]="${BASE_DIR}/receiver/bin/receiver 2345"
+#RECEIVER[5]="${BASE_DIR}/receiver/bin/receiver 2345"
 
 # Create R labels
 LABELS=""
