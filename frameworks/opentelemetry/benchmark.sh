@@ -85,6 +85,7 @@ THREADS=1              ## 1
 RECURSIONDEPTH=10      ## 10
 TOTALCALLS=2000000     ## 2000000
 METHODTIME=0      ## 500000
+DEBUG=false		## false
 
 #MOREPARAMS="--quickstart"
 MOREPARAMS="--application moobench.application.MonitoredClassSimple ${MOREPARAMS}"
@@ -104,7 +105,7 @@ RAWFN="${RESULTSDIR}raw"
 
 JAVAARGS="-server"
 JAVAARGS="${JAVAARGS} "
-JAVAARGS="${JAVAARGS} -Xms1G -Xmx4G"
+JAVAARGS="${JAVAARGS} -Xms1G -Xmx2G"
 JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
 #JAVAARGS="${JAVAARGS} -XX:+PrintInlining"
 #JAVAARGS="${JAVAARGS} -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation"
@@ -207,6 +208,10 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
     echo >>${BASEDIR}opentelemetry.log
     echo >>${BASEDIR}opentelemetry.log
+    if [ ! "$DEBUG" = true ]
+    then
+    	rm ${RESULTSDIR}output_"$i"_opentelemetry_logging.txt
+    fi
     sync
     sleep ${SLEEPTIME}
     
