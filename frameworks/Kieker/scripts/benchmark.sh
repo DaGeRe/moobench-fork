@@ -68,7 +68,7 @@ JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx2G"
 
 JAVA_OPTS="${FIXED_PARAMETERS}"
 
-LTW_ARGS="-javaagent:${AGENT} -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dkieker.monitoring.skipDefaultAOPConfiguration=true -Dorg.aspectj.weaver.loadtime.configuration=${AOP}"
+LTW_ARGS="-javaagent:${AGENT} -Dorg.aspectj.weaver.showWeaveInfo=true -Daj.weaving.verbose=true -Dkieker.monitoring.skipDefaultAOPConfiguration=true -Dorg.aspectj.weaver.loadtime.configuration=${AOP}"
 
 KIEKER_ARGS="-Dlog4j.configuration=log4j.cfg -Dkieker.monitoring.name=KIEKER-BENCHMARK -Dkieker.monitoring.adaptiveMonitoring.enabled=false -Dkieker.monitoring.periodicSensorsExecutorPoolSize=0"
 
@@ -151,6 +151,8 @@ function execute-experiment() {
     else
        BENCHMARK_OPTS="${JAVA_ARGS} ${LTW_ARGS} ${KIEKER_ARGS} ${kieker_parameters}"
     fi
+    
+    echo ${BENCHMARK}" "${BENCHMARK_OPTS}" moobench.benchmark.BenchmarkMain"
 
     ${BENCHMARK} ${BENCHMARK_OPTS} moobench.benchmark.BenchmarkMain \
     	--application moobench.application.MonitoredClassSimple \
@@ -194,7 +196,7 @@ function getSum {
 
 function printIntermediaryResults {
    for ((index=0;index<${#WRITER_CONFIG[@]};index+=1)); do
-      echo -n "Intermediary results $TITLE[$index] "
+      echo -n "Intermediary results "$TITLE[$index]" "
       cat results-kieker/raw-*-${RECURSION_DEPTH}-${index}.csv | awk -F';' '{print $2}' | getSum
    done
 }

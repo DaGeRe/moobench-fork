@@ -14,7 +14,7 @@ BENCHMARK="${BASE_DIR}/benchmark/bin/benchmark"
 BATCH_MODE="yes"
 
 # in-jar locations
-AOP="kieker.aop.xml"
+AOP="file:"$(pwd)"/../src/META-INF/kieker.aop.xml"
 
 # execution parameter
 SLEEP_TIME=30                   ## 30
