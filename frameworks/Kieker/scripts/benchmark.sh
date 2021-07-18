@@ -64,8 +64,7 @@ RAWFN="${RESULTS_DIR}/raw"
 
 # general server arguments
 JAVA_ARGS="-server"
-JAVA_ARGS="${JAVA_ARGS} -d64"
-JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx4G"
+JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx2G"
 
 JAVA_OPTS="${FIXED_PARAMETERS}"
 
