@@ -111,6 +111,12 @@ JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
 #JAVAARGS="${JAVAARGS} -Djava.compiler=NONE"
 JAR="-jar MooBench.jar"
 
+if [ ! -f "MooBench.jar" ]
+then
+	echo "MooBench.jar missing; please build it first using ./gradlew assemble in the main folder"
+	exit 1
+fi
+
 if [ ! -f ${BASEDIR}lib/opentelemetry-javaagent-all.jar ]
 then
 	mkdir -p ${BASEDIR}lib
