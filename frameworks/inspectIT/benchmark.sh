@@ -148,6 +148,8 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
 
     runInspectITZipkin
     cleanup
+    
+    printIntermediaryResults
 done
 zip -jqr ${RESULTSDIR}stat.zip ${RESULTSDIR}stat
 rm -rf ${RESULTSDIR}stat/
