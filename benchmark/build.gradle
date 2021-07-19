@@ -32,5 +32,10 @@ jar {
 		    into "../frameworks/opentelemetry/"
 		    rename('benchmark.jar', 'MooBench.jar')
 	    }
+	    copy {
+		    from jar
+		    into "../frameworks/inspectIT/"
+		    rename('benchmark.jar', 'MooBench.jar')
+	    }
 	}
 }
