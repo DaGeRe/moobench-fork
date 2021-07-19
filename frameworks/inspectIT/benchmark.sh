@@ -1,5 +1,73 @@
 #!/bin/bash
 
+function runNoInstrumentation {
+    # No instrumentation
+    k=`expr ${k} + 1`
+    echo " # ${i}.${j}.${k} No instrumentation"
+    echo " # ${i}.${j}.${k} No instrumentation" >>${BASEDIR}inspectit.log
+    ${JAVABIN}java ${JAVAARGS_NOINSTR} ${JAR} \
+        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
+        --total-calls ${TOTALCALLS} \
+        --method-time ${METHODTIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
+        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_"$j"_noinstrumentation.txt
+}
+
+function runInspectITZipkin {
+    # InspectIT (minimal)
+    k=`expr ${k} + 1`
+    echo " # ${i}.${j}.${k} InspectIT (minimal)"
+    echo " # ${i}.${j}.${k} InspectIT (minimal)" >>${BASEDIR}inspectit.log
+    #${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr-mod.jar 1>>${BASEDIR}logs/out.log 2>&1 &
+    startZipkin
+    sleep 10
+    echo $JAVAARGS_INSPECTIT_MINIMAL
+    echo $JAR
+    ${JAVABIN}java ${JAVAARGS_INSPECTIT_MINIMAL} ${JAR} \
+        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
+        --total-calls ${TOTALCALLS} \
+        --method-time ${METHODTIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
+        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_"$j"_inspectit.txt
+    sleep 10
+    stopBackgroundProcess
+}
+
+function startZipkin {
+	if [ ! -d zipkin ]
+	then
+		mkdir zipkin
+		cd zipkin
+		curl -sSL https://zipkin.io/quickstart.sh | bash -s
+	fi
+	cd zipkin
+	java -Xmx6g -jar zipkin.jar &> zipkin.txt &
+	sleep 5
+	cd ..
+}
+
+function stopBackgroundProcess {
+	kill %1
+}
+
+function cleanup {
+	[ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
+	echo >>${BASEDIR}opentelemetry.log
+	echo >>${BASEDIR}opentelemetry.log
+	sync
+	sleep ${SLEEPTIME}
+}
+
+function printIntermediaryResults {
+    echo -n "Intermediary results uninstrumented "
+    cat tmp/results-opentelemetry/raw-*-$RECURSIONDEPTH-1.csv | awk -F';' '{print $2}' | getSum
+    
+    echo -n "Intermediary results inspectIT "
+    cat tmp/results-opentelemetry/raw-*-$RECURSIONDEPTH-2.csv | awk -F';' '{print $2}' | getSum
+}
+
 JAVABIN=""
 
 RSCRIPTDIR=r/
@@ -11,7 +79,15 @@ NUM_LOOPS=10           ## 10
 THREADS=1              ## 1
 RECURSIONDEPTH=10      ## 10
 TOTALCALLS=2000000     ## 2000000
-METHODTIME=500000      ## 500000
+METHODTIME=0           ## 0
+
+if [ ! -d agent ]
+then
+	mkdir agent
+	cd agent
+	wget https://github.com/inspectIT/inspectit-ocelot/releases/download/1.10.1/inspectit-ocelot-agent-1.10.1.jar
+	cd ..
+fi
 
 #MOREPARAMS="--quickstart"
 MOREPARAMS="${MOREPARAMS}"
@@ -20,7 +96,7 @@ TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH}
 echo "Experiment will take circa ${TIME} seconds."
 
 echo "Removing and recreating '$RESULTSDIR'"
-(rm -rf ${RESULTSDIR}) && mkdir ${RESULTSDIR}
+(rm -rf ${RESULTSDIR}) && mkdir -p ${RESULTSDIR}
 mkdir ${RESULTSDIR}stat/
 
 # Clear inspectit.log and initialize logging
@@ -31,20 +107,19 @@ mkdir ${BASEDIR}logs/
 RAWFN="${RESULTSDIR}raw"
 
 JAVAARGS="-server"
-JAVAARGS="${JAVAARGS} -d64"
-JAVAARGS="${JAVAARGS} -Xms1G -Xmx4G"
+JAVAARGS="${JAVAARGS} -Xms1G -Xmx2G"
 JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
 #JAVAARGS="${JAVAARGS} -XX:+PrintInlining"
 #JAVAARGS="${JAVAARGS} -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation"
 #JAVAARGS="${JAVAARGS} -Djava.compiler=NONE"
-JAR="-jar MooBench.jar"
+JAR="-jar MooBench.jar --application moobench.application.MonitoredClassSimple"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-agent-mod.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties"
-JAVAARGS_INSPECTIT_MINIMAL="${JAVAARGS_LTW} -Dinspectit.config=${BASEDIR}config/minimal/"
+JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-ocelot-agent-1.10.1.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties"
+JAVAARGS_INSPECTIT_MINIMAL="${JAVAARGS_LTW} -Dinspectit.service-name='My-Custom-Service' -Dinspectit.exporters.tracing.zipkin.url=http://127.0.0.1:9411/api/v2/spans"
 JAVAARGS_INSPECTIT_FULL="${JAVAARGS_LTW} -Dinspectit.config=${BASEDIR}config/timer/"
 
-CMR_ARGS="-d64 -Xms12G -Xmx12G -Xmn4G -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -Dinspectit.logging.config=config/logging-config.xml"
+CMR_ARGS=" -Xms12G -Xmx12G -Xmn4G -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -Dinspectit.logging.config=config/logging-config.xml"
 
 ## Write configuration
 uname -a >${RESULTSDIR}configuration.txt
@@ -68,98 +143,11 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo "## Starting iteration ${i}/${NUM_LOOPS}"
     echo "## Starting iteration ${i}/${NUM_LOOPS}" >>${BASEDIR}inspectit.log
 
-    # No instrumentation
-    k=`expr ${k} + 1`
-    echo " # ${i}.${j}.${k} No instrumentation"
-    echo " # ${i}.${j}.${k} No instrumentation" >>${BASEDIR}inspectit.log
-    sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java ${JAVAARGS_NOINSTR} ${JAR} \
-        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTALCALLS} \
-        --methodtime ${METHODTIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
-        ${MOREPARAMS}
-    kill %sar
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
-    echo >>${BASEDIR}inspectit.log
-    echo >>${BASEDIR}inspectit.log
-    sync
-    sleep ${SLEEPTIME}
+    runNoInstrumentation
+    cleanup
 
-    # InspectIT (minimal)
-    k=`expr ${k} + 1`
-    echo " # ${i}.${j}.${k} InspectIT (minimal)"
-    echo " # ${i}.${j}.${k} InspectIT (minimal)" >>${BASEDIR}inspectit.log
-    sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr-mod.jar 1>>${BASEDIR}logs/out.log 2>&1 &
-    sleep 10
-    ${JAVABIN}java ${JAVAARGS_INSPECTIT_MINIMAL} ${JAR} \
-        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTALCALLS} \
-        --methodtime ${METHODTIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
-        ${MOREPARAMS}
-    sleep 10
-    kill $!
-    sleep 10
-    kill -9 $!
-    rm -rf ${BASEDIR}storage/
-    rm -rf ${BASEDIR}db/
-    kill %sar
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
-    echo >>${BASEDIR}inspectit.log
-    echo >>${BASEDIR}inspectit.log
-    sync
-    sleep ${SLEEPTIME}
-
-    # InspectIT (without CMR)
-    k=`expr ${k} + 1`
-    echo " # ${i}.${j}.${k} InspectIT (without CMR)"
-    echo " # ${i}.${j}.${k} InspectIT (without CMR)" >>${BASEDIR}inspectit.log
-    sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java ${JAVAARGS_INSPECTIT_FULL} ${JAR} \
-        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTALCALLS} \
-        --methodtime ${METHODTIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
-        ${MOREPARAMS}
-    kill %sar
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
-    echo >>${BASEDIR}inspectit.log
-    echo >>${BASEDIR}inspectit.log
-    sync
-    sleep ${SLEEPTIME}
-
-    # InspectIT (with CMR)
-    k=`expr ${k} + 1`
-    echo " # ${i}.${j}.${k} InspectIT (with CMR)"
-    echo " # ${i}.${j}.${k} InspectIT (with CMR)" >>${BASEDIR}inspectit.log
-    sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr-mod.jar 1>>${BASEDIR}logs/out.log 2>&1 &
-    sleep 10
-    ${JAVABIN}java ${JAVAARGS_INSPECTIT_FULL} ${JAR} \
-        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTALCALLS} \
-        --methodtime ${METHODTIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
-        ${MOREPARAMS}
-    sleep 10
-    kill $!
-    sleep 10
-    kill -9 $!
-    rm -rf ${BASEDIR}storage/
-    rm -rf ${BASEDIR}db/
-    kill %sar
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
-    echo >>${BASEDIR}inspectit.log
-    echo >>${BASEDIR}inspectit.log
-    sync
-    sleep ${SLEEPTIME}
-
+    runInspectITZipkin
+    cleanup
 done
 zip -jqr ${RESULTSDIR}stat.zip ${RESULTSDIR}stat
 rm -rf ${RESULTSDIR}stat/
