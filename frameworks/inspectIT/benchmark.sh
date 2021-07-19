@@ -54,18 +54,22 @@ function stopBackgroundProcess {
 
 function cleanup {
 	[ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
-	echo >>${BASEDIR}opentelemetry.log
-	echo >>${BASEDIR}opentelemetry.log
+	echo >>${BASEDIR}inspectit.log
+	echo >>${BASEDIR}inspectit.log
 	sync
 	sleep ${SLEEPTIME}
 }
 
+function getSum {
+  awk '{sum += $1; square += $1^2} END {print "Average: "sum/NR" Standard Deviation: "sqrt(square / NR - (sum/NR)^2)" Count: "NR}'
+}
+
 function printIntermediaryResults {
     echo -n "Intermediary results uninstrumented "
-    cat tmp/results-opentelemetry/raw-*-$RECURSIONDEPTH-1.csv | awk -F';' '{print $2}' | getSum
+    cat tmp/results-inspectit/raw-*-$RECURSIONDEPTH-1.csv | awk -F';' '{print $2}' | getSum
     
     echo -n "Intermediary results inspectIT "
-    cat tmp/results-opentelemetry/raw-*-$RECURSIONDEPTH-2.csv | awk -F';' '{print $2}' | getSum
+    cat tmp/results-inspectit/raw-*-$RECURSIONDEPTH-2.csv | awk -F';' '{print $2}' | getSum
 }
 
 JAVABIN=""
@@ -116,7 +120,7 @@ JAR="-jar MooBench.jar --application moobench.application.MonitoredClassSimple"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
 JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-ocelot-agent-1.10.1.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties"
-JAVAARGS_INSPECTIT_MINIMAL="${JAVAARGS_LTW} -Dinspectit.service-name='My-Custom-Service' -Dinspectit.exporters.tracing.zipkin.url=http://127.0.0.1:9411/api/v2/spans"
+JAVAARGS_INSPECTIT_MINIMAL="${JAVAARGS_LTW} -Dinspectit.service-name='My-Custom-Service' -Dinspectit.exporters.tracing.zipkin.url=http://127.0.0.1:9411/api/v2/spans -Dinspectit.config=${BASEDIR}config/minimal/"
 JAVAARGS_INSPECTIT_FULL="${JAVAARGS_LTW} -Dinspectit.config=${BASEDIR}config/timer/"
 
 CMR_ARGS=" -Xms12G -Xmx12G -Xmn4G -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -Dinspectit.logging.config=config/logging-config.xml"
