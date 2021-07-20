@@ -53,7 +53,6 @@ function cleanup {
 
 function runNoInstrumentation {
     # No instrumentation
-    k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} No instrumentation"
     echo " # ${i}.${j}.${k} No instrumentation" >>${BASEDIR}opentelemetry.log
     ${JAVABIN}java ${JAVAARGS_NOINSTR} ${JAR} \
