@@ -86,12 +86,13 @@ function runOpenTelemetryLogging {
     ${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_LOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
-        --method-time ${METHODTIME} \
+        --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${j} \
         ${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry_logging.txt
     if [ ! "$DEBUG" = true ]
     then
+    	echo "DEBUG is $DEBUG, deleting opentelemetry logging file"
     	rm ${RESULTS_DIR}output_"$i"_opentelemetry_logging.txt
     fi
 }
