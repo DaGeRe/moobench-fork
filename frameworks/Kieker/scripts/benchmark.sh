@@ -15,6 +15,9 @@ else
 	echo "Missing configuration: ${BASE_DIR}/config"
 	exit 1
 fi
+
+source ../../common-functions.sh
+
 if [ -f "${BASE_DIR}/common-functions" ] ; then
 	. ${BASE_DIR}/common-functions
 else
@@ -190,10 +193,6 @@ function execute-benchmark-body() {
   fi
 }
 
-function getSum {
-  awk '{sum += $1; square += $1^2} END {print "Average: "sum/NR" Standard Deviation: "sqrt(square / NR - (sum/NR)^2)" Count: "NR}'
-}
-
 function printIntermediaryResults {
    for ((index=0;index<${#WRITER_CONFIG[@]};index+=1)); do
       echo -n "Intermediary results "$TITLE[$index]" "
@@ -234,14 +233,6 @@ results.count=${TOTAL_NUM_OF_CALLS}
 results.skip=${TOTAL_NUM_OF_CALLS}/2
 source("${RSCRIPT_PATH}")
 EOF
-}
-
-## Clean up raw results
-function cleanup-results() {
-  zip -jqr ${RESULTS_DIR}/results.zip ${RAWFN}*
-  rm -f ${RAWFN}*
-  [ -f ${DATA_DIR}/nohup.out ] && cp ${DATA_DIR}/nohup.out ${RESULTS_DIR}
-  [ -f ${DATA_DIR}/nohup.out ] && > ${DATA_DIR}/nohup.out
 }
 
 ## Execute benchmark
