@@ -61,7 +61,7 @@ function runNoInstrumentation {
         --method-time ${METHODTIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${j} \
-        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_uninstrumented.txt
+        ${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_uninstrumented.txt
 }
 
 function runOpenTelemetryNoLogging {
@@ -75,7 +75,7 @@ function runOpenTelemetryNoLogging {
         --method-time ${METHODTIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${j} \
-        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_opentelemetry.txt
+        ${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry.txt
 }
 
 function runOpenTelemetryLogging {
@@ -89,10 +89,10 @@ function runOpenTelemetryLogging {
         --method-time ${METHODTIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${j} \
-        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_opentelemetry_logging.txt
+        ${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry_logging.txt
     if [ ! "$DEBUG" = true ]
     then
-    	rm ${RESULTSDIR}output_"$i"_opentelemetry_logging.txt
+    	rm ${RESULTS_DIR}output_"$i"_opentelemetry_logging.txt
     fi
 }
 
@@ -108,7 +108,7 @@ function runOpenTelemetryZipkin {
         --method-time ${METHODTIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${j} \
-        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_opentelemetry_zipkin.txt
+        ${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry_zipkin.txt
     stopBackgroundProcess
 }
 
@@ -140,12 +140,8 @@ function runOpenTelemetryPrometheus {
 		--method-time ${METHODTIME} \
 		--total-threads ${THREADS} \
 		--recursion-depth ${j} \
-		${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_opentelemetry_prometheus.txt
+		${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry_prometheus.txt
 	stopBackgroundProcess
-}
-
-function getSum {
-  awk '{sum += $1; square += $1^2} END {print "Average: "sum/NR" Standard Deviation: "sqrt(square / NR - (sum/NR)^2)" Count: "NR}'
 }
 
 function printIntermediaryResults {
@@ -178,15 +174,9 @@ JAVABIN=""
 
 RSCRIPTDIR=r/
 BASEDIR=./
-RESULTSDIR="${BASEDIR}results-opentelemetry/"
+RESULTS_DIR="${BASEDIR}results-opentelemetry/"
 
-SLEEPTIME=30           ## 30
-NUM_LOOPS=10           ## 10
-THREADS=1              ## 1
-RECURSIONDEPTH=10      ## 10
-TOTALCALLS=2000000     ## 2000000
-METHODTIME=0      ## 500000
-DEBUG=false		## false
+source ../common-functions.sh
 
 #MOREPARAMS="--quickstart"
 MOREPARAMS="--application moobench.application.MonitoredClassSimple ${MOREPARAMS}"
@@ -194,15 +184,15 @@ MOREPARAMS="--application moobench.application.MonitoredClassSimple ${MOREPARAMS
 TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEPTIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSIONDEPTH} + 50 \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
 
-echo "Removing and recreating '$RESULTSDIR'"
-(rm -rf ${RESULTSDIR}) && mkdir -p ${RESULTSDIR}
-#mkdir ${RESULTSDIR}stat/
+echo "Cleaning and recreating '$RESULTS_DIR'"
+(rm -rf ${RESULTS_DIR}/**csv) && mkdir -p ${RESULTS_DIR}
+#mkdir ${RESULTS_DIR}stat/
 
 # Clear opentelemetry.log and initialize logging
 rm -f ${BASEDIR}opentelemetry.log
 touch ${BASEDIR}opentelemetry.log
 
-RAWFN="${RESULTSDIR}raw"
+RAWFN="${RESULTS_DIR}raw"
 
 JAVAARGS="-server"
 JAVAARGS="${JAVAARGS} "
@@ -236,18 +226,18 @@ JAVAARGS_OPENTELEMETRY_PROMETHEUS="${JAVAARGS_OPENTELEMETRY_BASIC} -Dotel.traces
 
 
 ## Write configuration
-uname -a >${RESULTSDIR}configuration.txt
-${JAVABIN}java ${JAVAARGS} -version 2>>${RESULTSDIR}configuration.txt
-echo "JAVAARGS: ${JAVAARGS}" >>${RESULTSDIR}configuration.txt
-echo "" >>${RESULTSDIR}configuration.txt
-echo "Runtime: circa ${TIME} seconds" >>${RESULTSDIR}configuration.txt
-echo "" >>${RESULTSDIR}configuration.txt
-echo "SLEEPTIME=${SLEEPTIME}" >>${RESULTSDIR}configuration.txt
-echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTSDIR}configuration.txt
-echo "TOTALCALLS=${TOTALCALLS}" >>${RESULTSDIR}configuration.txt
-echo "METHODTIME=${METHODTIME}" >>${RESULTSDIR}configuration.txt
-echo "THREADS=${THREADS}" >>${RESULTSDIR}configuration.txt
-echo "RECURSIONDEPTH=${RECURSIONDEPTH}" >>${RESULTSDIR}configuration.txt
+uname -a >${RESULTS_DIR}configuration.txt
+${JAVABIN}java ${JAVAARGS} -version 2>>${RESULTS_DIR}configuration.txt
+echo "JAVAARGS: ${JAVAARGS}" >>${RESULTS_DIR}configuration.txt
+echo "" >>${RESULTS_DIR}configuration.txt
+echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}configuration.txt
+echo "" >>${RESULTS_DIR}configuration.txt
+echo "SLEEPTIME=${SLEEPTIME}" >>${RESULTS_DIR}configuration.txt
+echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTS_DIR}configuration.txt
+echo "TOTALCALLS=${TOTALCALLS}" >>${RESULTS_DIR}configuration.txt
+echo "METHODTIME=${METHODTIME}" >>${RESULTS_DIR}configuration.txt
+echo "THREADS=${THREADS}" >>${RESULTS_DIR}configuration.txt
+echo "RECURSIONDEPTH=${RECURSIONDEPTH}" >>${RESULTS_DIR}configuration.txt
 sync
 
 ## Execute Benchmark
@@ -284,14 +274,17 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
 
     printIntermediaryResults
 done
-#zip -jqr ${RESULTSDIR}stat.zip ${RESULTSDIR}stat
-#rm -rf ${RESULTSDIR}stat/
-mv ${BASEDIR}opentelemetry.log ${RESULTSDIR}opentelemetry.log
-[ -f ${RESULTSDIR}hotspot-1-${RECURSIONDEPTH}-1.log ] && grep "<task " ${RESULTSDIR}hotspot-*.log >${RESULTSDIR}log.log
-[ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTSDIR}
+
+cleanup-results
+
+#zip -jqr ${RESULTS_DIR}stat.zip ${RESULTS_DIR}stat
+#rm -rf ${RESULTS_DIR}stat/
+mv ${BASEDIR}opentelemetry.log ${RESULTS_DIR}opentelemetry.log
+[ -f ${RESULTS_DIR}hotspot-1-${RECURSIONDEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}hotspot-*.log >${RESULTS_DIR}log.log
+[ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTS_DIR}
 
 ## Clean up raw results
-#gzip -qr ${RESULTSDIR}results.zip ${RAWFN}*
+#gzip -qr ${RESULTS_DIR}results.zip ${RAWFN}*
 #rm -f ${RAWFN}*
-[ -f ${BASEDIR}nohup.out ] && cp ${BASEDIR}nohup.out ${RESULTSDIR}
+[ -f ${BASEDIR}nohup.out ] && cp ${BASEDIR}nohup.out ${RESULTS_DIR}
 [ -f ${BASEDIR}nohup.out ] && > ${BASEDIR}nohup.out
