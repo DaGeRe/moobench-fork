@@ -13,23 +13,23 @@ function cleanup-results() {
 }
 
 # Initialize all unset parameters
-if [ -z $SLEEPTIME ]; then
-	SLEEPTIME=30           ## 30
+if [ -z $SLEEP_TIME ]; then
+	SLEEP_TIME=30           ## 30
 fi
-if [ -z $NUM_LOOPS ]; then
-	NUM_LOOPS=10           ## 10
+if [ -z $NUM_OF_LOOPS ]; then
+	NUM_OF_LOOPS=10           ## 10
 fi
 if [ -z $THREADS ]; then
 	THREADS=1              ## 1
 fi
-if [ -z $RECURSIONDEPTH ]; then
-	RECURSIONDEPTH=10      ## 10
+if [ -z $RECURSION_DEPTH ]; then
+	RECURSION_DEPTH=10      ## 10
 fi
-if [ -z $TOTALCALLS ]; then
-	TOTALCALLS=2000000     ## 2000000
+if [ -z $TOTAL_NUM_OF_CALLS ]; then
+	TOTAL_NUM_OF_CALLS=2000000     ## 2000000
 fi
-if [ -z $METHODTIME ]; then
-	METHODTIME=0      ## 500000
+if [ -z $METHOD_TIME ]; then
+	METHOD_TIME=0      ## 500000
 fi
 if [ -z $DEBUG ]; then
 	DEBUG=false		## false

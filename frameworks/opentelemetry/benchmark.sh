@@ -44,11 +44,11 @@ function stopBackgroundProcess {
 }
 
 function cleanup {
-	[ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
+	[ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
 	echo >>${BASEDIR}opentelemetry.log
 	echo >>${BASEDIR}opentelemetry.log
 	sync
-	sleep ${SLEEPTIME}
+	sleep ${SLEEP_TIME}
 }
 
 function runNoInstrumentation {
@@ -57,8 +57,8 @@ function runNoInstrumentation {
     echo " # ${i}.${j}.${k} No instrumentation" >>${BASEDIR}opentelemetry.log
     ${JAVABIN}java ${JAVAARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --total-calls ${TOTALCALLS} \
-        --method-time ${METHODTIME} \
+        --total-calls ${TOTAL_NUM_OF_CALLS} \
+        --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${j} \
         ${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_uninstrumented.txt
@@ -71,8 +71,8 @@ function runOpenTelemetryNoLogging {
     echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Logging Deactivated" >>${BASEDIR}opentelemetry.log
     ${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_LOGGING_DEACTIVATED} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --total-calls ${TOTALCALLS} \
-        --method-time ${METHODTIME} \
+        --total-calls ${TOTAL_NUM_OF_CALLS} \
+        --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${j} \
         ${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry.txt
@@ -85,7 +85,7 @@ function runOpenTelemetryLogging {
     echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Logging" >>${BASEDIR}opentelemetry.log
     ${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_LOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --total-calls ${TOTALCALLS} \
+        --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHODTIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${j} \
@@ -104,8 +104,8 @@ function runOpenTelemetryZipkin {
     echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Zipkin" >>${BASEDIR}opentelemetry.log
     ${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_ZIPKIN} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --total-calls ${TOTALCALLS} \
-        --method-time ${METHODTIME} \
+        --total-calls ${TOTAL_NUM_OF_CALLS} \
+        --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${j} \
         ${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry_zipkin.txt
@@ -120,11 +120,11 @@ function runOpenTelemetryJaeger {
 	echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Jaeger" >>${BASEDIR}opentelemetry.log
 	${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_JAEGER} ${JAR} \
 		--output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-		--total-calls ${TOTALCALLS} \
+		--total-calls ${TOTAL_NUM_OF_CALLS} \
 		--method-time ${METHODTIME} \
 		--total-threads ${THREADS} \
 		--recursion-depth ${j} \
-		${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_opentelemetry_prometheus.txt
+		${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry_jaeger.txt
 	stopBackgroundProcess
 }
 
@@ -136,8 +136,8 @@ function runOpenTelemetryPrometheus {
 	echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Prometheus" >>${BASEDIR}opentelemetry.log
 	${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_PROMETHEUS} ${JAR} \
 		--output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-		--total-calls ${TOTALCALLS} \
-		--method-time ${METHODTIME} \
+		--total-calls ${TOTAL_NUM_OF_CALLS} \
+		--method-time ${METHOD_TIME} \
 		--total-threads ${THREADS} \
 		--recursion-depth ${j} \
 		${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry_prometheus.txt
@@ -146,26 +146,26 @@ function runOpenTelemetryPrometheus {
 
 function printIntermediaryResults {
     echo -n "Intermediary results uninstrumented "
-    cat results-opentelemetry/raw-*-$RECURSIONDEPTH-0.csv | awk -F';' '{print $2}' | getSum
+    cat results-opentelemetry/raw-*-$RECURSION_DEPTH-0.csv | awk -F';' '{print $2}' | getSum
     
     echo -n "Intermediary results opentelemetry Logging Deactivated "
-    cat results-opentelemetry/raw-*-$RECURSIONDEPTH-1.csv | awk -F';' '{print $2}' | getSum
+    cat results-opentelemetry/raw-*-$RECURSION_DEPTH-1.csv | awk -F';' '{print $2}' | getSum
     
     echo -n "Intermediary results opentelemetry Logging "
-    cat results-opentelemetry/raw-*-$RECURSIONDEPTH-2.csv | awk -F';' '{print $2}' | getSum
+    cat results-opentelemetry/raw-*-$RECURSION_DEPTH-2.csv | awk -F';' '{print $2}' | getSum
     
     echo -n "Intermediary results opentelemetry Zipkin "
-    cat results-opentelemetry/raw-*-$RECURSIONDEPTH-3.csv | awk -F';' '{print $2}' | getSum
+    cat results-opentelemetry/raw-*-$RECURSION_DEPTH-3.csv | awk -F';' '{print $2}' | getSum
     
     MACHINE_TYPE=`uname -m`; 
     if [ ${MACHINE_TYPE} == 'x86_64' ]
     then
         echo -n "Intermediary results opentelemetry Jaeger "
-    	cat results-opentelemetry/raw-*-$RECURSIONDEPTH-4.csv | awk -F';' '{print $2}' | getSum
+    	cat results-opentelemetry/raw-*-$RECURSION_DEPTH-4.csv | awk -F';' '{print $2}' | getSum
     
     	# Prometheus does not work currently
 	#echo -n "Intermediary results opentelemetry Prometheus"
-    	#cat results-opentelemetry/raw-*-$RECURSIONDEPTH-5.csv | awk -F';' '{print $2}' | getSum
+    	#cat results-opentelemetry/raw-*-$RECURSION_DEPTH-5.csv | awk -F';' '{print $2}' | getSum
     fi
 }
 
@@ -177,11 +177,12 @@ BASEDIR=./
 RESULTS_DIR="${BASEDIR}results-opentelemetry/"
 
 source ../common-functions.sh
+echo "NUM_OF_LOOPS: $NUM_OF_LOOPS"
 
 #MOREPARAMS="--quickstart"
 MOREPARAMS="--application moobench.application.MonitoredClassSimple ${MOREPARAMS}"
 
-TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEPTIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSIONDEPTH} + 50 \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} `
+TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
 
 echo "Cleaning and recreating '$RESULTS_DIR'"
@@ -233,19 +234,19 @@ echo "" >>${RESULTS_DIR}configuration.txt
 echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}configuration.txt
 echo "" >>${RESULTS_DIR}configuration.txt
 echo "SLEEPTIME=${SLEEPTIME}" >>${RESULTS_DIR}configuration.txt
-echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTS_DIR}configuration.txt
-echo "TOTALCALLS=${TOTALCALLS}" >>${RESULTS_DIR}configuration.txt
+echo "NUM_OF_LOOPS=${NUM_OF_LOOPS}" >>${RESULTS_DIR}configuration.txt
+echo "TOTAL_NUM_OF_CALLS=${TOTAL_NUM_OF_CALLS}" >>${RESULTS_DIR}configuration.txt
 echo "METHODTIME=${METHODTIME}" >>${RESULTS_DIR}configuration.txt
 echo "THREADS=${THREADS}" >>${RESULTS_DIR}configuration.txt
-echo "RECURSIONDEPTH=${RECURSIONDEPTH}" >>${RESULTS_DIR}configuration.txt
+echo "RECURSION_DEPTH=${RECURSION_DEPTH}" >>${RESULTS_DIR}configuration.txt
 sync
 
 ## Execute Benchmark
-for ((i=1;i<=${NUM_LOOPS};i+=1)); do
-    j=${RECURSIONDEPTH}
+for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
+    j=${RECURSION_DEPTH}
     k=0
-    echo "## Starting iteration ${i}/${NUM_LOOPS}"
-    echo "## Starting iteration ${i}/${NUM_LOOPS}" >>${BASEDIR}opentelemetry.log
+    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}"
+    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >>${BASEDIR}opentelemetry.log
 
     runNoInstrumentation
     cleanup
@@ -280,7 +281,7 @@ cleanup-results
 #zip -jqr ${RESULTS_DIR}stat.zip ${RESULTS_DIR}stat
 #rm -rf ${RESULTS_DIR}stat/
 mv ${BASEDIR}opentelemetry.log ${RESULTS_DIR}opentelemetry.log
-[ -f ${RESULTS_DIR}hotspot-1-${RECURSIONDEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}hotspot-*.log >${RESULTS_DIR}log.log
+[ -f ${RESULTS_DIR}hotspot-1-${RECURSION_DEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}hotspot-*.log >${RESULTS_DIR}log.log
 [ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTS_DIR}
 
 ## Clean up raw results
