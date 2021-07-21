@@ -57,7 +57,7 @@ TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURS
 information "Experiment will take circa ${TIME} seconds."
 
 information "Removing and recreating '$RESULTS_DIR'"
-(rm -rf ${RESULTS_DIR}) && mkdir -p ${RESULTS_DIR}
+(rm -rf ${RESULTS_DIR}/*csv) && mkdir -p ${RESULTS_DIR}
 
 # Clear kieker.log and initialize logging
 rm -f ${DATA_DIR}/kieker.log
