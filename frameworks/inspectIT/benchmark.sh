@@ -65,10 +65,10 @@ function getSum {
 
 function printIntermediaryResults {
     echo -n "Intermediary results uninstrumented "
-    cat tmp/results-inspectit/raw-*-$RECURSIONDEPTH-1.csv | awk -F';' '{print $2}' | getSum
+    cat tmp/results-inspectit/raw-*-$RECURSIONDEPTH-0.csv | awk -F';' '{print $2}' | getSum
     
     echo -n "Intermediary results inspectIT "
-    cat tmp/results-inspectit/raw-*-$RECURSIONDEPTH-2.csv | awk -F';' '{print $2}' | getSum
+    cat tmp/results-inspectit/raw-*-$RECURSIONDEPTH-1.csv | awk -F';' '{print $2}' | getSum
 }
 
 JAVABIN=""
