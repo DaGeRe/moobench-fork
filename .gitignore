@@ -20,6 +20,8 @@ frameworks/SPASSmeter/tmp/
 frameworks/SPASSmeter/MooBench.jar
 frameworks/inspectIT/inspectit.log
 frameworks/inspectIT/MooBench.jar
+frameworks/inspectIT/logs/
+frameworks/inspectIT/tmp/
 frameworks/opentelemetry/opentelemetry.log
 frameworks/opentelemetry/tmp/
 frameworks/opentelemetry/*.txt
