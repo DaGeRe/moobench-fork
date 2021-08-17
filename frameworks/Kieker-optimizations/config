@@ -1,0 +1,19 @@
+##
+# MooBench configuration parameter
+
+# path setup
+JAVA_BIN="java"
+
+RSCRIPT_PATH="${BASE_DIR}/stats.csv.r"
+
+DATA_DIR="${BASE_DIR}/data"
+RESULTS_DIR="${BASE_DIR}/results-kieker"
+AGENT="${BASE_DIR}/kieker-1.15-SNAPSHOT-aspectj.jar"
+BENCHMARK="java -jar benchmark/build/libs/benchmark.jar"
+
+BATCH_MODE="yes"
+
+# in-jar locations
+AOP="file:"$(pwd)"/../src/META-INF/kieker.aop.xml"
+
+# end
