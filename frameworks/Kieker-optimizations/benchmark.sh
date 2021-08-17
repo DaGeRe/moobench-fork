@@ -137,6 +137,19 @@ EOF
 sync
 
 function buildBenchmark {
+	echo "Copying Benchmark"
+    	if [ -d benchmark ]
+    	then
+    		rm -rf benchmark
+    	fi
+    	cp -R ../../benchmark/ . 
+    	touch benchmark/settings.gradle
+        
+    	cd benchmark && gradle clean assemble && cd ..
+    	echo "Benchmark built"
+}
+
+function buildInstrumentedBenchmark {
 	echo "Instrumenting using source code instrumentation"
     	if [ -d benchmark ]
     	then
@@ -174,8 +187,9 @@ function execute-experiment() {
 
     if [ $index -gt 1 ]
     then
-     	buildBenchmark
-    	
+     	buildInstrumentedBenchmark
+    else
+       buildBenchmark
     fi
 
     if [  "${kieker_parameters}" = "" ] ; then
