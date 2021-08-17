@@ -142,7 +142,7 @@ function buildBenchmark {
     	then
     		rm -rf benchmark
     	fi
-    	cp -R ../../../benchmark/ . 
+    	cp -R ../../benchmark/ . 
     	java -jar $KIEKER_SOURCE_INSTRUMENTATION_JAR -folder benchmark
     	touch benchmark/settings.gradle
         sed -i "/dependencies {/a implementation 'net.kieker-monitoring:kieker:1.15-SNAPSHOT:jar'" benchmark/build.gradle
