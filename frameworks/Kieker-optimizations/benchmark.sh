@@ -145,7 +145,7 @@ function buildBenchmark {
     	cp -R ../../benchmark/ . 
     	touch benchmark/settings.gradle
         
-    	cd benchmark && gradle clean assemble && cd ..
+    	cd benchmark && ../../../gradlew clean assemble && cd ..
     	echo "Benchmark built"
 }
 
@@ -163,7 +163,7 @@ function buildInstrumentedBenchmark {
         # This is only temporary necessary, until Kieker 1.15 is released
         sed -i "/repositories {/a mavenLocal()" benchmark/build.gradle
         
-    	cd benchmark && gradle clean assemble && cd ..
+    	cd benchmark && ../../../gradlew clean assemble && cd ..
     	echo "Source instrumentation finished"
 }
 
