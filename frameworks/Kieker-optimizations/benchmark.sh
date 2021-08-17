@@ -16,7 +16,7 @@ else
 	exit 1
 fi
 
-source ../../common-functions.sh
+source ../common-functions.sh
 
 if [ -f "${BASE_DIR}/common-functions" ] ; then
 	. ${BASE_DIR}/common-functions
@@ -37,6 +37,11 @@ else
 	fi
 	OPTION="$2"
 fi
+
+# get agent
+export VERSION_PATH=`curl "https://oss.sonatype.org/service/local/repositories/snapshots/content/net/kieker-monitoring/kieker/" | grep '<resourceURI>' | sed 's/ *<resourceURI>//g' | sed 's/<\/resourceURI>//g' | grep '/$'`
+export AGENT_PATH=`curl "${VERSION_PATH}" | grep 'aspectj.jar</resourceURI' | sort | sed 's/ *<resourceURI>//g' | sed 's/<\/resourceURI>//g' | tail -1`
+curl "${AGENT_PATH}" > "${AGENT}"
 
 # test input parameters and configuration
 #checkFile R-script "${RSCRIPT_PATH}"
