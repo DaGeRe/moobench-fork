@@ -37,6 +37,22 @@ function createRLabels() {
 	echo $LABELS
 }
 
+function writeConfiguration() {
+	uname -a >${RESULTS_DIR}configuration.txt
+	${JAVABIN}java ${JAVAARGS} -version 2>>${RESULTS_DIR}configuration.txt
+	echo "JAVAARGS: ${JAVAARGS}" >>${RESULTS_DIR}configuration.txt
+	echo "" >>${RESULTS_DIR}configuration.txt
+	echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}configuration.txt
+	echo "" >>${RESULTS_DIR}configuration.txt
+	echo "SLEEPTIME=${SLEEPTIME}" >>${RESULTS_DIR}configuration.txt
+	echo "NUM_OF_LOOPS=${NUM_OF_LOOPS}" >>${RESULTS_DIR}configuration.txt
+	echo "TOTAL_NUM_OF_CALLS=${TOTAL_NUM_OF_CALLS}" >>${RESULTS_DIR}configuration.txt
+	echo "METHODTIME=${METHODTIME}" >>${RESULTS_DIR}configuration.txt
+	echo "THREADS=${THREADS}" >>${RESULTS_DIR}configuration.txt
+	echo "RECURSION_DEPTH=${RECURSION_DEPTH}" >>${RESULTS_DIR}configuration.txt
+	sync
+}
+
 # Initialize all unset parameters
 if [ -z $SLEEP_TIME ]; then
 	SLEEP_TIME=30           ## 30

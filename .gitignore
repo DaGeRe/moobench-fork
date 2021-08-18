@@ -22,6 +22,10 @@ frameworks/inspectIT/inspectit.log
 frameworks/inspectIT/MooBench.jar
 frameworks/inspectIT/logs/
 frameworks/inspectIT/tmp/
+frameworks/inspectIT/zipkin/
+frameworks/inspectIT/configuration.txt
+frameworks/inspectIT/results-inspectit/
+frameworks/opentelemetry/results-opentelemetry/
 frameworks/opentelemetry/opentelemetry.log
 frameworks/opentelemetry/tmp/
 frameworks/opentelemetry/*.txt

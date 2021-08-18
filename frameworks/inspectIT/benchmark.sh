@@ -6,10 +6,10 @@ function runNoInstrumentation {
     echo " # ${i}.${j}.${k} No instrumentation" >>${BASEDIR}inspectit.log
     ${JAVABIN}java ${JAVAARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --total-calls ${TOTALCALLS} \
-        --method-time ${METHODTIME} \
+        --total-calls ${TOTAL_NUM_OF_CALLS} \
+        --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
-        --recursion-depth ${j} \
+        --recursion-depth ${RECURSION_DEPTH} \
         ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_"$j"_noinstrumentation.txt
 }
 
@@ -20,17 +20,17 @@ function runInspectITZipkin {
     echo " # ${i}.${j}.${k} InspectIT (minimal)" >>${BASEDIR}inspectit.log
     #${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr-mod.jar 1>>${BASEDIR}logs/out.log 2>&1 &
     startZipkin
-    sleep 10
+    sleep $SLEEP_TIME
     echo $JAVAARGS_INSPECTIT_MINIMAL
     echo $JAR
     ${JAVABIN}java ${JAVAARGS_INSPECTIT_MINIMAL} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --total-calls ${TOTALCALLS} \
-        --method-time ${METHODTIME} \
+        --total-calls ${TOTAL_NUM_OF_CALLS} \
+        --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
-        --recursion-depth ${j} \
+        --recursion-depth ${RECURSION_DEPTH} \
         ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_"$j"_inspectit.txt
-    sleep 10
+    sleep $SLEEP_TIME
     stopBackgroundProcess
 }
 
@@ -40,8 +40,9 @@ function startZipkin {
 		mkdir zipkin
 		cd zipkin
 		curl -sSL https://zipkin.io/quickstart.sh | bash -s
+	else
+		cd zipkin
 	fi
-	cd zipkin
 	java -Xmx6g -jar zipkin.jar &> zipkin.txt &
 	sleep 5
 	cd ..
@@ -56,7 +57,7 @@ function cleanup {
 	echo >>${BASEDIR}inspectit.log
 	echo >>${BASEDIR}inspectit.log
 	sync
-	sleep ${SLEEPTIME}
+	sleep ${SLEEP_TIME}
 }
 
 function getSum {
@@ -75,14 +76,9 @@ JAVABIN=""
 
 RSCRIPTDIR=r/
 BASEDIR=./
-RESULTSDIR="${BASEDIR}tmp/results-inspectit/"
+RESULTSDIR="${BASEDIR}results-inspectit/"
 
-SLEEPTIME=30           ## 30
-NUM_LOOPS=10           ## 10
-THREADS=1              ## 1
-RECURSIONDEPTH=10      ## 10
-TOTALCALLS=2000000     ## 2000000
-METHODTIME=0           ## 0
+source ../common-functions.sh
 
 if [ ! -d agent ]
 then
@@ -112,32 +108,16 @@ RAWFN="${RESULTSDIR}raw"
 JAVAARGS="-server"
 JAVAARGS="${JAVAARGS} -Xms1G -Xmx2G"
 JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
-#JAVAARGS="${JAVAARGS} -XX:+PrintInlining"
-#JAVAARGS="${JAVAARGS} -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation"
-#JAVAARGS="${JAVAARGS} -Djava.compiler=NONE"
 JAR="-jar MooBench.jar --application moobench.application.MonitoredClassSimple"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
 JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-ocelot-agent-1.10.1.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties"
-JAVAARGS_INSPECTIT_MINIMAL="${JAVAARGS_LTW} -Dinspectit.service-name='My-Custom-Service' -Dinspectit.exporters.tracing.zipkin.url=http://127.0.0.1:9411/api/v2/spans -Dinspectit.config.file-based.path=${BASEDIR}config/isequence/"
+JAVAARGS_INSPECTIT_MINIMAL="${JAVAARGS_LTW} -Dinspectit.service-name='My-Custom-Service' -Dinspectit.exporters.tracing.zipkin.url=http://127.0.0.1:9411/api/v2/spans -Dinspectit.config.file-based.path=${BASEDIR}config/zipkin/"
 JAVAARGS_INSPECTIT_FULL="${JAVAARGS_LTW} -Dinspectit.config=${BASEDIR}config/timer/"
 
-CMR_ARGS=" -Xms12G -Xmx12G -Xmn4G -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -Dinspectit.logging.config=config/logging-config.xml"
+CMR_ARGS=" -Xms12G -Xmx12G -Xmn4G -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution "
 
-## Write configuration
-uname -a >${RESULTSDIR}configuration.txt
-${JAVABIN}java ${JAVAARGS} -version 2>>${RESULTSDIR}configuration.txt
-echo "JAVAARGS: ${JAVAARGS}" >>${RESULTSDIR}configuration.txt
-echo "" >>${RESULTSDIR}configuration.txt
-echo "Runtime: circa ${TIME} seconds" >>${RESULTSDIR}configuration.txt
-echo "" >>${RESULTSDIR}configuration.txt
-echo "SLEEPTIME=${SLEEPTIME}" >>${RESULTSDIR}configuration.txt
-echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTSDIR}configuration.txt
-echo "TOTALCALLS=${TOTALCALLS}" >>${RESULTSDIR}configuration.txt
-echo "METHODTIME=${METHODTIME}" >>${RESULTSDIR}configuration.txt
-echo "THREADS=${THREADS}" >>${RESULTSDIR}configuration.txt
-echo "RECURSIONDEPTH=${RECURSIONDEPTH}" >>${RESULTSDIR}configuration.txt
-sync
+writeConfiguration
 
 ## Execute Benchmark
 for ((i=1;i<=${NUM_LOOPS};i+=1)); do
