@@ -74,7 +74,6 @@ echo "Experiment will take circa ${TIME} seconds."
 
 echo "Removing and recreating '$RESULTSDIR'"
 (rm -rf ${RESULTSDIR}) && mkdir -p ${RESULTSDIR}
-mkdir ${RESULTSDIR}stat/
 
 # Clear inspectit.log and initialize logging
 rm -f ${BASEDIR}inspectit.log
@@ -108,8 +107,6 @@ for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
     
     printIntermediaryResults
 done
-zip -jqr ${RESULTSDIR}stat.zip ${RESULTSDIR}stat
-rm -rf ${RESULTSDIR}stat/
 mv ${BASEDIR}inspectit.log ${RESULTSDIR}inspectit.log
 [ -f ${RESULTSDIR}hotspot-1-${RECURSION_DEPTH}-1.log ] && grep "<task " ${RESULTSDIR}hotspot-*.log >${RESULTSDIR}log.log
 [ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTSDIR}
