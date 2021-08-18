@@ -12,6 +12,14 @@ function cleanup-results() {
   [ -f ${DATA_DIR}/nohup.out ] && > ${DATA_DIR}/nohup.out
 }
 
+function checkMoobenchApplication() {
+	if [ ! -f "MooBench.jar" ]
+	then
+		echo "MooBench.jar missing; please build it first using ../gradlew assemble in the benchmark folder"
+		exit 1
+	fi
+}
+
 function getKiekerAgent() {
 	echo "Checking whether Kieker is present in $AGENT"
 	if [ ! -f $AGENT ]
@@ -30,6 +38,15 @@ function getInspectItAgent() {
 		cd agent
 		wget https://github.com/inspectIT/inspectit-ocelot/releases/download/1.11.1/inspectit-ocelot-agent-1.11.1.jar
 		cd ..
+	fi
+}
+
+function getOpentelemetryAgent() {
+	if [ ! -f ${BASEDIR}lib/opentelemetry-javaagent-all.jar ]
+	then
+		mkdir -p ${BASEDIR}lib
+		wget --output-document=${BASEDIR}lib/opentelemetry-javaagent-all.jar \
+			https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent-all.jar
 	fi
 }
 

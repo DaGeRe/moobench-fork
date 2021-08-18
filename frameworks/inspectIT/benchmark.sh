@@ -62,6 +62,8 @@ RESULTSDIR="${BASEDIR}results-inspectit/"
 
 source ../common-functions.sh
 
+checkMoobenchApplication
+
 getInspectItAgent
 
 #MOREPARAMS="--quickstart"

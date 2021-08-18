@@ -153,16 +153,6 @@ function printIntermediaryResults {
     fi
 }
 
-function downloadOpentelemetry() {
-	if [ ! -f ${BASEDIR}lib/opentelemetry-javaagent-all.jar ]
-	then
-		mkdir -p ${BASEDIR}lib
-		wget --output-document=${BASEDIR}lib/opentelemetry-javaagent-all.jar \
-			https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent-all.jar
-	fi
-}
-
-
 JAVABIN=""
 
 RSCRIPTDIR=r/
@@ -194,13 +184,9 @@ JAVAARGS="${JAVAARGS} -Xms1G -Xmx2G"
 JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
 JAR="-jar MooBench.jar"
 
-if [ ! -f "MooBench.jar" ]
-then
-	echo "MooBench.jar missing; please build it first using ../gradlew assemble in the benchmark folder"
-	exit 1
-fi
+checkMoobenchApplication
 
-downloadOpentelemetry
+getOpentelemetryAgent
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
 JAVAARGS_OPENTELEMETRY_BASIC="${JAVAARGS} -javaagent:${BASEDIR}lib/opentelemetry-javaagent-all.jar -Dotel.resource.attributes=service.name=moobench -Dotel.instrumentation.methods.include=moobench.application.MonitoredClassSimple[monitoredMethod];moobench.application.MonitoredClassThreaded[monitoredMethod]"
