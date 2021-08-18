@@ -44,7 +44,7 @@ function stopBackgroundProcess {
 }
 
 function cleanup {
-	[ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+	[ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-$RECURSION_DEPTH-${k}.log
 	echo >>${BASEDIR}opentelemetry.log
 	echo >>${BASEDIR}opentelemetry.log
 	sync
@@ -53,42 +53,42 @@ function cleanup {
 
 function runNoInstrumentation {
     # No instrumentation
-    echo " # ${i}.${j}.${k} No instrumentation"
-    echo " # ${i}.${j}.${k} No instrumentation" >>${BASEDIR}opentelemetry.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} No instrumentation"
+    echo " # ${i}.$RECURSION_DEPTH.${k} No instrumentation" >>${BASEDIR}opentelemetry.log
     ${JAVABIN}java ${JAVAARGS_NOINSTR} ${JAR} \
-        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
+        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
-        --recursion-depth ${j} \
+        --recursion-depth $RECURSION_DEPTH \
         ${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_uninstrumented.txt
 }
 
 function runOpenTelemetryNoLogging {
     # OpenTelemetry Instrumentation Logging Deactivated
     k=`expr ${k} + 1`
-    echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Logging Deactivated"
-    echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Logging Deactivated" >>${BASEDIR}opentelemetry.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Logging Deactivated"
+    echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Logging Deactivated" >>${BASEDIR}opentelemetry.log
     ${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_LOGGING_DEACTIVATED} ${JAR} \
-        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
+        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
-        --recursion-depth ${j} \
+        --recursion-depth $RECURSION_DEPTH \
         ${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry.txt
 }
 
 function runOpenTelemetryLogging {
     # OpenTelemetry Instrumentation Logging
     k=`expr ${k} + 1`
-    echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Logging"
-    echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Logging" >>${BASEDIR}opentelemetry.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Logging"
+    echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Logging" >>${BASEDIR}opentelemetry.log
     ${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_LOGGING} ${JAR} \
-        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
+        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
-        --recursion-depth ${j} \
+        --recursion-depth $RECURSION_DEPTH \
         ${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry_logging.txt
     if [ ! "$DEBUG" = true ]
     then
@@ -101,14 +101,14 @@ function runOpenTelemetryZipkin {
     # OpenTelemetry Instrumentation Zipkin
     k=`expr ${k} + 1`
     startZipkin
-    echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Zipkin"
-    echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Zipkin" >>${BASEDIR}opentelemetry.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Zipkin"
+    echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Zipkin" >>${BASEDIR}opentelemetry.log
     ${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_ZIPKIN} ${JAR} \
-        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
+        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
-        --recursion-depth ${j} \
+        --recursion-depth $RECURSION_DEPTH \
         ${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry_zipkin.txt
     stopBackgroundProcess
 }
@@ -117,14 +117,14 @@ function runOpenTelemetryJaeger {
 	# OpenTelemetry Instrumentation Jaeger
 	k=`expr ${k} + 1`
 	startJaeger
-	echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Jaeger"
-	echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Jaeger" >>${BASEDIR}opentelemetry.log
+	echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Jaeger"
+	echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Jaeger" >>${BASEDIR}opentelemetry.log
 	${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_JAEGER} ${JAR} \
-		--output-filename ${RAWFN}-${i}-${j}-${k}.csv \
+		--output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
 		--total-calls ${TOTAL_NUM_OF_CALLS} \
 		--method-time ${METHODTIME} \
 		--total-threads ${THREADS} \
-		--recursion-depth ${j} \
+		--recursion-depth $RECURSION_DEPTH \
 		${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry_jaeger.txt
 	stopBackgroundProcess
 }
@@ -133,14 +133,14 @@ function runOpenTelemetryPrometheus {
 	# OpenTelemetry Instrumentation Prometheus
 	k=`expr ${k} + 1`
 	startPrometheus
-	echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Prometheus"
-	echo " # ${i}.${j}.${k} OpenTelemetry Instrumentation Prometheus" >>${BASEDIR}opentelemetry.log
+	echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Prometheus"
+	echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Prometheus" >>${BASEDIR}opentelemetry.log
 	${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_PROMETHEUS} ${JAR} \
-		--output-filename ${RAWFN}-${i}-${j}-${k}.csv \
+		--output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
 		--total-calls ${TOTAL_NUM_OF_CALLS} \
 		--method-time ${METHOD_TIME} \
 		--total-threads ${THREADS} \
-		--recursion-depth ${j} \
+		--recursion-depth $RECURSION_DEPTH \
 		${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry_prometheus.txt
 	stopBackgroundProcess
 }
@@ -245,7 +245,6 @@ sync
 
 ## Execute Benchmark
 for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
-    j=${RECURSION_DEPTH}
     k=0
     echo "## Starting iteration ${i}/${NUM_OF_LOOPS}"
     echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >>${BASEDIR}opentelemetry.log

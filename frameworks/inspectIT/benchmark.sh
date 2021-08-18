@@ -2,34 +2,34 @@
 
 function runNoInstrumentation {
     # No instrumentation
-    echo " # ${i}.${j}.${k} No instrumentation"
-    echo " # ${i}.${j}.${k} No instrumentation" >>${BASEDIR}inspectit.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} No instrumentation"
+    echo " # ${i}.$RECURSION_DEPTH.${k} No instrumentation" >>${BASEDIR}inspectit.log
     ${JAVABIN}java ${JAVAARGS_NOINSTR} ${JAR} \
-        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
+        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${RECURSION_DEPTH} \
-        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_"$j"_noinstrumentation.txt
+        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_"$RECURSION_DEPTH"_noinstrumentation.txt
 }
 
 function runInspectITZipkin {
     # InspectIT (minimal)
     k=`expr ${k} + 1`
-    echo " # ${i}.${j}.${k} InspectIT (minimal)"
-    echo " # ${i}.${j}.${k} InspectIT (minimal)" >>${BASEDIR}inspectit.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} InspectIT (minimal)"
+    echo " # ${i}.$RECURSION_DEPTH.${k} InspectIT (minimal)" >>${BASEDIR}inspectit.log
     #${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr-mod.jar 1>>${BASEDIR}logs/out.log 2>&1 &
     startZipkin
     sleep $SLEEP_TIME
     echo $JAVAARGS_INSPECTIT_MINIMAL
     echo $JAR
     ${JAVABIN}java ${JAVAARGS_INSPECTIT_MINIMAL} ${JAR} \
-        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
+        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${RECURSION_DEPTH} \
-        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_"$j"_inspectit.txt
+        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_"$RECURSION_DEPTH"_inspectit.txt
     sleep $SLEEP_TIME
     stopBackgroundProcess
 }
@@ -112,7 +112,7 @@ JAR="-jar MooBench.jar --application moobench.application.MonitoredClassSimple"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
 JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-ocelot-agent-1.10.1.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties"
-JAVAARGS_INSPECTIT_MINIMAL="${JAVAARGS_LTW} -Dinspectit.service-name='My-Custom-Service' -Dinspectit.exporters.tracing.zipkin.url=http://127.0.0.1:9411/api/v2/spans -Dinspectit.config.file-based.path=${BASEDIR}config/zipkin/"
+JAVAARGS_INSPECTIT_MINIMAL="${JAVAARGS_LTW} -Dinspectit.service-name=moobench-inspectit -Dinspectit.exporters.tracing.zipkin.url=http://127.0.0.1:9411/api/v2/spans -Dinspectit.config.file-based.path=${BASEDIR}config/zipkin/"
 JAVAARGS_INSPECTIT_FULL="${JAVAARGS_LTW} -Dinspectit.config=${BASEDIR}config/timer/"
 
 CMR_ARGS=" -Xms12G -Xmx12G -Xmn4G -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution "
