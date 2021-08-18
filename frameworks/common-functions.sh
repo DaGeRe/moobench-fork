@@ -15,7 +15,7 @@ function cleanup-results() {
 function checkMoobenchApplication() {
 	if [ ! -f "MooBench.jar" ]
 	then
-		echo "MooBench.jar missing; please build it first using ../gradlew assemble in the benchmark folder"
+		echo "MooBench.jar missing; please build it first using ./gradlew assemble in the main folder"
 		exit 1
 	fi
 }
