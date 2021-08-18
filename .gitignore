@@ -15,10 +15,12 @@ frameworks/Kieker/scripts/kieker-*-aspectj.jar
 frameworks/Kieker/scripts/receiver/
 frameworks/Kieker/scripts/results-kieker/
 frameworks/Kieker/scripts/benchmark_*
-frameworks/Kieker-optimizations/scripts/benchmark_*
+frameworks/Kieker-optimizations/benchmark/
 frameworks/Kieker-optimizations/kieker-1.15-SNAPSHOT-aspectj.jar
 frameworks/Kieker-optimizations/kieker-1.15-SNAPSHOT.jar
 frameworks/Kieker-optimizations/results-kieker/
+frameworks/Kieker-optimizations/benchmark_*
+frameworks/Kieker-optimizations/frameworks/
 frameworks/SPASSmeter/spassmeter.log
 frameworks/SPASSmeter/tmp/
 frameworks/SPASSmeter/MooBench.jar
