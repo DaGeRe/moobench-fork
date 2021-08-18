@@ -38,7 +38,26 @@ function runInspectITZipkin {
     echo " # ${i}.$RECURSION_DEPTH.${k} InspectIT (Zipkin)" >>${BASEDIR}inspectit.log
     startZipkin
     sleep $SLEEP_TIME
-    ${JAVABIN}java ${JAVAARGS_INSPECTIT_MINIMAL} ${JAR} \
+    ${JAVABIN}java ${JAVAARGS_INSPECTIT_ZIPKIN} ${JAR} \
+        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
+        --total-calls ${TOTAL_NUM_OF_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${RECURSION_DEPTH} \
+        --force-terminate \
+        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_"$RECURSION_DEPTH"_inspectit.txt
+    sleep $SLEEP_TIME
+    stopBackgroundProcess
+}
+
+function runInspectITPrometheus {
+    # InspectIT (minimal)
+    k=`expr ${k} + 1`
+    echo " # ${i}.$RECURSION_DEPTH.${k} InspectIT (Prometheus)"
+    echo " # ${i}.$RECURSION_DEPTH.${k} InspectIT (Prometheus)" >>${BASEDIR}inspectit.log
+    startPrometheus
+    sleep $SLEEP_TIME
+    ${JAVABIN}java ${JAVAARGS_INSPECTIT_PROMETHEUS} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
@@ -71,6 +90,9 @@ function printIntermediaryResults {
     
     echo -n "Intermediary results inspectIT Zipkin "
     cat results-inspectit/raw-*-"$RECURSION_DEPTH"-2.csv | awk -F';' '{print $2}' | getSum
+    
+    echo -n "Intermediary results inspectIT Prometheus "
+    cat results-inspectit/raw-*-"$RECURSION_DEPTH"-3.csv | awk -F';' '{print $2}' | getSum
 }
 
 JAVABIN=""
@@ -108,8 +130,9 @@ JAR="-jar MooBench.jar --application moobench.application.MonitoredClassSimple"
 JAVAARGS_NOINSTR="${JAVAARGS}"
 JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-ocelot-agent-1.11.1.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties"
 JAVAARGS_INSPECTIT_DEACTIVATED="${JAVAARGS_LTW} -Dinspectit.service-name=moobench-inspectit -Dinspectit.exporters.metrics.prometheus.enabled=false -Dinspectit.exporters.tracing.zipkin.enabled=false -Dinspectit.config.file-based.path=${BASEDIR}config/onlyInstrument/"
-JAVAARGS_INSPECTIT_MINIMAL="${JAVAARGS_LTW} -Dinspectit.service-name=moobench-inspectit -Dinspectit.exporters.metrics.prometheus.enabled=false -Dinspectit.exporters.tracing.zipkin.url=http://127.0.0.1:9411/api/v2/spans -Dinspectit.config.file-based.path=${BASEDIR}config/zipkin/"
-JAVAARGS_INSPECTIT_FULL="${JAVAARGS_LTW} -Dinspectit.config=${BASEDIR}config/timer/"
+JAVAARGS_INSPECTIT_ZIPKIN="${JAVAARGS_LTW} -Dinspectit.service-name=moobench-inspectit -Dinspectit.exporters.metrics.prometheus.enabled=false -Dinspectit.exporters.tracing.zipkin.url=http://127.0.0.1:9411/api/v2/spans -Dinspectit.config.file-based.path=${BASEDIR}config/zipkin/"
+JAVAARGS_INSPECTIT_PROMETHEUS="${JAVAARGS_LTW} -Dinspectit.service-name=moobench-inspectit -Dinspectit.exporters.metrics.zipkin.enabled=false -Dinspectit.exporters.metrics.prometheus.enabled=true -Dinspectit.config.file-based.path=${BASEDIR}config/prometheus/"
+
 
 writeConfiguration
 
@@ -126,6 +149,9 @@ for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
     cleanup
 
     runInspectITZipkin
+    cleanup
+    
+    runInspectITPrometheus
     cleanup
     
     printIntermediaryResults
