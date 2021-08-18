@@ -170,6 +170,15 @@ function printIntermediaryResults {
     fi
 }
 
+function downloadOpentelemetry() {
+	if [ ! -f ${BASEDIR}lib/opentelemetry-javaagent-all.jar ]
+	then
+		mkdir -p ${BASEDIR}lib
+		wget --output-document=${BASEDIR}lib/opentelemetry-javaagent-all.jar \
+			https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent-all.jar
+	fi
+}
+
 
 JAVABIN=""
 
@@ -200,9 +209,6 @@ JAVAARGS="-server"
 JAVAARGS="${JAVAARGS} "
 JAVAARGS="${JAVAARGS} -Xms1G -Xmx2G"
 JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
-#JAVAARGS="${JAVAARGS} -XX:+PrintInlining"
-#JAVAARGS="${JAVAARGS} -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation"
-#JAVAARGS="${JAVAARGS} -Djava.compiler=NONE"
 JAR="-jar MooBench.jar"
 
 if [ ! -f "MooBench.jar" ]
@@ -211,12 +217,7 @@ then
 	exit 1
 fi
 
-if [ ! -f ${BASEDIR}lib/opentelemetry-javaagent-all.jar ]
-then
-	mkdir -p ${BASEDIR}lib
-	wget --output-document=${BASEDIR}lib/opentelemetry-javaagent-all.jar \
-		https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent-all.jar
-fi
+downloadOpentelemetry
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
 JAVAARGS_OPENTELEMETRY_BASIC="${JAVAARGS} -javaagent:${BASEDIR}lib/opentelemetry-javaagent-all.jar -Dotel.resource.attributes=service.name=moobench -Dotel.instrumentation.methods.include=moobench.application.MonitoredClassSimple[monitoredMethod];moobench.application.MonitoredClassThreaded[monitoredMethod]"

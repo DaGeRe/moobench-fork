@@ -18,6 +18,8 @@ fi
 
 source ../../common-functions.sh
 
+getKiekerAgent
+
 if [ -f "${BASE_DIR}/common-functions" ] ; then
 	. ${BASE_DIR}/common-functions
 else
@@ -104,15 +106,7 @@ RECEIVER[5]="${BASE_DIR}/collector-2.0/bin/collector -p 2345"
 RECEIVER[5]="${BASE_DIR}/receiver/bin/receiver 2345"
 
 # Create R labels
-LABELS=""
-for I in "${TITLE[@]}" ; do
-	title="$I"
-	if [ "$LABELS" == "" ] ; then
-		LABELS="\"$title\""
-	else
-		LABELS="${LABELS}, \"$title\""
-	fi
-done
+LABELS=$(createRLabels)
 
 ## Write configuration
 uname -a >${RESULTS_DIR}/configuration.txt
