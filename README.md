@@ -16,6 +16,7 @@ Initially, the following steps are required:
 All experiments are started with the provided "External Controller" scripts. The following scripts are available
 * for Kieker: In `frameworks/Kieker/scripts/benchmark.sh` for regular execution and `frameworks/Kieker/scripts/runExponentialSizes.sh` for execution of different call tree depth sizes
 * for OpenTelemetry: `frameworks/opentelemetry/benchmark.sh` for regular execution and `frameworks/opentelemetry/runExponentialSizes.sh` for execution of different call tree depth sizes
+
 All scripts have been tested on Ubuntu and Raspbian. 
 
 The execution may be parameterized by the following environment variables:
@@ -25,6 +26,7 @@ The execution may be parameterized by the following environment variables:
 * MAXRECURSIONDEPTH   recursion up to this depth (default 10)
 * TOTALCALLS          the duration of the benchmark (deafult 2,000,000 calls)
 * METHODTIME          the time per monitored call (default 0 ns or 500 us)
+
 If they are unset, the values are set via `frameworks/common-function.sh`.
 
 Typical call (using Ubuntu):
