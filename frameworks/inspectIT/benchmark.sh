@@ -67,7 +67,7 @@ getInspectItAgent
 #MOREPARAMS="--quickstart"
 MOREPARAMS="${MOREPARAMS}"
 
-TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_LOOPS} + ${SLEEPTIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_LOOPS} `
+TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEPTIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
 
 echo "Removing and recreating '$RESULTSDIR'"
@@ -93,10 +93,10 @@ JAVAARGS_INSPECTIT_FULL="${JAVAARGS_LTW} -Dinspectit.config=${BASEDIR}config/tim
 writeConfiguration
 
 ## Execute Benchmark
-for ((i=1;i<=${NUM_LOOPS};i+=1)); do
+for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
     k=0
-    echo "## Starting iteration ${i}/${NUM_LOOPS}"
-    echo "## Starting iteration ${i}/${NUM_LOOPS}" >>${BASEDIR}inspectit.log
+    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}"
+    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >>${BASEDIR}inspectit.log
 
     runNoInstrumentation
     cleanup
@@ -117,7 +117,7 @@ mv ${BASEDIR}inspectit.log ${RESULTSDIR}inspectit.log
 R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
 output_fn="${RESULTSDIR}results-timeseries.pdf"
-configs.loop=${NUM_LOOPS}
+configs.loop=${NUM_OF_LOOPS}
 configs.recursion=c(${RECURSION_DEPTH})
 configs.labels=c("No Probe","InspectIT (minimal)","InspectIT (without CMR)","InspectIT (with CMR)")
 configs.colors=c("black","red","blue","green")
@@ -130,7 +130,7 @@ EOF
 R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
 output_fn="${RESULTSDIR}results-timeseries-average.pdf"
-configs.loop=${NUM_LOOPS}
+configs.loop=${NUM_OF_LOOPS}
 configs.recursion=c(${RECURSION_DEPTH})
 configs.labels=c("No Probe","InspectIT (minimal)","InspectIT (without CMR)","InspectIT (with CMR)")
 configs.colors=c("black","red","blue","green")
@@ -143,7 +143,7 @@ EOF
 R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
 outtxt_fn="${RESULTSDIR}results-text.txt"
-configs.loop=${NUM_LOOPS}
+configs.loop=${NUM_OF_LOOPS}
 configs.recursion=c(${RECURSION_DEPTH})
 configs.labels=c("No Probe","InspectIT (minimal)","InspectIT (without CMR)","InspectIT (with CMR)")
 results.count=${TOTALCALLS}
