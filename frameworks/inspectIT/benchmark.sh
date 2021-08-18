@@ -13,15 +13,31 @@ function runNoInstrumentation {
         ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_"$RECURSION_DEPTH"_noinstrumentation.txt
 }
 
+function runInspectITDeactivated {
+    # InspectIT (minimal)
+    k=`expr ${k} + 1`
+    echo " # ${i}.$RECURSION_DEPTH.${k} InspectIT (deactivated)"
+    echo " # ${i}.$RECURSION_DEPTH.${k} InspectIT (deactivated)" >>${BASEDIR}inspectit.log
+    sleep $SLEEP_TIME
+    ${JAVABIN}java ${JAVAARGS_INSPECTIT_DEACTIVATED} ${JAR} \
+        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
+        --total-calls ${TOTAL_NUM_OF_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${RECURSION_DEPTH} \
+        --force-terminate \
+        ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_"$RECURSION_DEPTH"_inspectit.txt
+    sleep $SLEEP_TIME
+}
+
+
 function runInspectITZipkin {
     # InspectIT (minimal)
     k=`expr ${k} + 1`
-    echo " # ${i}.$RECURSION_DEPTH.${k} InspectIT (minimal)"
-    echo " # ${i}.$RECURSION_DEPTH.${k} InspectIT (minimal)" >>${BASEDIR}inspectit.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} InspectIT (Zipkin)"
+    echo " # ${i}.$RECURSION_DEPTH.${k} InspectIT (Zipkin)" >>${BASEDIR}inspectit.log
     startZipkin
     sleep $SLEEP_TIME
-    echo $JAVAARGS_INSPECTIT_MINIMAL
-    echo $JAR
     ${JAVABIN}java ${JAVAARGS_INSPECTIT_MINIMAL} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
@@ -50,8 +66,11 @@ function printIntermediaryResults {
     echo -n "Intermediary results uninstrumented "
     cat results-inspectit/raw-*-"$RECURSION_DEPTH"-0.csv | awk -F';' '{print $2}' | getSum
     
-    echo -n "Intermediary results inspectIT "
+    echo -n "Intermediary results inspectIT Deactivated"
     cat results-inspectit/raw-*-"$RECURSION_DEPTH"-1.csv | awk -F';' '{print $2}' | getSum
+    
+    echo -n "Intermediary results inspectIT Zipkin "
+    cat results-inspectit/raw-*-"$RECURSION_DEPTH"-2.csv | awk -F';' '{print $2}' | getSum
 }
 
 JAVABIN=""
@@ -88,6 +107,7 @@ JAR="-jar MooBench.jar --application moobench.application.MonitoredClassSimple"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
 JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-ocelot-agent-1.11.1.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties"
+JAVAARGS_INSPECTIT_DEACTIVATED="${JAVAARGS_LTW} -Dinspectit.service-name=moobench-inspectit -Dinspectit.exporters.metrics.prometheus.enabled=false -Dinspectit.exporters.tracing.zipkin.enabled=false -Dinspectit.config.file-based.path=${BASEDIR}config/onlyInstrument/"
 JAVAARGS_INSPECTIT_MINIMAL="${JAVAARGS_LTW} -Dinspectit.service-name=moobench-inspectit -Dinspectit.exporters.metrics.prometheus.enabled=false -Dinspectit.exporters.tracing.zipkin.url=http://127.0.0.1:9411/api/v2/spans -Dinspectit.config.file-based.path=${BASEDIR}config/zipkin/"
 JAVAARGS_INSPECTIT_FULL="${JAVAARGS_LTW} -Dinspectit.config=${BASEDIR}config/timer/"
 
@@ -100,6 +120,9 @@ for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
     echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >>${BASEDIR}inspectit.log
 
     runNoInstrumentation
+    cleanup
+
+    runInspectITDeactivated
     cleanup
 
     runInspectITZipkin
