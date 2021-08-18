@@ -47,6 +47,36 @@ function createRLabels() {
 	echo $LABELS
 }
 
+function startZipkin {
+	if [ ! -d zipkin ]
+	then
+		mkdir zipkin
+		cd zipkin
+		curl -sSL https://zipkin.io/quickstart.sh | bash -s
+	else
+		cd zipkin
+	fi
+	java -Xmx6g -jar zipkin.jar &> zipkin.txt &
+	sleep 5
+	cd ..
+}
+
+function startPrometheus {
+	if [ ! -d prometheus-2.28.1.linux-amd64 ]
+	then
+		wget https://github.com/prometheus/prometheus/releases/download/v2.28.1/prometheus-2.28.1.linux-amd64.tar.gz
+		tar -xvf prometheus-2.28.1.linux-amd64.tar.gz
+		rm prometheus-2.28.1.linux-amd64.tar.gz
+	fi
+	cd prometheus-2.28.1.linux-amd64
+	./prometheus &> prometheus.log &
+	cd ..
+}
+
+function stopBackgroundProcess {
+	kill %1
+}
+
 function writeConfiguration() {
 	uname -a >${RESULTS_DIR}configuration.txt
 	${JAVABIN}java ${JAVAARGS} -version 2>>${RESULTS_DIR}configuration.txt

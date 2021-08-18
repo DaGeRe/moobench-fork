@@ -34,24 +34,6 @@ function runInspectITZipkin {
     stopBackgroundProcess
 }
 
-function startZipkin {
-	if [ ! -d zipkin ]
-	then
-		mkdir zipkin
-		cd zipkin
-		curl -sSL https://zipkin.io/quickstart.sh | bash -s
-	else
-		cd zipkin
-	fi
-	java -Xmx6g -jar zipkin.jar &> zipkin.txt &
-	sleep 5
-	cd ..
-}
-
-function stopBackgroundProcess {
-	kill %1
-}
-
 function cleanup {
 	[ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
 	echo >>${BASEDIR}inspectit.log
