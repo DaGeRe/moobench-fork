@@ -1,5 +1,4 @@
-The MooBench Monitoring Overhead Micro-Benchmark 
-------------------------------------------------------------------------
+# The MooBench Monitoring Overhead Micro-Benchmark 
 
 Website: http://kieker-monitoring.net/MooBench
 
@@ -9,8 +8,10 @@ Currenly (fully) supported monitoring frameworks are:
 * Kieker (http://kieker-monitoring.net)
 * OpenTelemetry (https://opentelemetry.io/)
 
+## Benchmark Execution
+
 Initially, the following steps are required:
-1. Make sure, that you've installed R (http://www.r-project.org/) to generate the results (Ubuntu: `sudo apt install r-base`).
+1. Make sure, that you've installed R (http://www.r-project.org/) to generate the results (Ubuntu: `sudo apt install r-base`) and awk to install intermediate results (Ubuntu: `sudo apt install gawk`).
 2. Compile the application by calling `./gradlew assemble`.
 
 All experiments are started with the provided "External Controller" scripts. The following scripts are available
@@ -37,8 +38,7 @@ cd frameworks/opentelemetry/
 ./benchmark.sh
 ```
 
-Analyzing the data
-===================
+## Data Analysis
 In the folder /bin/r are some R scripts provided to generate graphs to 
 visualize the results. In the top the files, one can configure the 
 required paths and the configuration used to analyze the data.
