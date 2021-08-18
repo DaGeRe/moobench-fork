@@ -30,8 +30,12 @@ The execution may be parameterized by the following environment variables:
 If they are unset, the values are set via `frameworks/common-function.sh`.
 
 Typical call (using Ubuntu):
-$ export SLEEPTIME=1 && ./gradlew assemble && cd frameworks/opentelemetry/ && ./benchmark.sh
-
+```
+export SLEEPTIME=1 
+./gradlew assemble 
+cd frameworks/opentelemetry/ 
+./benchmark.sh
+```
 
 Analyzing the data:
 ===================
