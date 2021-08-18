@@ -1,8 +1,0 @@
-Folder structure:
-
-agent/  -> add from download
-CMR/    -> add from download
-config/ -> present and preconfigured
-
-
-the -inner experiments require a customized version of inspectIT, that is able to deactivate parts of its probes
