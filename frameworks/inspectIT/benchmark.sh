@@ -18,7 +18,6 @@ function runInspectITZipkin {
     k=`expr ${k} + 1`
     echo " # ${i}.$RECURSION_DEPTH.${k} InspectIT (minimal)"
     echo " # ${i}.$RECURSION_DEPTH.${k} InspectIT (minimal)" >>${BASEDIR}inspectit.log
-    #${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr-mod.jar 1>>${BASEDIR}logs/out.log 2>&1 &
     startZipkin
     sleep $SLEEP_TIME
     echo $JAVAARGS_INSPECTIT_MINIMAL
@@ -29,6 +28,7 @@ function runInspectITZipkin {
         --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${RECURSION_DEPTH} \
+        --force-terminate \
         ${MOREPARAMS} &> ${RESULTSDIR}output_"$i"_"$RECURSION_DEPTH"_inspectit.txt
     sleep $SLEEP_TIME
     stopBackgroundProcess
@@ -66,10 +66,10 @@ function getSum {
 
 function printIntermediaryResults {
     echo -n "Intermediary results uninstrumented "
-    cat tmp/results-inspectit/raw-*-$RECURSIONDEPTH-0.csv | awk -F';' '{print $2}' | getSum
+    cat results-inspectit/raw-*-"$RECURSION_DEPTH"-0.csv | awk -F';' '{print $2}' | getSum
     
     echo -n "Intermediary results inspectIT "
-    cat tmp/results-inspectit/raw-*-$RECURSIONDEPTH-1.csv | awk -F';' '{print $2}' | getSum
+    cat results-inspectit/raw-*-"$RECURSION_DEPTH"-1.csv | awk -F';' '{print $2}' | getSum
 }
 
 JAVABIN=""
@@ -80,18 +80,12 @@ RESULTSDIR="${BASEDIR}results-inspectit/"
 
 source ../common-functions.sh
 
-if [ ! -d agent ]
-then
-	mkdir agent
-	cd agent
-	wget https://github.com/inspectIT/inspectit-ocelot/releases/download/1.10.1/inspectit-ocelot-agent-1.10.1.jar
-	cd ..
-fi
+getInspectItAgent
 
 #MOREPARAMS="--quickstart"
 MOREPARAMS="${MOREPARAMS}"
 
-TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEPTIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSIONDEPTH} + 50 \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} `
+TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_LOOPS} + ${SLEEPTIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
 
 echo "Removing and recreating '$RESULTSDIR'"
@@ -101,27 +95,23 @@ mkdir ${RESULTSDIR}stat/
 # Clear inspectit.log and initialize logging
 rm -f ${BASEDIR}inspectit.log
 touch ${BASEDIR}inspectit.log
-mkdir ${BASEDIR}logs/
 
 RAWFN="${RESULTSDIR}raw"
 
 JAVAARGS="-server"
 JAVAARGS="${JAVAARGS} -Xms1G -Xmx2G"
-JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
+JAVAARGS="${JAVAARGS} -verbose:gc "
 JAR="-jar MooBench.jar --application moobench.application.MonitoredClassSimple"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-ocelot-agent-1.10.1.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties"
-JAVAARGS_INSPECTIT_MINIMAL="${JAVAARGS_LTW} -Dinspectit.service-name=moobench-inspectit -Dinspectit.exporters.tracing.zipkin.url=http://127.0.0.1:9411/api/v2/spans -Dinspectit.config.file-based.path=${BASEDIR}config/zipkin/"
+JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-ocelot-agent-1.11.1.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties"
+JAVAARGS_INSPECTIT_MINIMAL="${JAVAARGS_LTW} -Dinspectit.service-name=moobench-inspectit -Dinspectit.exporters.metrics.prometheus.enabled=false -Dinspectit.exporters.tracing.zipkin.url=http://127.0.0.1:9411/api/v2/spans -Dinspectit.config.file-based.path=${BASEDIR}config/zipkin/"
 JAVAARGS_INSPECTIT_FULL="${JAVAARGS_LTW} -Dinspectit.config=${BASEDIR}config/timer/"
-
-CMR_ARGS=" -Xms12G -Xmx12G -Xmn4G -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution "
 
 writeConfiguration
 
 ## Execute Benchmark
 for ((i=1;i<=${NUM_LOOPS};i+=1)); do
-    j=${RECURSIONDEPTH}
     k=0
     echo "## Starting iteration ${i}/${NUM_LOOPS}"
     echo "## Starting iteration ${i}/${NUM_LOOPS}" >>${BASEDIR}inspectit.log
@@ -137,8 +127,7 @@ done
 zip -jqr ${RESULTSDIR}stat.zip ${RESULTSDIR}stat
 rm -rf ${RESULTSDIR}stat/
 mv ${BASEDIR}inspectit.log ${RESULTSDIR}inspectit.log
-mv ${BASEDIR}logs/ ${RESULTSDIR}
-[ -f ${RESULTSDIR}hotspot-1-${RECURSIONDEPTH}-1.log ] && grep "<task " ${RESULTSDIR}hotspot-*.log >${RESULTSDIR}log.log
+[ -f ${RESULTSDIR}hotspot-1-${RECURSION_DEPTH}-1.log ] && grep "<task " ${RESULTSDIR}hotspot-*.log >${RESULTSDIR}log.log
 [ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTSDIR}
 
 ## Generate Results file
@@ -147,7 +136,7 @@ R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
 output_fn="${RESULTSDIR}results-timeseries.pdf"
 configs.loop=${NUM_LOOPS}
-configs.recursion=c(${RECURSIONDEPTH})
+configs.recursion=c(${RECURSION_DEPTH})
 configs.labels=c("No Probe","InspectIT (minimal)","InspectIT (without CMR)","InspectIT (with CMR)")
 configs.colors=c("black","red","blue","green")
 results.count=${TOTALCALLS}
@@ -160,7 +149,7 @@ R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
 output_fn="${RESULTSDIR}results-timeseries-average.pdf"
 configs.loop=${NUM_LOOPS}
-configs.recursion=c(${RECURSIONDEPTH})
+configs.recursion=c(${RECURSION_DEPTH})
 configs.labels=c("No Probe","InspectIT (minimal)","InspectIT (without CMR)","InspectIT (with CMR)")
 configs.colors=c("black","red","blue","green")
 results.count=${TOTALCALLS}
@@ -173,7 +162,7 @@ R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
 outtxt_fn="${RESULTSDIR}results-text.txt"
 configs.loop=${NUM_LOOPS}
-configs.recursion=c(${RECURSIONDEPTH})
+configs.recursion=c(${RECURSION_DEPTH})
 configs.labels=c("No Probe","InspectIT (minimal)","InspectIT (without CMR)","InspectIT (with CMR)")
 results.count=${TOTALCALLS}
 results.skip=${TOTALCALLS}*3/4

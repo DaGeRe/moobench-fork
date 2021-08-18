@@ -23,6 +23,16 @@ function getKiekerAgent() {
 	fi
 }
 
+function getInspectItAgent() {
+	if [ ! -d agent ]
+	then
+		mkdir agent
+		cd agent
+		wget https://github.com/inspectIT/inspectit-ocelot/releases/download/1.11.1/inspectit-ocelot-agent-1.11.1.jar
+		cd ..
+	fi
+}
+
 function createRLabels() {
 	# Create R labels
 	LABELS=""
