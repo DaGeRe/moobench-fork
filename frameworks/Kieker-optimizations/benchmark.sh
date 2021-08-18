@@ -21,7 +21,7 @@ source ../common-functions.sh
 if [ -f "${BASE_DIR}/common-functions" ] ; then
 	. ${BASE_DIR}/common-functions
 else
-	echo "Missing configuration: ${BASE_DIR}/common-functions"
+	echo "Missing common functions: ${BASE_DIR}/common-functions"
 	exit 1
 fi
 
@@ -38,10 +38,7 @@ else
 	OPTION="$2"
 fi
 
-# get agent
-export VERSION_PATH=`curl "https://oss.sonatype.org/service/local/repositories/snapshots/content/net/kieker-monitoring/kieker/" | grep '<resourceURI>' | sed 's/ *<resourceURI>//g' | sed 's/<\/resourceURI>//g' | grep '/$'`
-export AGENT_PATH=`curl "${VERSION_PATH}" | grep 'aspectj.jar</resourceURI' | sort | sed 's/ *<resourceURI>//g' | sed 's/<\/resourceURI>//g' | tail -1`
-curl "${AGENT_PATH}" > "${AGENT}"
+getKiekerAgent
 
 # test input parameters and configuration
 #checkFile R-script "${RSCRIPT_PATH}"
@@ -245,7 +242,7 @@ function execute-benchmark-body() {
 
 function printIntermediaryResults {
    for ((index=0;index<${#WRITER_CONFIG[@]};index+=1)); do
-      echo -n "Intermediary results "$TITLE[$index]" "
+      echo -n "Intermediary results "${TITLE[$index]}" "
       cat results-kieker/raw-*-${RECURSION_DEPTH}-${index}.csv | awk -F';' '{print $2}' | getSum
    done
 }
