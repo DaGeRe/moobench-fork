@@ -14,6 +14,6 @@ BENCHMARK="java -jar benchmark/build/libs/benchmark.jar"
 BATCH_MODE="yes"
 
 # in-jar locations
-AOP="file:"$(pwd)"/../src/META-INF/kieker.aop.xml"
+AOP="file:"$(pwd)"/kieker.aop.xml"
 
 # end
