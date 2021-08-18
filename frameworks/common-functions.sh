@@ -23,6 +23,20 @@ function getKiekerAgent() {
 	fi
 }
 
+function createRLabels() {
+	# Create R labels
+	LABELS=""
+	for I in "${TITLE[@]}" ; do
+		title="$I"
+		if [ "$LABELS" == "" ] ; then
+			LABELS="\"$title\""
+		else
+			LABELS="${LABELS}, \"$title\""
+		fi
+	done
+	echo $LABELS
+}
+
 # Initialize all unset parameters
 if [ -z $SLEEP_TIME ]; then
 	SLEEP_TIME=30           ## 30
