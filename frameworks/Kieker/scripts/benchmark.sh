@@ -18,6 +18,8 @@ fi
 
 source ../../common-functions.sh
 
+getKiekerAgent
+
 if [ -f "${BASE_DIR}/common-functions" ] ; then
 	. ${BASE_DIR}/common-functions
 else
