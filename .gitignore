@@ -25,6 +25,7 @@ frameworks/inspectIT/tmp/
 frameworks/inspectIT/zipkin/
 frameworks/inspectIT/configuration.txt
 frameworks/inspectIT/results-inspectit/
+frameworks/inspectIT/prometheus-2.28.1.linux-amd64/
 frameworks/opentelemetry/results-opentelemetry/
 frameworks/opentelemetry/opentelemetry.log
 frameworks/opentelemetry/tmp/
