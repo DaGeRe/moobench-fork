@@ -64,6 +64,21 @@ function createRLabels() {
 	echo $LABELS
 }
 
+## Generate Results file
+function run-r() {
+R --vanilla --silent << EOF
+results_fn="${RAWFN}"
+outtxt_fn="${RESULTS_DIR}/results-text.txt"
+outcsv_fn="${RESULTS_DIR}/results-text.csv"
+configs.loop=${NUM_OF_LOOPS}
+configs.recursion=${RECURSION_DEPTH}
+configs.labels=c($LABELS)
+results.count=${TOTAL_NUM_OF_CALLS}
+results.skip=${TOTAL_NUM_OF_CALLS}/2
+source("${RSCRIPT_PATH}")
+EOF
+}
+
 function startZipkin {
 	if [ ! -d zipkin ]
 	then

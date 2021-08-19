@@ -105,9 +105,6 @@ WRITER_CONFIG[5]="-Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.Single
 RECEIVER[5]="${BASE_DIR}/collector-2.0/bin/collector -p 2345"
 RECEIVER[5]="${BASE_DIR}/receiver/bin/receiver 2345"
 
-# Create R labels
-LABELS=$(createRLabels)
-
 ## Write configuration
 uname -a >${RESULTS_DIR}/configuration.txt
 ${JAVA_BIN} ${JAVA_ARGS} -version 2>>${RESULTS_DIR}/configuration.txt
@@ -214,21 +211,6 @@ function execute-benchmark() {
   [ -f ${DATA_DIR}/errorlog.txt ] && mv ${DATA_DIR}/errorlog.txt ${RESULTS_DIR}
 }
 
-## Generate Results file
-function run-r() {
-R --vanilla --silent << EOF
-results_fn="${RAWFN}"
-outtxt_fn="${RESULTS_DIR}/results-text.txt"
-outcsv_fn="${RESULTS_DIR}/results-text.csv"
-configs.loop=${NUM_OF_LOOPS}
-configs.recursion=${RECURSION_DEPTH}
-configs.labels=c($LABELS)
-results.count=${TOTAL_NUM_OF_CALLS}
-results.skip=${TOTAL_NUM_OF_CALLS}/2
-source("${RSCRIPT_PATH}")
-EOF
-}
-
 ## Execute benchmark
 if [ "$MODE" == "execute" ] ; then
    if [ "$OPTION" == "" ] ; then
@@ -236,7 +218,11 @@ if [ "$MODE" == "execute" ] ; then
    else
      execute-benchmark-body $OPTION 1 1
    fi
+   
+   # Create R labels
+   LABELS=$(createRLabels)
    run-r
+   
    cleanup-results
 else
    execute-benchmark-body $OPTION 1 1
