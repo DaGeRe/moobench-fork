@@ -1,18 +1,4 @@
 #!/bin/bash
-# This file is configured for linux instead of solaris!!!
-
-function startZipkin {
-	if [ ! -d zipkin ]
-	then
-		mkdir zipkin
-		cd zipkin
-		curl -sSL https://zipkin.io/quickstart.sh | bash -s
-	fi
-	cd zipkin
-	java -Xmx6g -jar zipkin.jar &> zipkin.txt &
-	sleep 5
-	cd ..
-}
 
 function startJaeger {
 	if [ ! -d jaeger-1.24.0-linux-amd64 ]
@@ -27,56 +13,56 @@ function startJaeger {
 }
 
 function cleanup {
-	[ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-$RECURSION_DEPTH-${k}.log
-	echo >>${BASEDIR}opentelemetry.log
-	echo >>${BASEDIR}opentelemetry.log
+	[ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-$RECURSION_DEPTH-${k}.log
+	echo >>${BASE_DIR}/opentelemetry.log
+	echo >>${BASE_DIR}/opentelemetry.log
 	sync
 	sleep ${SLEEP_TIME}
 }
 
 function runNoInstrumentation {
     # No instrumentation
-    echo " # ${i}.$RECURSION_DEPTH.${k} No instrumentation"
-    echo " # ${i}.$RECURSION_DEPTH.${k} No instrumentation" >>${BASEDIR}opentelemetry.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/opentelemetry.log
     ${JAVABIN}java ${JAVAARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
         --recursion-depth $RECURSION_DEPTH \
-        ${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_uninstrumented.txt
+        ${MOREPARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
 }
 
 function runOpenTelemetryNoLogging {
     # OpenTelemetry Instrumentation Logging Deactivated
     k=`expr ${k} + 1`
-    echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Logging Deactivated"
-    echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Logging Deactivated" >>${BASEDIR}opentelemetry.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/opentelemetry.log
     ${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_LOGGING_DEACTIVATED} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
         --recursion-depth $RECURSION_DEPTH \
-        ${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry.txt
+        ${MOREPARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
 }
 
 function runOpenTelemetryLogging {
     # OpenTelemetry Instrumentation Logging
     k=`expr ${k} + 1`
-    echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Logging"
-    echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Logging" >>${BASEDIR}opentelemetry.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/opentelemetry.log
     ${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_LOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
         --recursion-depth $RECURSION_DEPTH \
-        ${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry_logging.txt
+        ${MOREPARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
     if [ ! "$DEBUG" = true ]
     then
     	echo "DEBUG is $DEBUG, deleting opentelemetry logging file"
-    	rm ${RESULTS_DIR}output_"$i"_opentelemetry_logging.txt
+    	rm ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
     fi
 }
 
@@ -84,15 +70,15 @@ function runOpenTelemetryZipkin {
     # OpenTelemetry Instrumentation Zipkin
     k=`expr ${k} + 1`
     startZipkin
-    echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Zipkin"
-    echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Zipkin" >>${BASEDIR}opentelemetry.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/opentelemetry.log
     ${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_ZIPKIN} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
         --recursion-depth $RECURSION_DEPTH \
-        ${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry_zipkin.txt
+        ${MOREPARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
     stopBackgroundProcess
 }
 
@@ -100,15 +86,15 @@ function runOpenTelemetryJaeger {
 	# OpenTelemetry Instrumentation Jaeger
 	k=`expr ${k} + 1`
 	startJaeger
-	echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Jaeger"
-	echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Jaeger" >>${BASEDIR}opentelemetry.log
+	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/opentelemetry.log
 	${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_JAEGER} ${JAR} \
 		--output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
 		--total-calls ${TOTAL_NUM_OF_CALLS} \
-		--method-time ${METHODTIME} \
+		--method-time ${METHOD_TIME} \
 		--total-threads ${THREADS} \
 		--recursion-depth $RECURSION_DEPTH \
-		${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry_jaeger.txt
+		${MOREPARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
 	stopBackgroundProcess
 }
 
@@ -116,51 +102,25 @@ function runOpenTelemetryPrometheus {
 	# OpenTelemetry Instrumentation Prometheus
 	k=`expr ${k} + 1`
 	startPrometheus
-	echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Prometheus"
-	echo " # ${i}.$RECURSION_DEPTH.${k} OpenTelemetry Instrumentation Prometheus" >>${BASEDIR}opentelemetry.log
+	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/opentelemetry.log
 	${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_PROMETHEUS} ${JAR} \
 		--output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
 		--total-calls ${TOTAL_NUM_OF_CALLS} \
 		--method-time ${METHOD_TIME} \
 		--total-threads ${THREADS} \
 		--recursion-depth $RECURSION_DEPTH \
-		${MOREPARAMS} &> ${RESULTS_DIR}output_"$i"_opentelemetry_prometheus.txt
+		${MOREPARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
 	stopBackgroundProcess
-}
-
-function printIntermediaryResults {
-    echo -n "Intermediary results uninstrumented "
-    cat results-opentelemetry/raw-*-$RECURSION_DEPTH-0.csv | awk -F';' '{print $2}' | getSum
-    
-    echo -n "Intermediary results opentelemetry Logging Deactivated "
-    cat results-opentelemetry/raw-*-$RECURSION_DEPTH-1.csv | awk -F';' '{print $2}' | getSum
-    
-    echo -n "Intermediary results opentelemetry Logging "
-    cat results-opentelemetry/raw-*-$RECURSION_DEPTH-2.csv | awk -F';' '{print $2}' | getSum
-    
-    echo -n "Intermediary results opentelemetry Zipkin "
-    cat results-opentelemetry/raw-*-$RECURSION_DEPTH-3.csv | awk -F';' '{print $2}' | getSum
-    
-    MACHINE_TYPE=`uname -m`; 
-    if [ ${MACHINE_TYPE} == 'x86_64' ]
-    then
-        echo -n "Intermediary results opentelemetry Jaeger "
-    	cat results-opentelemetry/raw-*-$RECURSION_DEPTH-4.csv | awk -F';' '{print $2}' | getSum
-    
-    	# Prometheus does not work currently
-	#echo -n "Intermediary results opentelemetry Prometheus"
-    	#cat results-opentelemetry/raw-*-$RECURSION_DEPTH-5.csv | awk -F';' '{print $2}' | getSum
-    fi
 }
 
 JAVABIN=""
 
-RSCRIPTDIR=r/
-BASEDIR=./
-RESULTS_DIR="${BASEDIR}results-opentelemetry/"
+BASE_DIR=$(pwd)
+RSCRIPT_PATH="../stats.csv.r"
 
 source ../common-functions.sh
-echo "NUM_OF_LOOPS: $NUM_OF_LOOPS"
+source labels.sh
 
 #MOREPARAMS="--quickstart"
 MOREPARAMS="--application moobench.application.MonitoredClassSimple ${MOREPARAMS}"
@@ -173,15 +133,13 @@ echo "Cleaning and recreating '$RESULTS_DIR'"
 #mkdir ${RESULTS_DIR}stat/
 
 # Clear opentelemetry.log and initialize logging
-rm -f ${BASEDIR}opentelemetry.log
-touch ${BASEDIR}opentelemetry.log
-
-RAWFN="${RESULTS_DIR}raw"
+rm -f ${BASE_DIR}/opentelemetry.log
+touch ${BASE_DIR}/opentelemetry.log
 
 JAVAARGS="-server"
 JAVAARGS="${JAVAARGS} "
 JAVAARGS="${JAVAARGS} -Xms1G -Xmx2G"
-JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
+JAVAARGS="${JAVAARGS} -verbose:gc "
 JAR="-jar MooBench.jar"
 
 checkMoobenchApplication
@@ -189,34 +147,20 @@ checkMoobenchApplication
 getOpentelemetryAgent
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_OPENTELEMETRY_BASIC="${JAVAARGS} -javaagent:${BASEDIR}lib/opentelemetry-javaagent-all.jar -Dotel.resource.attributes=service.name=moobench -Dotel.instrumentation.methods.include=moobench.application.MonitoredClassSimple[monitoredMethod];moobench.application.MonitoredClassThreaded[monitoredMethod]"
+JAVAARGS_OPENTELEMETRY_BASIC="${JAVAARGS} -javaagent:${BASE_DIR}/lib/opentelemetry-javaagent-all.jar -Dotel.resource.attributes=service.name=moobench -Dotel.instrumentation.methods.include=moobench.application.MonitoredClassSimple[monitoredMethod];moobench.application.MonitoredClassThreaded[monitoredMethod]"
 JAVAARGS_OPENTELEMETRY_LOGGING_DEACTIVATED="${JAVAARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=logging -Dotel.traces.sampler=always_off"
 JAVAARGS_OPENTELEMETRY_LOGGING="${JAVAARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=logging"
 JAVAARGS_OPENTELEMETRY_ZIPKIN="${JAVAARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=zipkin"
 JAVAARGS_OPENTELEMETRY_JAEGER="${JAVAARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=jaeger"
 JAVAARGS_OPENTELEMETRY_PROMETHEUS="${JAVAARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=prometheus"
 
-
-## Write configuration
-uname -a >${RESULTS_DIR}configuration.txt
-${JAVABIN}java ${JAVAARGS} -version 2>>${RESULTS_DIR}configuration.txt
-echo "JAVAARGS: ${JAVAARGS}" >>${RESULTS_DIR}configuration.txt
-echo "" >>${RESULTS_DIR}configuration.txt
-echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}configuration.txt
-echo "" >>${RESULTS_DIR}configuration.txt
-echo "SLEEPTIME=${SLEEPTIME}" >>${RESULTS_DIR}configuration.txt
-echo "NUM_OF_LOOPS=${NUM_OF_LOOPS}" >>${RESULTS_DIR}configuration.txt
-echo "TOTAL_NUM_OF_CALLS=${TOTAL_NUM_OF_CALLS}" >>${RESULTS_DIR}configuration.txt
-echo "METHODTIME=${METHODTIME}" >>${RESULTS_DIR}configuration.txt
-echo "THREADS=${THREADS}" >>${RESULTS_DIR}configuration.txt
-echo "RECURSION_DEPTH=${RECURSION_DEPTH}" >>${RESULTS_DIR}configuration.txt
-sync
+writeConfiguration
 
 ## Execute Benchmark
 for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
     k=0
     echo "## Starting iteration ${i}/${NUM_OF_LOOPS}"
-    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >>${BASEDIR}opentelemetry.log
+    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >>${BASE_DIR}opentelemetry.log
 
     runNoInstrumentation
     cleanup
@@ -237,8 +181,8 @@ for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
 	    cleanup
 	    
 	    # Prometheus does not work currently
-	    #runOpenTelemetryPrometheus
-	    #cleanup
+	    runOpenTelemetryPrometheus
+	    cleanup
     else
     	echo "No 64 Bit System; skipping Prometheus"
     fi
@@ -246,16 +190,15 @@ for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
     printIntermediaryResults
 done
 
+# Create R labels
+LABELS=$(createRLabels)
+run-r
+
 cleanup-results
 
 #zip -jqr ${RESULTS_DIR}stat.zip ${RESULTS_DIR}stat
 #rm -rf ${RESULTS_DIR}stat/
-mv ${BASEDIR}opentelemetry.log ${RESULTS_DIR}opentelemetry.log
+mv ${BASE_DIR}opentelemetry.log ${RESULTS_DIR}opentelemetry.log
 [ -f ${RESULTS_DIR}hotspot-1-${RECURSION_DEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}hotspot-*.log >${RESULTS_DIR}log.log
-[ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTS_DIR}
+[ -f ${BASE_DIR}errorlog.txt ] && mv ${BASE_DIR}errorlog.txt ${RESULTS_DIR}
 
-## Clean up raw results
-#gzip -qr ${RESULTS_DIR}results.zip ${RAWFN}*
-#rm -f ${RAWFN}*
-[ -f ${BASEDIR}nohup.out ] && cp ${BASEDIR}nohup.out ${RESULTS_DIR}
-[ -f ${BASEDIR}nohup.out ] && > ${BASEDIR}nohup.out

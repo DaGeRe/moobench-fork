@@ -84,6 +84,7 @@ function getSum {
 JAVABIN=""
 
 BASE_DIR=$(pwd)
+RSCRIPT_PATH="../stats.csv.r"
 
 source ../common-functions.sh
 source labels.sh
