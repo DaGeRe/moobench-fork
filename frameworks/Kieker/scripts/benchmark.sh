@@ -18,6 +18,10 @@ fi
 
 source ../../common-functions.sh
 
+# Only temporary fix: Overwrite Kieker results folder here
+RESULTS_DIR=../results-Kieker
+RAWFN=$RESULTS_DIR"/raw"
+
 getKiekerAgent
 
 if [ -f "${BASE_DIR}/common-functions" ] ; then
@@ -65,8 +69,6 @@ information "Removing and recreating '$RESULTS_DIR'"
 rm -f ${DATA_DIR}/kieker.log
 touch ${DATA_DIR}/kieker.log
 
-RAWFN="${RESULTS_DIR}/raw"
-
 # general server arguments
 JAVA_ARGS="-server"
 JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx2G"
@@ -85,22 +87,12 @@ declare -a RECEIVER
 declare -a TITLE
 
 # Configurations
-TITLE[0]="No instrumentation"
+source ../labels.sh
 WRITER_CONFIG[0]=""
-
-TITLE[1]="Deactivated probe"
 WRITER_CONFIG[1]="-Dkieker.monitoring.enabled=false -Dkieker.monitoring.writer=kieker.monitoring.writer.dump.DumpWriter"
-
-TITLE[2]="No logging (null writer)"
 WRITER_CONFIG[2]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.dump.DumpWriter"
-
-TITLE[3]="Logging (Generic Text)"
 WRITER_CONFIG[3]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.FileWriter -Dkieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.TextLogStreamHandler -Dkieker.monitoring.writer.filesystem.FileWriter.customStoragePath=${DATA_DIR}/"
-
-TITLE[4]="Logging (Generic Bin)"
 WRITER_CONFIG[4]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.FileWriter -Dkieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.BinaryLogStreamHandler -Dkieker.monitoring.writer.filesystem.FileWriter.bufferSize=8192 -Dkieker.monitoring.writer.filesystem.FileWriter.customStoragePath=${DATA_DIR}/"
-
-TITLE[5]="Logging (Single TCP)"
 WRITER_CONFIG[5]="-Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.SingleSocketTcpWriter -Dkieker.monitoring.writer.tcp.SingleSocketTcpWriter.port=2345"
 RECEIVER[5]="${BASE_DIR}/collector-2.0/bin/collector -p 2345"
 RECEIVER[5]="${BASE_DIR}/receiver/bin/receiver 2345"
@@ -182,13 +174,6 @@ function execute-benchmark-body() {
      kill -TERM $RECEIVER_PID
      unset RECEIVER_PID
   fi
-}
-
-function printIntermediaryResults {
-   for ((index=0;index<${#WRITER_CONFIG[@]};index+=1)); do
-      echo -n "Intermediary results "$TITLE[$index]" "
-      cat results-kieker/raw-*-${RECURSION_DEPTH}-${index}.csv | awk -F';' '{print $2}' | getSum
-   done
 }
 
 ## Execute Benchmark

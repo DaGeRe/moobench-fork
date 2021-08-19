@@ -110,20 +110,32 @@ function stopBackgroundProcess {
 }
 
 function writeConfiguration() {
-	uname -a >${RESULTS_DIR}configuration.txt
-	${JAVABIN}java ${JAVAARGS} -version 2>>${RESULTS_DIR}configuration.txt
-	echo "JAVAARGS: ${JAVAARGS}" >>${RESULTS_DIR}configuration.txt
-	echo "" >>${RESULTS_DIR}configuration.txt
-	echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}configuration.txt
-	echo "" >>${RESULTS_DIR}configuration.txt
-	echo "SLEEPTIME=${SLEEPTIME}" >>${RESULTS_DIR}configuration.txt
-	echo "NUM_OF_LOOPS=${NUM_OF_LOOPS}" >>${RESULTS_DIR}configuration.txt
-	echo "TOTAL_NUM_OF_CALLS=${TOTAL_NUM_OF_CALLS}" >>${RESULTS_DIR}configuration.txt
-	echo "METHODTIME=${METHODTIME}" >>${RESULTS_DIR}configuration.txt
-	echo "THREADS=${THREADS}" >>${RESULTS_DIR}configuration.txt
-	echo "RECURSION_DEPTH=${RECURSION_DEPTH}" >>${RESULTS_DIR}configuration.txt
+	uname -a >${RESULTS_DIR}/configuration.txt
+	${JAVABIN}java ${JAVAARGS} -version 2>>${RESULTS_DIR}/configuration.txt
+	echo "JAVAARGS: ${JAVAARGS}" >>${RESULTS_DIR}/configuration.txt
+	echo "" >>${RESULTS_DIR}/configuration.txt
+	echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}/configuration.txt
+	echo "" >>${RESULTS_DIR}/configuration.txt
+	echo "SLEEPTIME=${SLEEPTIME}" >>${RESULTS_DIR}/configuration.txt
+	echo "NUM_OF_LOOPS=${NUM_OF_LOOPS}" >>${RESULTS_DIR}/configuration.txt
+	echo "TOTAL_NUM_OF_CALLS=${TOTAL_NUM_OF_CALLS}" >>${RESULTS_DIR}/configuration.txt
+	echo "METHODTIME=${METHODTIME}" >>${RESULTS_DIR}/configuration.txt
+	echo "THREADS=${THREADS}" >>${RESULTS_DIR}/configuration.txt
+	echo "RECURSION_DEPTH=${RECURSION_DEPTH}" >>${RESULTS_DIR}/configuration.txt
 	sync
 }
+
+function printIntermediaryResults {
+   for ((index=0;index<${#TITLE[@]};index+=1)); do
+      echo -n "Intermediary results "${TITLE[$index]}" "
+      cat $RESULTS_DIR/raw-*-${RECURSION_DEPTH}-${index}.csv | awk -F';' '{print $2}' | getSum
+   done
+}
+
+
+FRAMEWORK_NAME=$(basename -- "$BASE_DIR")
+RESULTS_DIR="$BASE_DIR/results-$FRAMEWORK_NAME"
+RAWFN=$RESULTS_DIR"/raw"
 
 # Initialize all unset parameters
 if [ -z $SLEEP_TIME ]; then
