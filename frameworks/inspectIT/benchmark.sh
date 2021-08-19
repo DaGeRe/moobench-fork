@@ -141,8 +141,8 @@ for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
     
     printIntermediaryResults
 done
-mv ${BASE_DIR}inspectit.log ${RESULTS_DIR}inspectit.log
-[ -f ${RESULTS_DIR}hotspot-1-${RECURSION_DEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}hotspot-*.log >${RESULTS_DIR}log.log
+mv ${BASE_DIR}/inspectit.log ${RESULTS_DIR}/inspectit.log
+[ -f ${RESULTS_DIR}Hotspot-1-${RECURSION_DEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}hotspot-*.log >${RESULTS_DIR}log.log
 [ -f ${BASE_DIR}errorlog.txt ] && mv ${BASE_DIR}errorlog.txt ${RESULTS_DIR}
 
 # Create R labels
@@ -150,7 +150,7 @@ LABELS=$(createRLabels)
 run-r
 
 ## Clean up raw results
-zip -jqr ${RESULTSDIR}results.zip ${RAWFN}*
+zip -jqr ${RESULTS_DIR}/results.zip ${RAWFN}*
 rm -f ${RAWFN}*
-[ -f ${BASE_DIR}nohup.out ] && cp ${BASE_DIR}nohup.out ${RESULTSDIR}
+[ -f ${BASE_DIR}nohup.out ] && cp ${BASE_DIR}nohup.out ${RESULTS_DIR}
 [ -f ${BASE_DIR}nohup.out ] && > ${BASE_DIR}nohup.out
