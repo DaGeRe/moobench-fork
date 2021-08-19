@@ -100,7 +100,7 @@ TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH
 echo "Experiment will take circa ${TIME} seconds."
 
 echo "Removing and recreating '$RESULTS_DIR'"
-(rm -rf ${RESULTS_DIR}) && mkdir -p ${RESULTS_DIR}
+(rm -rf ${RESULTS_DIR}/**csv) && mkdir -p ${RESULTS_DIR}
 
 # Clear inspectit.log and initialize logging
 rm -f ${BASE_DIR}inspectit.log
