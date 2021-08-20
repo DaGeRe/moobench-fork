@@ -24,6 +24,11 @@ RAWFN=$RESULTS_DIR"/raw"
 
 getKiekerAgent
 
+# copy receiver
+tar -xvpf ${BASE_DIR}/../../../tools/receiver/build/distributions/receiver.tar
+# copy result compiler
+tar -xvpf ${BASE_DIR}/../../../tools/compile-results/build/distributions/compile-results.tar
+
 if [ -f "${BASE_DIR}/common-functions" ] ; then
 	. ${BASE_DIR}/common-functions
 else
