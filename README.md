@@ -11,12 +11,13 @@ Currenly (fully) supported monitoring frameworks are:
 ## Benchmark Execution
 
 Initially, the following steps are required:
-1. Make sure, that you've installed R (http://www.r-project.org/) to generate the results (Ubuntu: `sudo apt install r-base`) and awk to install intermediate results (Ubuntu: `sudo apt install gawk`).
+1. Make sure, that you've installed R (http://www.r-project.org/) to generate the results , awk to install intermediate results and curl to download processing tools (Ubuntu: `sudo apt install r-base gawk curl`).
 2. Compile the application by calling `./gradlew assemble`.
 
 All experiments are started with the provided "External Controller" scripts. The following scripts are available
 * for Kieker: In `frameworks/Kieker/scripts/benchmark.sh` for regular execution and `frameworks/Kieker/scripts/runExponentialSizes.sh` for execution of different call tree depth sizes
-* for OpenTelemetry: `frameworks/opentelemetry/benchmark.sh` for regular execution and `frameworks/opentelemetry/runExponentialSizes.sh` for execution of different call tree depth sizes
+* for OpenTelemetry: `frameworks/OpenTelemetry/benchmark.sh` for regular execution and `frameworks/OpenTelemetry/runExponentialSizes.sh` for execution of different call tree depth sizes
+* for inspectIT: `frameworks/inspectIT/benchmark.sh` for regular execution and `frameworks/inspectIT/runExponentialSizes.sh` for execution of different call tree depth sizes
 
 All scripts have been tested on Ubuntu and Raspbian. 
 
