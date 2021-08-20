@@ -3,7 +3,15 @@ then
 	echo "Please pass the folder that should be analyzed"
 fi
 
-BASE_DIR=$(pwd)/$1
+if [[ "$1" = /* ]]
+then
+	echo "absolute path"
+	BASE_DIR=$1
+else
+	echo "relative path"
+	BASE_DIR=$(pwd)/$1
+fi
+
 source common-functions.sh
 
 source $1/labels.sh
