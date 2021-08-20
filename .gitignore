@@ -11,6 +11,7 @@
 **/bin/**
 frameworks/Kieker/scripts/benchmark/
 frameworks/Kieker/scripts/data/
+frameworks/Kieker/MooBench.jar
 frameworks/Kieker/scripts/kieker-*-aspectj.jar
 frameworks/Kieker/scripts/receiver/
 frameworks/Kieker/results-Kieker/

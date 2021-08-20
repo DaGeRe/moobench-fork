@@ -137,9 +137,9 @@ function execute-experiment() {
        BENCHMARK_OPTS="${JAVA_ARGS} ${LTW_ARGS} ${KIEKER_ARGS} ${kieker_parameters}"
     fi
     
-    echo ${BENCHMARK_OPTS}" -jar benchmark/build/libs/benchmark.jar"
+    echo ${BENCHMARK_OPTS}" -jar ../MooBench.jar"
 
-    ${JAVABIN}java ${BENCHMARK_OPTS} -jar benchmark/build/libs/benchmark.jar \
+    ${JAVABIN}java ${BENCHMARK_OPTS} -jar ../MooBench.jar \
 	--application moobench.application.MonitoredClassSimple \
         --output-filename ${RAWFN}-${loop}-${recursion}-${index}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
