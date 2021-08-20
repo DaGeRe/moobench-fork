@@ -29,7 +29,7 @@ jar {
 	    }
 	    copy {
 		    from jar
-		    into "../frameworks/opentelemetry/"
+		    into "../frameworks/OpenTelemetry/"
 		    rename('benchmark.jar', 'MooBench.jar')
 	    }
 	    copy {
