@@ -3,7 +3,7 @@
 function runNoInstrumentation {
     # No instrumentation
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}inspectit.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/inspectIT.log
     ${JAVABIN}java ${JAVAARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
@@ -17,7 +17,7 @@ function runInspectITDeactivated {
     # InspectIT (minimal)
     k=`expr ${k} + 1`
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}inspectit.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/inspectIT.log
     sleep $SLEEP_TIME
     ${JAVABIN}java ${JAVAARGS_INSPECTIT_DEACTIVATED} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
@@ -35,7 +35,7 @@ function runInspectITZipkin {
     # InspectIT (minimal)
     k=`expr ${k} + 1`
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}inspectit.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/inspectIT.log
     startZipkin
     sleep $SLEEP_TIME
     ${JAVABIN}java ${JAVAARGS_INSPECTIT_ZIPKIN} ${JAR} \
@@ -54,7 +54,7 @@ function runInspectITPrometheus {
     # InspectIT (minimal)
     k=`expr ${k} + 1`
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}inspectit.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/inspectIT.log
     startPrometheus
     sleep $SLEEP_TIME
     ${JAVABIN}java ${JAVAARGS_INSPECTIT_PROMETHEUS} ${JAR} \
@@ -71,8 +71,8 @@ function runInspectITPrometheus {
 
 function cleanup {
 	[ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
-	echo >>${BASE_DIR}inspectit.log
-	echo >>${BASE_DIR}inspectit.log
+	echo >>${BASE_DIR}/inspectIT.log
+	echo >>${BASE_DIR}/inspectIT.log
 	sync
 	sleep ${SLEEP_TIME}
 }
@@ -103,8 +103,8 @@ echo "Removing and recreating '$RESULTS_DIR'"
 (rm -rf ${RESULTS_DIR}/**csv) && mkdir -p ${RESULTS_DIR}
 
 # Clear inspectit.log and initialize logging
-rm -f ${BASE_DIR}/inspectit.log
-touch ${BASE_DIR}/inspectit.log
+rm -f ${BASE_DIR}/inspectIT.log
+touch ${BASE_DIR}/inspectIT.log
 
 JAVAARGS="-server"
 JAVAARGS="${JAVAARGS} -Xms1G -Xmx2G"
@@ -125,7 +125,7 @@ writeConfiguration
 for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
     k=0
     echo "## Starting iteration ${i}/${NUM_OF_LOOPS}"
-    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >>${BASE_DIR}/inspectit.log
+    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >>${BASE_DIR}/inspectIT.log
 
     runNoInstrumentation
     cleanup
@@ -141,7 +141,7 @@ for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
     
     printIntermediaryResults
 done
-mv ${BASE_DIR}/inspectit.log ${RESULTS_DIR}/inspectit.log
+mv ${BASE_DIR}/inspectIT.log ${RESULTS_DIR}/inspectIT.log
 [ -f ${RESULTS_DIR}Hotspot-1-${RECURSION_DEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}hotspot-*.log >${RESULTS_DIR}log.log
 [ -f ${BASE_DIR}errorlog.txt ] && mv ${BASE_DIR}errorlog.txt ${RESULTS_DIR}
 

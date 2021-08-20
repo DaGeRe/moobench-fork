@@ -14,8 +14,8 @@ function startJaeger {
 
 function cleanup {
 	[ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-$RECURSION_DEPTH-${k}.log
-	echo >>${BASE_DIR}/opentelemetry.log
-	echo >>${BASE_DIR}/opentelemetry.log
+	echo >>${BASE_DIR}/OpenTelemetry.log
+	echo >>${BASE_DIR}/OpenTelemetry.log
 	sync
 	sleep ${SLEEP_TIME}
 }
@@ -23,7 +23,7 @@ function cleanup {
 function runNoInstrumentation {
     # No instrumentation
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/opentelemetry.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
     ${JAVABIN}java ${JAVAARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
@@ -37,7 +37,7 @@ function runOpenTelemetryNoLogging {
     # OpenTelemetry Instrumentation Logging Deactivated
     k=`expr ${k} + 1`
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/opentelemetry.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
     ${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_LOGGING_DEACTIVATED} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
@@ -51,7 +51,7 @@ function runOpenTelemetryLogging {
     # OpenTelemetry Instrumentation Logging
     k=`expr ${k} + 1`
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/opentelemetry.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
     ${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_LOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
@@ -71,7 +71,7 @@ function runOpenTelemetryZipkin {
     k=`expr ${k} + 1`
     startZipkin
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/opentelemetry.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
     ${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_ZIPKIN} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
@@ -87,7 +87,7 @@ function runOpenTelemetryJaeger {
 	k=`expr ${k} + 1`
 	startJaeger
 	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/opentelemetry.log
+	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
 	${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_JAEGER} ${JAR} \
 		--output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
 		--total-calls ${TOTAL_NUM_OF_CALLS} \
@@ -103,7 +103,7 @@ function runOpenTelemetryPrometheus {
 	k=`expr ${k} + 1`
 	startPrometheus
 	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/opentelemetry.log
+	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
 	${JAVABIN}java ${JAVAARGS_OPENTELEMETRY_PROMETHEUS} ${JAR} \
 		--output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
 		--total-calls ${TOTAL_NUM_OF_CALLS} \
@@ -132,9 +132,9 @@ echo "Cleaning and recreating '$RESULTS_DIR'"
 (rm -rf ${RESULTS_DIR}/**csv) && mkdir -p ${RESULTS_DIR}
 #mkdir ${RESULTS_DIR}stat/
 
-# Clear opentelemetry.log and initialize logging
-rm -f ${BASE_DIR}/opentelemetry.log
-touch ${BASE_DIR}/opentelemetry.log
+# Clear OpenTelemetry.log and initialize logging
+rm -f ${BASE_DIR}/OpenTelemetry.log
+touch ${BASE_DIR}/OpenTelemetry.log
 
 JAVAARGS="-server"
 JAVAARGS="${JAVAARGS} "
@@ -160,7 +160,7 @@ writeConfiguration
 for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
     k=0
     echo "## Starting iteration ${i}/${NUM_OF_LOOPS}"
-    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >>${BASE_DIR}opentelemetry.log
+    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >>${BASE_DIR}/OpenTelemetry.log
 
     runNoInstrumentation
     cleanup
@@ -198,7 +198,7 @@ cleanup-results
 
 #zip -jqr ${RESULTS_DIR}stat.zip ${RESULTS_DIR}stat
 #rm -rf ${RESULTS_DIR}stat/
-mv ${BASE_DIR}opentelemetry.log ${RESULTS_DIR}opentelemetry.log
+mv ${BASE_DIR}/OpenTelemetry.log ${RESULTS_DIR}/OpenTelemetry.log
 [ -f ${RESULTS_DIR}hotspot-1-${RECURSION_DEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}hotspot-*.log >${RESULTS_DIR}log.log
 [ -f ${BASE_DIR}errorlog.txt ] && mv ${BASE_DIR}errorlog.txt ${RESULTS_DIR}
 

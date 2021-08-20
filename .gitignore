@@ -30,6 +30,7 @@ frameworks/inspectIT/prometheus-2.28.1.linux-amd64/
 frameworks/OpenTelemetry/results-OpenTelemetry/
 frameworks/OpenTelemetry/tmp/
 frameworks/OpenTelemetry/*.txt
+frameworks/OpenTelemetry/OpenTelemetry.log
 frameworks/OpenTelemetry/MooBench.jar
 frameworks/OpenTelemetry/zipkin/
 frameworks/OpenTelemetry/lib/
