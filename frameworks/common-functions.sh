@@ -80,7 +80,7 @@ EOF
 }
 
 function startZipkin {
-	if [ ! -d zipkin ]
+	if [ ! -d zipkin ] || [ ! -f zipkin/zipkin.jar ]
 	then
 		mkdir zipkin
 		cd zipkin
