@@ -51,7 +51,6 @@ checkDirectory DATA_DIR "${DATA_DIR}" create
 PARENT=`dirname "${RESULTS_DIR}"`
 checkDirectory result-base "$PARENT"
 checkFile ApsectJ-Agent "${AGENT}"
-checkFile moobench "${BENCHMARK}"
 
 information "----------------------------------"
 information "Running benchmark..."
@@ -138,10 +137,10 @@ function execute-experiment() {
        BENCHMARK_OPTS="${JAVA_ARGS} ${LTW_ARGS} ${KIEKER_ARGS} ${kieker_parameters}"
     fi
     
-    echo ${BENCHMARK}" "${BENCHMARK_OPTS}" moobench.benchmark.BenchmarkMain"
+    echo ${BENCHMARK_OPTS}" -jar benchmark/build/libs/benchmark.jar"
 
-    ${BENCHMARK} ${BENCHMARK_OPTS} moobench.benchmark.BenchmarkMain \
-    	--application moobench.application.MonitoredClassSimple \
+    ${JAVABIN}java ${BENCHMARK_OPTS} -jar benchmark/build/libs/benchmark.jar \
+	--application moobench.application.MonitoredClassSimple \
         --output-filename ${RAWFN}-${loop}-${recursion}-${index}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \

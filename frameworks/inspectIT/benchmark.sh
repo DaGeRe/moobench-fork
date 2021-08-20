@@ -151,6 +151,4 @@ run-r
 
 ## Clean up raw results
 zip -jqr ${RESULTS_DIR}/results.zip ${RAWFN}*
-rm -f ${RAWFN}*
-[ -f ${BASE_DIR}nohup.out ] && cp ${BASE_DIR}nohup.out ${RESULTS_DIR}
-[ -f ${BASE_DIR}nohup.out ] && > ${BASE_DIR}nohup.out
+rm ${RAWFN}*
