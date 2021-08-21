@@ -19,6 +19,12 @@ All experiments are started with the provided "External Controller" scripts. The
 * for OpenTelemetry: `frameworks/OpenTelemetry/benchmark.sh` for regular execution and `frameworks/OpenTelemetry/runExponentialSizes.sh` for execution of different call tree depth sizes
 * for inspectIT: `frameworks/inspectIT/benchmark.sh` for regular execution and `frameworks/inspectIT/runExponentialSizes.sh` for execution of different call tree depth sizes
 
+Each scripts will start different factorial experiments (started `$NUM_OF_LOOPS` times for repeatability), which will be:
+- baseline execution
+- execution with instrumentation but without processing or serialization
+- execution with serialization to hard disc (currently not available for inspectIT)
+- execution with serialization to tcp receiver, which might be a simple receiver (Kieker), or Zikpin and Prometheus (OpenTelemetry and inspectIT)
+
 All scripts have been tested on Ubuntu and Raspbian. 
 
 The execution may be parameterized by the following environment variables:
@@ -40,6 +46,6 @@ cd frameworks/opentelemetry/
 ```
 
 ## Data Analysis
-In the folder /bin/r are some R scripts provided to generate graphs to 
-visualize the results. In the top the files, one can configure the 
-required paths and the configuration used to analyze the data.
+Each benchmark execution calls an R script providing mean, standard deviation and confidence intervals for the benchmark variants. If you want to get these values again, switch to `frameworks` and call `runR.sh $FRAMEWORK`, where framework is the folder name of the framework (e.g. Kieker).
+
+In the folder /bin/r are some R scripts provided to generate graphs to visualize the results. In the top the files, one can configure the required paths and the configuration used to analyze the data.
