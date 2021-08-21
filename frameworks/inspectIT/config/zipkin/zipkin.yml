@@ -10,6 +10,6 @@ inspectit:
         enabled: true
         include:
           'r_trace_method': true # records spans
-          'r_capture_method_duration': true # records metrics
+          'r_capture_method_duration': false # records metrics
         scopes:
           's_moobench': true 
