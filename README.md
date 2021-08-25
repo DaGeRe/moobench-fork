@@ -48,4 +48,6 @@ cd frameworks/opentelemetry/
 ## Data Analysis
 Each benchmark execution calls an R script providing mean, standard deviation and confidence intervals for the benchmark variants. If you want to get these values again, switch to `frameworks` and call `runR.sh $FRAMEWORK`, where framework is the folder name of the framework (e.g. Kieker).
 
+If you got data from a run with exponential growing call tree depth, unzip them first (`for file in *.zip; do unzip $file; done`), copy all `results-$framework` folder to a common folder and run `./getExponential.sh` in analysis. This will create a graph for each framework and an overview graph for external processing of the traces (zipkin for OpenTelemetry and inspectIT, TCP for Kieker).
+
 In the folder /bin/r are some R scripts provided to generate graphs to visualize the results. In the top the files, one can configure the required paths and the configuration used to analyze the data.
