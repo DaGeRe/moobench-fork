@@ -7,12 +7,13 @@ The MooBench micro-benchmarks can be used to quantify the performance overhead c
 Currenly (fully) supported monitoring frameworks are:
 * Kieker (http://kieker-monitoring.net)
 * OpenTelemetry (https://opentelemetry.io/)
+* inspectIT (https://inspectit.rocks/)
 
 ## Benchmark Execution
 
 Initially, the following steps are required:
 1. Make sure, that you've installed R (http://www.r-project.org/) to generate the results , awk to install intermediate results and curl to download processing tools (Ubuntu: `sudo apt install r-base gawk curl`).
-2. Compile the application by calling `./gradlew assemble`.
+2. Compile the application by calling `./gradlew assemble` in the main folder.
 
 All experiments are started with the provided "External Controller" scripts. The following scripts are available
 * for Kieker: In `frameworks/Kieker/scripts/benchmark.sh` for regular execution and `frameworks/Kieker/scripts/runExponentialSizes.sh` for execution of different call tree depth sizes
