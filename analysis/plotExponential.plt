@@ -71,6 +71,8 @@ plot '../results/evolution_inspectIT.csv' u 1:2 w linespoint lc "red" title 'Bas
 	
 unset output
 
+set terminal pdf size 5,3
+
 set out '../results/overview.pdf'
 
 set title 'Overview of Method Execution Durations'
@@ -78,7 +80,7 @@ set title 'Overview of Method Execution Durations'
 set xlabel 'Call Tree Depth'
 set ylabel 'Duration {/Symbol m}s'
 
-set key right center
+set key left top
 	
 plot '../results/evolution_inspectIT.csv' u 1:2 w linespoint lc "red" title 'Baseline', \
 	'../results/evolution_inspectIT.csv' u 1:($2-$3):($2+$3) w filledcurves lc "red" notitle fs transparent solid 0.5, \
