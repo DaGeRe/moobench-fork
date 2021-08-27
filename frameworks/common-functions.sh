@@ -89,7 +89,7 @@ function startZipkin {
 		cd zipkin
 	fi
 	java -Xmx6g -jar zipkin.jar &> zipkin.txt &
-	pid=$1
+	pid=$!
 	sleep 5
 	cd ..
 }
