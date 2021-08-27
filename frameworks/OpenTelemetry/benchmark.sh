@@ -80,6 +80,7 @@ function runOpenTelemetryZipkin {
         --recursion-depth $RECURSION_DEPTH \
         ${MOREPARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
     stopBackgroundProcess
+    sleep $SLEEP_TIME
 }
 
 function runOpenTelemetryJaeger {
@@ -96,6 +97,7 @@ function runOpenTelemetryJaeger {
 		--recursion-depth $RECURSION_DEPTH \
 		${MOREPARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
 	stopBackgroundProcess
+	sleep $SLEEP_TIME
 }
 
 function runOpenTelemetryPrometheus {
@@ -112,6 +114,7 @@ function runOpenTelemetryPrometheus {
 		--recursion-depth $RECURSION_DEPTH \
 		${MOREPARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
 	stopBackgroundProcess
+	sleep $SLEEP_TIME
 }
 
 JAVABIN=""

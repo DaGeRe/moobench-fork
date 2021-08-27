@@ -61,8 +61,8 @@ function runInspectITZipkin {
         --recursion-depth ${RECURSION_DEPTH} \
         --force-terminate \
         ${MOREPARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
-    sleep $SLEEP_TIME
     stopBackgroundProcess
+    sleep $SLEEP_TIME
 }
 
 function runInspectITPrometheus {
@@ -80,8 +80,8 @@ function runInspectITPrometheus {
         --recursion-depth ${RECURSION_DEPTH} \
         --force-terminate \
         ${MOREPARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
-    sleep $SLEEP_TIME
     stopBackgroundProcess
+    sleep $SLEEP_TIME
 }
 
 function cleanup {
