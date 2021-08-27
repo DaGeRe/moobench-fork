@@ -89,6 +89,7 @@ function startZipkin {
 		cd zipkin
 	fi
 	java -Xmx6g -jar zipkin.jar &> zipkin.txt &
+	pid=$1
 	sleep 5
 	cd ..
 }
@@ -97,17 +98,18 @@ function periodicallyCurlPrometheus {
 	while [ true ]
 	do
 		echo "Curling for prometheus simulation..."
-		curl localhost:8888
-		sleep 1
+		curl localhost:8888/metrics 
+		sleep 15
 	done
 }
 
 function startPrometheus {
 	periodicallyCurlPrometheus &
+	pid=$!
 }
 
 function stopBackgroundProcess {
-	kill %1
+	kill $pid
 }
 
 function writeConfiguration() {
