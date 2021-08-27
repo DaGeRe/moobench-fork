@@ -174,19 +174,8 @@ for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
     runOpenTelemetryZipkin
     cleanup
     
-    MACHINE_TYPE=`uname -m`; 
-    if [ ${MACHINE_TYPE} == 'x86_64' ]
-    then
-	runOpenTelemetryPrometheus
-	cleanup
-    	
-    	
-    	# jaeger does not finish correctly
-    	#runOpenTelemetryJaeger
-	#cleanup
-    else
-    	echo "No 64 Bit System; skipping Prometheus"
-    fi
+    runOpenTelemetryPrometheus
+    cleanup
 
     printIntermediaryResults
 done
