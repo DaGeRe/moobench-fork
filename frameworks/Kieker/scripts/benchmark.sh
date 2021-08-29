@@ -185,8 +185,8 @@ function execute-benchmark() {
   for ((loop=1;loop<=${NUM_OF_LOOPS};loop+=1)); do
     recursion=${RECURSION_DEPTH}
 
-    information "## Starting iteration ${i}/${NUM_OF_LOOPS}"
-    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >>${DATA_DIR}/kieker.log
+    information "## Starting iteration ${loop}/${NUM_OF_LOOPS}"
+    echo "## Starting iteration ${loop}/${NUM_OF_LOOPS}" >>${DATA_DIR}/kieker.log
 
     for ((index=0;index<${#WRITER_CONFIG[@]};index+=1)); do
       execute-benchmark-body $index $loop $recursion
