@@ -61,8 +61,6 @@ information "----------------------------------"
 information "Running benchmark..."
 information "----------------------------------"
 
-FIXED_PARAMETERS="--quickstart -a moobench.application.MonitoredClassSimple"
-
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 information "Experiment will take circa ${TIME} seconds."
 
@@ -76,8 +74,6 @@ touch ${DATA_DIR}/kieker.log
 # general server arguments
 JAVA_ARGS="-server"
 JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx2G"
-
-JAVA_OPTS="${FIXED_PARAMETERS}"
 
 LTW_ARGS="-javaagent:${AGENT} -Dorg.aspectj.weaver.showWeaveInfo=true -Daj.weaving.verbose=true -Dkieker.monitoring.skipDefaultAOPConfiguration=true -Dorg.aspectj.weaver.loadtime.configuration=${AOP}"
 
