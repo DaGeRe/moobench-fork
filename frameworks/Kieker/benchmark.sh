@@ -16,18 +16,14 @@ else
 	exit 1
 fi
 
-source ../../common-functions.sh
-
-# Only temporary fix: Overwrite Kieker results folder here
-RESULTS_DIR=../results-Kieker
-RAWFN=$RESULTS_DIR"/raw"
+source ../common-functions.sh
 
 getKiekerAgent
 
 # copy receiver
-tar -xvpf ${BASE_DIR}/../../../tools/receiver/build/distributions/receiver.tar
+tar -xvpf ${BASE_DIR}/../../tools/receiver/build/distributions/receiver.tar
 # copy result compiler
-tar -xvpf ${BASE_DIR}/../../../tools/compile-results/build/distributions/compile-results.tar
+tar -xvpf ${BASE_DIR}/../../tools/compile-results/build/distributions/compile-results.tar
 
 if [ -f "${BASE_DIR}/common-functions" ] ; then
 	. ${BASE_DIR}/common-functions
@@ -87,7 +83,7 @@ declare -a RECEIVER
 declare -a TITLE
 
 # Configurations
-source ../labels.sh
+source labels.sh
 WRITER_CONFIG[0]=""
 WRITER_CONFIG[1]="-Dkieker.monitoring.enabled=false -Dkieker.monitoring.writer=kieker.monitoring.writer.dump.DumpWriter"
 WRITER_CONFIG[2]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.dump.DumpWriter"
@@ -138,9 +134,9 @@ function execute-experiment() {
        BENCHMARK_OPTS="${JAVA_ARGS} ${LTW_ARGS} ${KIEKER_ARGS} ${kieker_parameters}"
     fi
     
-    echo ${BENCHMARK_OPTS}" -jar ../MooBench.jar"
+    echo ${BENCHMARK_OPTS}" -jar MooBench.jar"
 
-    ${JAVABIN}java ${BENCHMARK_OPTS} -jar ../MooBench.jar \
+    ${JAVABIN}java ${BENCHMARK_OPTS} -jar MooBench.jar \
 	--application moobench.application.MonitoredClassSimple \
         --output-filename ${RAWFN}-${loop}-${recursion}-${index}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
