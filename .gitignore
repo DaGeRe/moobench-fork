@@ -11,13 +11,13 @@
 **/bin/**
 frameworks/log_*
 results/
-frameworks/Kieker/scripts/benchmark/
-frameworks/Kieker/scripts/data/
+frameworks/Kieker/benchmark/
+frameworks/Kieker/data/
 frameworks/Kieker/MooBench.jar
-frameworks/Kieker/scripts/kieker-*-aspectj.jar
-frameworks/Kieker/scripts/receiver/
+frameworks/Kieker/kieker-*-aspectj.jar
+frameworks/Kieker/receiver/
 frameworks/Kieker/results-Kieker/
-frameworks/Kieker/scripts/benchmark_*
+frameworks/Kieker/benchmark_*
 frameworks/SPASSmeter/spassmeter.log
 frameworks/SPASSmeter/tmp/
 frameworks/SPASSmeter/MooBench.jar
@@ -40,8 +40,7 @@ frameworks/OpenTelemetry/jaeger-1.24.0-linux-amd64/
 frameworks/OpenTelemetry/prometheus-2.28.1.linux-amd64/
 frameworks/OpenTelemetry/prometheus-2.28.1.linux-amd64.tar.gz
 
-frameworks/Kieker/scripts/kieker-1.15-SNAPSHOT.jar
-frameworks/Kieker/scripts/compile-results/
+frameworks/Kieker/compile-results/
 tools/getConfidenceIntervalTable/*csv
 /.gradle/
 /build/
