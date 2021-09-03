@@ -142,7 +142,7 @@ function execute-experiment() {
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads 1 \
-        --recursion-depth ${recursion} &> benchmark_${loop}.txt
+        --recursion-depth ${recursion} &> ${RESULTS_DIR}/output_"$loop"_"$RECURSION_DEPTH"_$index.txt
 
     rm -rf ${DATA_DIR}/kieker-*
 
