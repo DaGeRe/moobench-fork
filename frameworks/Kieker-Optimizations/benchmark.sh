@@ -97,7 +97,7 @@ CIRQULAR_QUEUE_CONFIG="-Dkieker.monitoring.core.controller.WriterController.Reco
 AGGEGATED_WRITER_CONFIG="-Dkieker.monitoring.writer=de.dagere.kopeme.kieker.writer.AggregatedTreeWriter -Dde.dagere.kopeme.kieker.writer.AggregatedTreeWriter.writeInterval=5000"
 
 WRITER_CONFIG[0]=""
-WRITER_CONFIG[1]="$FILEWRITE_CONFIG"
+WRITER_CONFIG[1]="${LTW_ARGS} $FILEWRITE_CONFIG"
 WRITER_CONFIG[2]="$FILEWRITE_CONFIG"
 WRITER_CONFIG[3]="$FILEWRITE_CONFIG $CIRQULAR_QUEUE_CONFIG"
 WRITER_CONFIG[4]="$FILEWRITE_CONFIG $CIRQULAR_QUEUE_CONFIG"
@@ -143,7 +143,7 @@ function execute-experiment() {
     if [  "${kieker_parameters}" = "" ] ; then
        BENCHMARK_OPTS=${JAVA_ARGS}
     else
-       BENCHMARK_OPTS="${JAVA_ARGS} ${LTW_ARGS} ${KIEKER_ARGS} ${kieker_parameters}"
+       BENCHMARK_OPTS="${JAVA_ARGS} ${KIEKER_ARGS} ${kieker_parameters}"
     fi
     
     echo ${BENCHMARK_OPTS}" -jar MooBench.jar"
