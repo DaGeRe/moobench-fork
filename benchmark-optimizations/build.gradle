@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+dependencies {
+    implementation 'net.kieker-monitoring.moobench:moobench-application:1.0-SNAPSHOT'
+    implementation 'de.dagere.kopeme:kopeme-core:0.14-SNAPSHOT'
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Moobench Benchmark with Kieker Optimizations',
+                   'Implementation-Version': '0.1-SNAPSHOT',
+                   'Main-Class': 'moobench.benchmark.BenchmarkMain'
+    }
+    
+    duplicatesStrategy "EXCLUDE"
+    
+    from sourceSets.main.output
+
+	dependsOn configurations.runtimeClasspath
+	from {
+    	configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+	}
+	
+	doLast {
+	    copy {
+		    from jar
+		    into "../frameworks/Kieker-Optimizations/"
+		    rename('benchmark-optimizations.jar', 'MooBench-Optimizations.jar')
+	    }
+	}
+}

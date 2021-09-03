@@ -1,0 +1,6 @@
+TITLE[0]="No instrumentation"
+TITLE[1]="Regular AspectJ, Generic Bin"
+TITLE[2]="Source Instrumentation, Generic Bin"
+TITLE[3]="Source Instrumentation, CircularFifoQueue, Generic Bin"
+TITLE[4]="Source Instrumentation, ReducedOperationExecutionRecord, CircularFifoQueue, Generic Bin"
+TITLE[5]="Source Instrumentation, ReducedOperationExecutionRecord, CircularFifoQueue, Aggragated Writer"

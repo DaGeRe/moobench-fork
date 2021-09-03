@@ -1,10 +1,23 @@
 plugins {
     id 'java'
     id 'application'
+    id 'maven-publish'
 }
 
 dependencies {
     implementation 'com.beust:jcommander:1.72'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'net.kieker-monitoring.moobench'
+            artifactId 'moobench-application'
+            version '1.0-SNAPSHOT'
+
+            from components.java
+        }
+    }
 }
 
 jar {

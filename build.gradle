@@ -15,12 +15,12 @@ repositories {
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:29.0-jre'
-    implementation 'com.beust:jcommander:1.72'
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.13'
@@ -32,5 +32,6 @@ subprojects {
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
     mavenCentral()
+    mavenLocal()
 }
 }
