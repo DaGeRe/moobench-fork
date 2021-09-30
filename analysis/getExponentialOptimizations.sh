@@ -59,4 +59,4 @@ do
 	getFrameworkEvolutionFile $1 $framework
 done
 
-gnuplot -c plotExponential.plt
+gnuplot -c plotExponentialOptimizations.plt

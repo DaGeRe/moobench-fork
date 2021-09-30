@@ -25,7 +25,7 @@ plot '../results/evolution_Kieker-Optimizations.csv' u 1:2 w linespoint lc "red"
 	'../results/evolution_Kieker-Optimizations.csv' u 1:($4-$5):($4+$5) w filledcurves lc "yellow" notitle fs transparent solid 0.5, \
      '../results/evolution_Kieker-Optimizations.csv' u 1:6 w linespoint lc "red" title 'Source Instrumentation', \
 	'../results/evolution_Kieker-Optimizations.csv' u 1:($6-$7):($6+$7) w filledcurves lc "red" notitle fs transparent solid 0.5, \
-     '../results/evolution_Kieker-Optimizations.csv' u 1:8 w linespoint lc "blue" title 'CircularFifoQueue', \
+     '../results/evolution_Kieker-Optimizations.csv' u 1:8 w linespoint lc "blue" title 'SynchronizedCircularFifoQueue', \
         '../results/evolution_Kieker-Optimizations.csv' u 1:($8-$9):($8+$9) w filledcurves lc "blue" notitle fs transparent solid 0.5, \
      '../results/evolution_Kieker-Optimizations.csv' u 1:10 w linespoint lc "green" title 'Reduced Record', \
         '../results/evolution_Kieker-Optimizations.csv' u 1:($10-$11):($10+$11) w filledcurves lc "green" notitle fs transparent solid 0.5, \
