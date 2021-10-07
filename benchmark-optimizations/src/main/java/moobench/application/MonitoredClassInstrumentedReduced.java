@@ -16,7 +16,7 @@
 
 package moobench.application;
 
-import de.dagere.kopeme.kieker.record.ReducedOperationExecutionRecord;
+import de.dagere.kopeme.kieker.record.DurationRecord;
 import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.core.controller.MonitoringController;
 import kieker.monitoring.core.registry.ControlFlowRegistry;
@@ -86,7 +86,7 @@ public final class MonitoredClassInstrumentedReduced implements MonitoredClass {
 		} finally {
 			final long tout = TIME.getTime();
 			CTRLINST.newMonitoringRecord(
-					new ReducedOperationExecutionRecord(operationSignature, tin, tout));
+					new DurationRecord(operationSignature, tin, tout));
 			// cleanup
 			if (entrypoint) {
 				CFREGISTRY.unsetThreadLocalTraceId();
