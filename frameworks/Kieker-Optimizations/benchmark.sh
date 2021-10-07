@@ -90,7 +90,7 @@ CLASS[1]="moobench.application.MonitoredClassSimple"
 CLASS[2]="moobench.application.MonitoredClassInstrumented"
 CLASS[3]="moobench.application.MonitoredClassInstrumented"
 CLASS[4]="moobench.application.MonitoredClassInstrumentedReduced"
-CLASS[5]="moobench.application.MonitoredClassInstrumentedReduced"
+CLASS[5]="moobench.application.MonitoredClassInstrumentedDurationAggregation"
 
 FILEWRITE_CONFIG="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.FileWriter -Dkieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.BinaryLogStreamHandler -Dkieker.monitoring.writer.filesystem.FileWriter.bufferSize=8192 -Dkieker.monitoring.writer.filesystem.FileWriter.customStoragePath=${DATA_DIR}/"
 CIRQULAR_QUEUE_CONFIG="-Dkieker.monitoring.core.controller.WriterController.RecordQueueFQN=de.dagere.kopeme.collections.SynchronizedCircularFifoQueue -Dkieker.monitoring.core.controller.WriterController.QueuePutStrategy=kieker.monitoring.queue.putstrategy.YieldPutStrategy -Dkieker.monitoring.core.controller.WriterController.QueueTakeStrategy=kieker.monitoring.queue.takestrategy.YieldTakeStrategy"

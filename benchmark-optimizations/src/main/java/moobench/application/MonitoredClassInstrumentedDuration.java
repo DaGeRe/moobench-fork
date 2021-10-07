@@ -25,7 +25,7 @@ import kieker.monitoring.timer.ITimeSource;
 /**
  * @author Jan Waller
  */
-public final class MonitoredClassInstrumentedReduced implements MonitoredClass {
+public final class MonitoredClassInstrumentedDuration implements MonitoredClass {
 
 	private static final IMonitoringController CTRLINST = MonitoringController.getInstance();
 	private static final ControlFlowRegistry CFREGISTRY = ControlFlowRegistry.INSTANCE;
@@ -34,67 +34,37 @@ public final class MonitoredClassInstrumentedReduced implements MonitoredClass {
 	/**
 	 * Default constructor.
 	 */
-	public MonitoredClassInstrumentedReduced() {
+	public MonitoredClassInstrumentedDuration() {
 		// empty default constructor
 	}
 
 	@Override
 	public final long monitoredMethod(final long methodTime, final int recDepth) {
-		final String operationSignature = "moobench.application.MonitoredClassInstrumentedReduced.monitoredMethod(long,int)";
+		final String operationSignature = "moobench.application.MonitoredClassInstrumentedDuration.monitoredMethod(long,int)";
 		if (!CTRLINST.isProbeActivated(operationSignature)) {
-			if (recDepth > 1) {
-				return this.monitoredMethod(methodTime, recDepth - 1);
-			} else {
-				final long exitTime = System.nanoTime() + methodTime;
-				long currentTime;
-				do {
-					currentTime = System.nanoTime();
-				} while (currentTime < exitTime);
-				return currentTime;
-			}
+			return extracted_monitoredMethod(methodTime, recDepth);
 		}
-
-		// common fields
-		final boolean entrypoint;
-		final int ess; // this is the height in the dynamic call tree of this execution
-		long traceId = CFREGISTRY.recallThreadLocalTraceId(); // traceId, -1 if entry point
-		if (traceId == -1) {
-			entrypoint = true;
-			traceId = CFREGISTRY.getAndStoreUniqueThreadLocalTraceId();
-			CFREGISTRY.storeThreadLocalESS(1); // next operation is ess + 1
-			ess = 0;
-		} else {
-			entrypoint = false;
-			ess = CFREGISTRY.recallAndIncrementThreadLocalESS(); // ess >= 0
-			if (ess == -1) {
-				CTRLINST.terminateMonitoring();
-			}
-		}
-		// measure before
 		final long tin = TIME.getTime();
 		try {
-			if (recDepth > 1) {
-				return this.monitoredMethod(methodTime, recDepth - 1);
-			} else {
-				final long exitTime = System.nanoTime() + methodTime;
-				long currentTime;
-				do {
-					currentTime = System.nanoTime();
-				} while (currentTime < exitTime);
-				return currentTime;
-			}
+			return extracted_monitoredMethod(methodTime, recDepth);
 		} finally {
 			final long tout = TIME.getTime();
 			CTRLINST.newMonitoringRecord(
 					new DurationRecord(operationSignature, tin, tout));
-			// cleanup
-			if (entrypoint) {
-				CFREGISTRY.unsetThreadLocalTraceId();
-				CFREGISTRY.unsetThreadLocalESS();
-			} else {
-				CFREGISTRY.storeThreadLocalESS(ess); // next operation is ess
-			}
 		}
 
+	}
+
+	private long extracted_monitoredMethod(final long methodTime, final int recDepth) {
+		if (recDepth > 1) {
+			return this.monitoredMethod(methodTime, recDepth - 1);
+		} else {
+			final long exitTime = System.nanoTime() + methodTime;
+			long currentTime;
+			do {
+				currentTime = System.nanoTime();
+			} while (currentTime < exitTime);
+			return currentTime;
+		}
 	}
 }
