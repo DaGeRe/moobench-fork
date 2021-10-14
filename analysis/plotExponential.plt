@@ -93,3 +93,24 @@ plot '../results/evolution_inspectIT.csv' u 1:2 w linespoint lc "red" title 'Bas
 
 	
 unset output
+
+set out '../results/overview_opentelemetry.pdf'
+
+set title 'Overview of Method Execution Durations'
+
+set xlabel 'Call Tree Depth'
+set ylabel 'Duration {/Symbol m}s'
+
+set key left top
+	
+plot '../results/evolution_inspectIT.csv' u 1:2 w linespoint lc "red" title 'Baseline', \
+	'../results/evolution_inspectIT.csv' u 1:($2-$3):($2+$3) w filledcurves lc "red" notitle fs transparent solid 0.5, \
+     '../results/evolution_OpenTelemetry.csv' u 1:4 w linespoint lc "blue" title 'OpenTelemetry (No Logging)', \
+	'../results/evolution_OpenTelemetry.csv' u 1:($4-$5):($4+$5) w filledcurves lc "blue" notitle fs transparent solid 0.5, \
+     '../results/evolution_inspectIT.csv' u 1:6 w linespoint lc rgb "#c66900" title 'inspectIT (Zipkin)', \
+	'../results/evolution_inspectIT.csv' u 1:($6-$7):($6+$7) w filledcurves lc rgb "#c66900" notitle fs transparent solid 0.5, \
+     '../results/evolution_OpenTelemetry.csv' u 1:8 w linespoint lc "green" title 'OpenTelemetry (Zipkin)', \
+	'../results/evolution_OpenTelemetry.csv' u 1:($8-$9):($8+$9) w filledcurves lc "green" notitle fs transparent solid 0.5
+
+	
+unset output
