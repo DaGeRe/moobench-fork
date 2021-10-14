@@ -21,8 +21,8 @@ set key left top
 	
 plot '../results/evolution_Kieker-Optimizations.csv' u 1:2 w linespoint lc "red" title 'Baseline', \
 	'../results/evolution_Kieker-Optimizations.csv' u 1:($2-$3):($2+$3) w filledcurves lc "red" notitle fs transparent solid 0.5, \
-     '../results/evolution_Kieker-Optimizations.csv' u 1:4 w linespoint lc "yellow" title 'Regular Kieker', \
-	'../results/evolution_Kieker-Optimizations.csv' u 1:($4-$5):($4+$5) w filledcurves lc "yellow" notitle fs transparent solid 0.5, \
+     '../results/evolution_Kieker-Optimizations.csv' u 1:4 w linespoint lc "dark-yellow" title 'Regular Kieker', \
+	'../results/evolution_Kieker-Optimizations.csv' u 1:($4-$5):($4+$5) w filledcurves lc "dark-yellow" notitle fs transparent solid 0.5, \
      '../results/evolution_Kieker-Optimizations.csv' u 1:6 w linespoint lc "red" title 'Source Instrumentation', \
 	'../results/evolution_Kieker-Optimizations.csv' u 1:($6-$7):($6+$7) w filledcurves lc "red" notitle fs transparent solid 0.5, \
      '../results/evolution_Kieker-Optimizations.csv' u 1:8 w linespoint lc "blue" title 'SynchronizedCircularFifoQueue', \
