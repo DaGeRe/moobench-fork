@@ -1,0 +1,15 @@
+inspectit:
+  instrumentation:
+    scopes:
+      's_moobench':
+        type:
+          name: 'MonitoredClass'
+          matcher-mode: 'CONTAINS'
+    rules:
+      'r_moobench':
+        enabled: true
+        include:
+          'r_trace_method': false # records spans
+          'r_capture_method_duration': true # records metrics
+        scopes:
+          's_moobench': true 

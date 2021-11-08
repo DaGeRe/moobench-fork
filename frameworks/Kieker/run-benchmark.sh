@@ -28,10 +28,6 @@ cd ${BASE_DIR}
 ## setup
 # install benchmark
 tar -xvpf ${BASE_DIR}/../../../benchmark/build/distributions/benchmark.tar
-# get agent
-export VERSION_PATH=`curl "https://oss.sonatype.org/service/local/repositories/snapshots/content/net/kieker-monitoring/kieker/" | grep '<resourceURI>' | sed 's/ *<resourceURI>//g' | sed 's/<\/resourceURI>//g' | grep '/$'`
-export AGENT_PATH=`curl "${VERSION_PATH}" | grep 'aspectj.jar</resourceURI' | sort | sed 's/ *<resourceURI>//g' | sed 's/<\/resourceURI>//g' | tail -1`
-curl "${AGENT_PATH}" > "${AGENT}"
 # copy receiver
 tar -xvpf ${BASE_DIR}/../../../tools/receiver/build/distributions/receiver.tar
 # copy result compiler

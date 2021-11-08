@@ -15,13 +15,13 @@ TOTALCALLS=2000000     ## 2000000
 METHODTIME=0      ## 500000
 
 #MOREPARAMS="--quickstart"
-MOREPARAMS="--application mooBench.monitoredApplication.MonitoredClassSimple ${MOREPARAMS}"
+MOREPARAMS="--application moobench.application.MonitoredClassSimple ${MOREPARAMS}"
 
 TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEPTIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSIONDEPTH} + 50 \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
 
 echo "Removing and recreating '$RESULTSDIR'"
-(rm -rf ${RESULTSDIR}) && mkdir ${RESULTSDIR}
+(rm -rf ${RESULTSDIR}) && mkdir -p ${RESULTSDIR}
 #mkdir ${RESULTSDIR}stat/
 
 # Clear spassmeter.log and initialize logging
@@ -31,7 +31,7 @@ touch ${BASEDIR}spassmeter.log
 RAWFN="${RESULTSDIR}raw"
 
 JAVAARGS="-server"
-JAVAARGS="${JAVAARGS} -d64"
+JAVAARGS="${JAVAARGS} "
 JAVAARGS="${JAVAARGS} -Xms1G -Xmx4G"
 JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
 #JAVAARGS="${JAVAARGS} -XX:+PrintInlining"
@@ -73,10 +73,10 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     #sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java ${JAVAARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTALCALLS} \
-        --methodtime ${METHODTIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTALCALLS} \
+        --method-time ${METHODTIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MOREPARAMS}
     #kill %sar
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
@@ -92,10 +92,10 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     #sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java ${JAVAARGS_LTW} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTALCALLS} \
-        --methodtime ${METHODTIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTALCALLS} \
+        --method-time ${METHODTIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MOREPARAMS}
     #kill %sar
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
@@ -111,10 +111,10 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     #sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java ${JAVAARGS_LTW_ASM} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTALCALLS} \
-        --methodtime ${METHODTIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTALCALLS} \
+        --method-time ${METHODTIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MOREPARAMS}
     #kill %sar
     [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log

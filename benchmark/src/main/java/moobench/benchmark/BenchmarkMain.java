@@ -148,6 +148,7 @@ public final class BenchmarkMain {
 				commander.usage();
 			}
 			System.out.println(ex.toString()); // NOPMD (Stacktrace)
+			ex.printStackTrace();
 			System.exit(-1);
 		}
 	}

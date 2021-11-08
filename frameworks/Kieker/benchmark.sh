@@ -15,6 +15,16 @@ else
 	echo "Missing configuration: ${BASE_DIR}/config"
 	exit 1
 fi
+
+source ../common-functions.sh
+
+getKiekerAgent
+
+# copy receiver
+tar -xvpf ${BASE_DIR}/../../tools/receiver/build/distributions/receiver.tar
+# copy result compiler
+tar -xvpf ${BASE_DIR}/../../tools/compile-results/build/distributions/compile-results.tar
+
 if [ -f "${BASE_DIR}/common-functions" ] ; then
 	. ${BASE_DIR}/common-functions
 else
@@ -42,34 +52,26 @@ checkDirectory DATA_DIR "${DATA_DIR}" create
 PARENT=`dirname "${RESULTS_DIR}"`
 checkDirectory result-base "$PARENT"
 checkFile ApsectJ-Agent "${AGENT}"
-checkFile moobench "${BENCHMARK}"
 
 information "----------------------------------"
 information "Running benchmark..."
 information "----------------------------------"
 
-FIXED_PARAMETERS="--quickstart -a moobench.application.MonitoredClassSimple"
-
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 information "Experiment will take circa ${TIME} seconds."
 
 information "Removing and recreating '$RESULTS_DIR'"
-(rm -rf ${RESULTS_DIR}) && mkdir -p ${RESULTS_DIR}
+(rm -rf ${RESULTS_DIR}/*csv) && mkdir -p ${RESULTS_DIR}
 
 # Clear kieker.log and initialize logging
 rm -f ${DATA_DIR}/kieker.log
 touch ${DATA_DIR}/kieker.log
 
-RAWFN="${RESULTS_DIR}/raw"
-
 # general server arguments
 JAVA_ARGS="-server"
-JAVA_ARGS="${JAVA_ARGS} -d64"
-JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx4G"
+JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx2G"
 
-JAVA_OPTS="${FIXED_PARAMETERS}"
-
-LTW_ARGS="-javaagent:${AGENT} -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dkieker.monitoring.skipDefaultAOPConfiguration=true -Dorg.aspectj.weaver.loadtime.configuration=${AOP}"
+LTW_ARGS="-javaagent:${AGENT} -Dorg.aspectj.weaver.showWeaveInfo=true -Daj.weaving.verbose=true -Dkieker.monitoring.skipDefaultAOPConfiguration=true -Dorg.aspectj.weaver.loadtime.configuration=${AOP}"
 
 KIEKER_ARGS="-Dlog4j.configuration=log4j.cfg -Dkieker.monitoring.name=KIEKER-BENCHMARK -Dkieker.monitoring.adaptiveMonitoring.enabled=false -Dkieker.monitoring.periodicSensorsExecutorPoolSize=0"
 
@@ -81,36 +83,15 @@ declare -a RECEIVER
 declare -a TITLE
 
 # Configurations
-TITLE[0]="No instrumentation"
+source labels.sh
 WRITER_CONFIG[0]=""
-
-TITLE[1]="Deactivated probe"
 WRITER_CONFIG[1]="-Dkieker.monitoring.enabled=false -Dkieker.monitoring.writer=kieker.monitoring.writer.dump.DumpWriter"
-
-TITLE[2]="No logging (null writer)"
 WRITER_CONFIG[2]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.dump.DumpWriter"
-
-TITLE[3]="Logging (Generic Text)"
 WRITER_CONFIG[3]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.FileWriter -Dkieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.TextLogStreamHandler -Dkieker.monitoring.writer.filesystem.FileWriter.customStoragePath=${DATA_DIR}/"
-
-TITLE[4]="Logging (Generic Bin)"
 WRITER_CONFIG[4]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.FileWriter -Dkieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.BinaryLogStreamHandler -Dkieker.monitoring.writer.filesystem.FileWriter.bufferSize=8192 -Dkieker.monitoring.writer.filesystem.FileWriter.customStoragePath=${DATA_DIR}/"
-
-TITLE[5]="Logging (Single TCP)"
 WRITER_CONFIG[5]="-Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.SingleSocketTcpWriter -Dkieker.monitoring.writer.tcp.SingleSocketTcpWriter.port=2345"
-#RECEIVER[5]="${BASE_DIR}/collector-2.0/bin/collector -p 2345"
+RECEIVER[5]="${BASE_DIR}/collector-2.0/bin/collector -p 2345"
 RECEIVER[5]="${BASE_DIR}/receiver/bin/receiver 2345"
-
-# Create R labels
-LABELS=""
-for I in "${TITLE[@]}" ; do
-	title="$I"
-	if [ "$LABELS" == "" ] ; then
-		LABELS="\"$title\""
-	else
-		LABELS="${LABELS}, \"$title\""
-	fi
-done
 
 ## Write configuration
 uname -a >${RESULTS_DIR}/configuration.txt
@@ -152,13 +133,16 @@ function execute-experiment() {
     else
        BENCHMARK_OPTS="${JAVA_ARGS} ${LTW_ARGS} ${KIEKER_ARGS} ${kieker_parameters}"
     fi
+    
+    echo ${BENCHMARK_OPTS}" -jar MooBench.jar"
 
-    ${BENCHMARK} \
+    ${JAVABIN}java ${BENCHMARK_OPTS} -jar MooBench.jar \
+	--application moobench.application.MonitoredClassSimple \
         --output-filename ${RAWFN}-${loop}-${recursion}-${index}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads 1 \
-        --recursion-depth ${recursion}
+        --recursion-depth ${recursion} &> ${RESULTS_DIR}/output_"$loop"_"$RECURSION_DEPTH"_$index.txt
 
     rm -rf ${DATA_DIR}/kieker-*
 
@@ -193,40 +177,19 @@ function execute-benchmark() {
   for ((loop=1;loop<=${NUM_OF_LOOPS};loop+=1)); do
     recursion=${RECURSION_DEPTH}
 
-    information "## Starting iteration ${i}/${NUM_OF_LOOPS}"
-    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >>${DATA_DIR}/kieker.log
+    information "## Starting iteration ${loop}/${NUM_OF_LOOPS}"
+    echo "## Starting iteration ${loop}/${NUM_OF_LOOPS}" >>${DATA_DIR}/kieker.log
 
     for ((index=0;index<${#WRITER_CONFIG[@]};index+=1)); do
       execute-benchmark-body $index $loop $recursion
     done
+    
+    printIntermediaryResults
   done
 
   mv ${DATA_DIR}/kieker.log ${RESULTS_DIR}/kieker.log
   [ -f ${RESULTS_DIR}/hotspot-1-${RECURSION_DEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}/hotspot-*.log > ${RESULTS_DIR}/log.log
   [ -f ${DATA_DIR}/errorlog.txt ] && mv ${DATA_DIR}/errorlog.txt ${RESULTS_DIR}
-}
-
-## Generate Results file
-function run-r() {
-R --vanilla --silent << EOF
-results_fn="${RAWFN}"
-outtxt_fn="${RESULTS_DIR}/results-text.txt"
-outcsv_fn="${RESULTS_DIR}/results-text.csv"
-configs.loop=${NUM_OF_LOOPS}
-configs.recursion=${RECURSION_DEPTH}
-configs.labels=c($LABELS)
-results.count=${TOTAL_NUM_OF_CALLS}
-results.skip=${TOTAL_NUM_OF_CALLS}/2
-source("${RSCRIPT_PATH}")
-EOF
-}
-
-## Clean up raw results
-function cleanup-results() {
-  zip -jqr ${RESULTS_DIR}/results.zip ${RAWFN}*
-  rm -f ${RAWFN}*
-  [ -f ${DATA_DIR}/nohup.out ] && cp ${DATA_DIR}/nohup.out ${RESULTS_DIR}
-  [ -f ${DATA_DIR}/nohup.out ] && > ${DATA_DIR}/nohup.out
 }
 
 ## Execute benchmark
@@ -236,7 +199,11 @@ if [ "$MODE" == "execute" ] ; then
    else
      execute-benchmark-body $OPTION 1 1
    fi
+   
+   # Create R labels
+   LABELS=$(createRLabels)
    run-r
+   
    cleanup-results
 else
    execute-benchmark-body $OPTION 1 1

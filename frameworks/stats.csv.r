@@ -67,9 +67,9 @@ for (writer_idx in (1:numberOfWriters)) {
 qnorm_value <- qnorm(0.975)
 
 # print results
-printDimensionNames <- list(c("mean","ci95%","md25%","md50%","md75%","max","min"), c(1:numberOfWriters))
+printDimensionNames <- list(c("mean","sd","ci95%","md25%","md50%","md75%","max","min"), c(1:numberOfWriters))
 # row number == number of computed result values, e.g., mean, min, max
-printvalues <- matrix(nrow=7, ncol=numberOfWriters, dimnames=printDimensionNames)
+printvalues <- matrix(nrow=8, ncol=numberOfWriters, dimnames=printDimensionNames)
 
 for (writer_idx in (1:numberOfWriters)) {
    idx_mult <- c(1:numOfRowsToRead)
@@ -77,6 +77,7 @@ for (writer_idx in (1:numberOfWriters)) {
    valuesBIG <- resultsBIG[writer_idx,idx_mult]/timeUnit
 
    printvalues["mean",writer_idx] <- mean(valuesBIG)
+   printvalues["sd",writer_idx] <- sd(valuesBIG)
    printvalues["ci95%",writer_idx] <- qnorm_value*sd(valuesBIG)/sqrt(length(valuesBIG))
    printvalues[c("md25%","md50%","md75%"),writer_idx] <- quantile(valuesBIG, probs=c(0.25, 0.5, 0.75))
    printvalues["max",writer_idx] <- max(valuesBIG)

@@ -7,6 +7,40 @@ dependencies {
     implementation 'com.beust:jcommander:1.72'
 }
 
-application {
-    mainClass = 'moobench.benchmark.BenchmarkMain'
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Moobench Benchmark',
+                   'Implementation-Version': '0.1-SNAPSHOT',
+                   'Main-Class': 'moobench.benchmark.BenchmarkMain'
+    }
+    
+    from sourceSets.main.output
+
+	dependsOn configurations.runtimeClasspath
+	from {
+    	configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+	}
+	
+	doLast {
+		copy {
+		    from jar
+		    into "../frameworks/SPASSmeter/"
+		    rename('benchmark.jar', 'MooBench.jar')
+	    }
+	    copy {
+		    from jar
+		    into "../frameworks/OpenTelemetry/"
+		    rename('benchmark.jar', 'MooBench.jar')
+	    }
+	    copy {
+		    from jar
+		    into "../frameworks/inspectIT/"
+		    rename('benchmark.jar', 'MooBench.jar')
+	    }
+	    copy {
+		    from jar
+		    into "../frameworks/Kieker/"
+		    rename('benchmark.jar', 'MooBench.jar')
+	    }
+	}
 }

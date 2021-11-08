@@ -1,214 +1,173 @@
 #!/bin/bash
 
+function runNoInstrumentation {
+    # No instrumentation
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/inspectIT.log
+    ${JAVABIN}java ${JAVAARGS_NOINSTR} ${JAR} \
+        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
+        --total-calls ${TOTAL_NUM_OF_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${RECURSION_DEPTH} \
+        ${MOREPARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
+}
+
+function runInspectITDeactivated {
+    k=`expr ${k} + 1`
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/inspectIT.log
+    sleep $SLEEP_TIME
+    ${JAVABIN}java ${JAVAARGS_INSPECTIT_DEACTIVATED} ${JAR} \
+        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
+        --total-calls ${TOTAL_NUM_OF_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${RECURSION_DEPTH} \
+        --force-terminate \
+        ${MOREPARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
+    sleep $SLEEP_TIME
+}
+
+function runInspectITNullWriter {
+    k=`expr ${k} + 1`
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/inspectIT.log
+    sleep $SLEEP_TIME
+    ${JAVABIN}java ${JAVAARGS_INSPECTIT_NULLWRITER} ${JAR} \
+        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
+        --total-calls ${TOTAL_NUM_OF_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${RECURSION_DEPTH} \
+        --force-terminate \
+        ${MOREPARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
+    sleep $SLEEP_TIME
+}
+
+
+function runInspectITZipkin {
+    # InspectIT (minimal)
+    k=`expr ${k} + 1`
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/inspectIT.log
+    startZipkin
+    sleep $SLEEP_TIME
+    ${JAVABIN}java ${JAVAARGS_INSPECTIT_ZIPKIN} ${JAR} \
+        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
+        --total-calls ${TOTAL_NUM_OF_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${RECURSION_DEPTH} \
+        --force-terminate \
+        ${MOREPARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
+    stopBackgroundProcess
+    sleep $SLEEP_TIME
+}
+
+function runInspectITPrometheus {
+    # InspectIT (minimal)
+    k=`expr ${k} + 1`
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/inspectIT.log
+    startPrometheus
+    sleep $SLEEP_TIME
+    ${JAVABIN}java ${JAVAARGS_INSPECTIT_PROMETHEUS} ${JAR} \
+        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
+        --total-calls ${TOTAL_NUM_OF_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${RECURSION_DEPTH} \
+        --force-terminate \
+        ${MOREPARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
+    stopBackgroundProcess
+    sleep $SLEEP_TIME
+}
+
+function cleanup {
+	[ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+	echo >>${BASE_DIR}/inspectIT.log
+	echo >>${BASE_DIR}/inspectIT.log
+	sync
+	sleep ${SLEEP_TIME}
+}
+
+function getSum {
+  awk '{sum += $1; square += $1^2} END {print "Average: "sum/NR" Standard Deviation: "sqrt(square / NR - (sum/NR)^2)" Count: "NR}'
+}
+
 JAVABIN=""
 
-RSCRIPTDIR=r/
-BASEDIR=./
-RESULTSDIR="${BASEDIR}tmp/results-inspectit/"
+BASE_DIR=$(pwd)
+RSCRIPT_PATH="../stats.csv.r"
 
-SLEEPTIME=30           ## 30
-NUM_LOOPS=10           ## 10
-THREADS=1              ## 1
-RECURSIONDEPTH=10      ## 10
-TOTALCALLS=2000000     ## 2000000
-METHODTIME=500000      ## 500000
+source ../common-functions.sh
+source labels.sh
+
+checkMoobenchApplication
+
+getInspectItAgent
 
 #MOREPARAMS="--quickstart"
 MOREPARAMS="${MOREPARAMS}"
 
-TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEPTIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSIONDEPTH} + 50 \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} `
+TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
 
-echo "Removing and recreating '$RESULTSDIR'"
-(rm -rf ${RESULTSDIR}) && mkdir ${RESULTSDIR}
-mkdir ${RESULTSDIR}stat/
+echo "Removing and recreating '$RESULTS_DIR'"
+(rm -rf ${RESULTS_DIR}/**csv) && mkdir -p ${RESULTS_DIR}
 
 # Clear inspectit.log and initialize logging
-rm -f ${BASEDIR}inspectit.log
-touch ${BASEDIR}inspectit.log
-mkdir ${BASEDIR}logs/
-
-RAWFN="${RESULTSDIR}raw"
+rm -f ${BASE_DIR}/inspectIT.log
+touch ${BASE_DIR}/inspectIT.log
 
 JAVAARGS="-server"
-JAVAARGS="${JAVAARGS} -d64"
-JAVAARGS="${JAVAARGS} -Xms1G -Xmx4G"
-JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
-#JAVAARGS="${JAVAARGS} -XX:+PrintInlining"
-#JAVAARGS="${JAVAARGS} -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation"
-#JAVAARGS="${JAVAARGS} -Djava.compiler=NONE"
-JAR="-jar MooBench.jar"
+JAVAARGS="${JAVAARGS} -Xms1G -Xmx2G"
+JAVAARGS="${JAVAARGS} -verbose:gc "
+JAR="-jar MooBench.jar --application moobench.application.MonitoredClassSimple"
 
 JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}agent/inspectit-agent-mod.jar -Djava.util.logging.config.file=${BASEDIR}config/logging.properties"
-JAVAARGS_INSPECTIT_MINIMAL="${JAVAARGS_LTW} -Dinspectit.config=${BASEDIR}config/minimal/"
-JAVAARGS_INSPECTIT_FULL="${JAVAARGS_LTW} -Dinspectit.config=${BASEDIR}config/timer/"
+JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASE_DIR}/agent/inspectit-ocelot-agent-1.11.1.jar -Djava.util.logging.config.file=${BASE_DIR}/config/logging.properties"
+JAVAARGS_INSPECTIT_DEACTIVATED="${JAVAARGS_LTW} -Dinspectit.service-name=moobench-inspectit -Dinspectit.exporters.metrics.prometheus.enabled=false -Dinspectit.exporters.tracing.zipkin.enabled=false -Dinspectit.config.file-based.path=${BASE_DIR}/config/onlyInstrument/"
+JAVAARGS_INSPECTIT_NULLWRITER="${JAVAARGS_LTW} -Dinspectit.service-name=moobench-inspectit -Dinspectit.exporters.metrics.prometheus.enabled=false -Dinspectit.exporters.tracing.zipkin.enabled=false -Dinspectit.config.file-based.path=${BASE_DIR}/config/nullWriter/"
+JAVAARGS_INSPECTIT_ZIPKIN="${JAVAARGS_LTW} -Dinspectit.service-name=moobench-inspectit -Dinspectit.exporters.metrics.prometheus.enabled=false -Dinspectit.exporters.tracing.zipkin.url=http://127.0.0.1:9411/api/v2/spans -Dinspectit.config.file-based.path=${BASE_DIR}/config/zipkin/"
+JAVAARGS_INSPECTIT_PROMETHEUS="${JAVAARGS_LTW} -Dinspectit.service-name=moobench-inspectit -Dinspectit.exporters.metrics.zipkin.enabled=false -Dinspectit.exporters.metrics.prometheus.enabled=true -Dinspectit.config.file-based.path=${BASE_DIR}/config/prometheus/"
 
-CMR_ARGS="-d64 -Xms12G -Xmx12G -Xmn4G -XX:MaxPermSize=128m -XX:PermSize=128m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:+UseBiasedLocking -XX:+HeapDumpOnOutOfMemoryError -server -verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -Dinspectit.logging.config=config/logging-config.xml"
-
-## Write configuration
-uname -a >${RESULTSDIR}configuration.txt
-${JAVABIN}java ${JAVAARGS} -version 2>>${RESULTSDIR}configuration.txt
-echo "JAVAARGS: ${JAVAARGS}" >>${RESULTSDIR}configuration.txt
-echo "" >>${RESULTSDIR}configuration.txt
-echo "Runtime: circa ${TIME} seconds" >>${RESULTSDIR}configuration.txt
-echo "" >>${RESULTSDIR}configuration.txt
-echo "SLEEPTIME=${SLEEPTIME}" >>${RESULTSDIR}configuration.txt
-echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTSDIR}configuration.txt
-echo "TOTALCALLS=${TOTALCALLS}" >>${RESULTSDIR}configuration.txt
-echo "METHODTIME=${METHODTIME}" >>${RESULTSDIR}configuration.txt
-echo "THREADS=${THREADS}" >>${RESULTSDIR}configuration.txt
-echo "RECURSIONDEPTH=${RECURSIONDEPTH}" >>${RESULTSDIR}configuration.txt
-sync
+echo "RESULTS_DIR: $RESULTS_DIR"
+echo "RAWFN: $RAWFN"
+writeConfiguration
 
 ## Execute Benchmark
-for ((i=1;i<=${NUM_LOOPS};i+=1)); do
-    j=${RECURSIONDEPTH}
+for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
     k=0
-    echo "## Starting iteration ${i}/${NUM_LOOPS}"
-    echo "## Starting iteration ${i}/${NUM_LOOPS}" >>${BASEDIR}inspectit.log
+    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}"
+    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >>${BASE_DIR}/inspectIT.log
 
-    # No instrumentation
-    k=`expr ${k} + 1`
-    echo " # ${i}.${j}.${k} No instrumentation"
-    echo " # ${i}.${j}.${k} No instrumentation" >>${BASEDIR}inspectit.log
-    sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java ${JAVAARGS_NOINSTR} ${JAR} \
-        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTALCALLS} \
-        --methodtime ${METHODTIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
-        ${MOREPARAMS}
-    kill %sar
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
-    echo >>${BASEDIR}inspectit.log
-    echo >>${BASEDIR}inspectit.log
-    sync
-    sleep ${SLEEPTIME}
+    runNoInstrumentation
+    cleanup
 
-    # InspectIT (minimal)
-    k=`expr ${k} + 1`
-    echo " # ${i}.${j}.${k} InspectIT (minimal)"
-    echo " # ${i}.${j}.${k} InspectIT (minimal)" >>${BASEDIR}inspectit.log
-    sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr-mod.jar 1>>${BASEDIR}logs/out.log 2>&1 &
-    sleep 10
-    ${JAVABIN}java ${JAVAARGS_INSPECTIT_MINIMAL} ${JAR} \
-        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTALCALLS} \
-        --methodtime ${METHODTIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
-        ${MOREPARAMS}
-    sleep 10
-    kill $!
-    sleep 10
-    kill -9 $!
-    rm -rf ${BASEDIR}storage/
-    rm -rf ${BASEDIR}db/
-    kill %sar
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
-    echo >>${BASEDIR}inspectit.log
-    echo >>${BASEDIR}inspectit.log
-    sync
-    sleep ${SLEEPTIME}
+    runInspectITDeactivated
+    cleanup
+    
+    runInspectITNullWriter
+    cleanup
 
-    # InspectIT (without CMR)
-    k=`expr ${k} + 1`
-    echo " # ${i}.${j}.${k} InspectIT (without CMR)"
-    echo " # ${i}.${j}.${k} InspectIT (without CMR)" >>${BASEDIR}inspectit.log
-    sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java ${JAVAARGS_INSPECTIT_FULL} ${JAR} \
-        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTALCALLS} \
-        --methodtime ${METHODTIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
-        ${MOREPARAMS}
-    kill %sar
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
-    echo >>${BASEDIR}inspectit.log
-    echo >>${BASEDIR}inspectit.log
-    sync
-    sleep ${SLEEPTIME}
-
-    # InspectIT (with CMR)
-    k=`expr ${k} + 1`
-    echo " # ${i}.${j}.${k} InspectIT (with CMR)"
-    echo " # ${i}.${j}.${k} InspectIT (with CMR)" >>${BASEDIR}inspectit.log
-    sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java ${CMR_ARGS} -Xloggc:${BASEDIR}logs/gc.log -jar CMR/inspectit-cmr-mod.jar 1>>${BASEDIR}logs/out.log 2>&1 &
-    sleep 10
-    ${JAVABIN}java ${JAVAARGS_INSPECTIT_FULL} ${JAR} \
-        --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTALCALLS} \
-        --methodtime ${METHODTIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
-        ${MOREPARAMS}
-    sleep 10
-    kill $!
-    sleep 10
-    kill -9 $!
-    rm -rf ${BASEDIR}storage/
-    rm -rf ${BASEDIR}db/
-    kill %sar
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
-    echo >>${BASEDIR}inspectit.log
-    echo >>${BASEDIR}inspectit.log
-    sync
-    sleep ${SLEEPTIME}
-
+    runInspectITZipkin
+    cleanup
+    
+    runInspectITPrometheus
+    cleanup
+    
+    printIntermediaryResults
 done
-zip -jqr ${RESULTSDIR}stat.zip ${RESULTSDIR}stat
-rm -rf ${RESULTSDIR}stat/
-mv ${BASEDIR}inspectit.log ${RESULTSDIR}inspectit.log
-mv ${BASEDIR}logs/ ${RESULTSDIR}
-[ -f ${RESULTSDIR}hotspot-1-${RECURSIONDEPTH}-1.log ] && grep "<task " ${RESULTSDIR}hotspot-*.log >${RESULTSDIR}log.log
-[ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTSDIR}
+mv ${BASE_DIR}/inspectIT.log ${RESULTS_DIR}/inspectIT.log
+[ -f ${RESULTS_DIR}Hotspot-1-${RECURSION_DEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}hotspot-*.log >${RESULTS_DIR}log.log
+[ -f ${BASE_DIR}errorlog.txt ] && mv ${BASE_DIR}errorlog.txt ${RESULTS_DIR}
 
-## Generate Results file
-# Timeseries
-R --vanilla --silent <<EOF
-results_fn="${RAWFN}"
-output_fn="${RESULTSDIR}results-timeseries.pdf"
-configs.loop=${NUM_LOOPS}
-configs.recursion=c(${RECURSIONDEPTH})
-configs.labels=c("No Probe","InspectIT (minimal)","InspectIT (without CMR)","InspectIT (with CMR)")
-configs.colors=c("black","red","blue","green")
-results.count=${TOTALCALLS}
-tsconf.min=(${METHODTIME}/1000)
-tsconf.max=(${METHODTIME}/1000)+300
-source("${RSCRIPTDIR}timeseries.r")
-EOF
-# Timeseries-Average
-R --vanilla --silent <<EOF
-results_fn="${RAWFN}"
-output_fn="${RESULTSDIR}results-timeseries-average.pdf"
-configs.loop=${NUM_LOOPS}
-configs.recursion=c(${RECURSIONDEPTH})
-configs.labels=c("No Probe","InspectIT (minimal)","InspectIT (without CMR)","InspectIT (with CMR)")
-configs.colors=c("black","red","blue","green")
-results.count=${TOTALCALLS}
-tsconf.min=(${METHODTIME}/1000)
-tsconf.max=(${METHODTIME}/1000)+300
-source("${RSCRIPTDIR}timeseries-average.r")
-EOF
-# Bars
-R --vanilla --silent <<EOF
-results_fn="${RAWFN}"
-outtxt_fn="${RESULTSDIR}results-text.txt"
-configs.loop=${NUM_LOOPS}
-configs.recursion=c(${RECURSIONDEPTH})
-configs.labels=c("No Probe","InspectIT (minimal)","InspectIT (without CMR)","InspectIT (with CMR)")
-results.count=${TOTALCALLS}
-results.skip=${TOTALCALLS}*3/4
-source("${RSCRIPTDIR}stats.r")
-EOF
+# Create R labels
+LABELS=$(createRLabels)
+run-r
 
 ## Clean up raw results
-zip -jqr ${RESULTSDIR}results.zip ${RAWFN}*
-rm -f ${RAWFN}*
-[ -f ${BASEDIR}nohup.out ] && cp ${BASEDIR}nohup.out ${RESULTSDIR}
-[ -f ${BASEDIR}nohup.out ] && > ${BASEDIR}nohup.out
+zip -jqr ${RESULTS_DIR}/results.zip ${RAWFN}*
+rm ${RAWFN}*
