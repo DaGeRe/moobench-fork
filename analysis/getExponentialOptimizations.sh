@@ -37,7 +37,7 @@ function getFrameworkEvolutionFile {
 }
 
 if [ "$#" -lt 1 ]; then
-	echo "Please pass the folder where results-Kieker, results-OpenTelemetry and results-inspectIT are"
+	echo "Please pass the folder where the folder Kieker-Optimizations is contained"
 	exit 1
 fi
 
@@ -56,6 +56,11 @@ mkdir -p $RESULTFOLDER
 for framework in Kieker-Optimizations
 do
 	echo "Analysing $framework"
+	if [ ! -d $1/results-$framework ]
+	then
+		echo "Passed wrong folder: $1/results-$framework"
+		exit 1
+	fi
 	getFrameworkEvolutionFile $1 $framework
 done
 
