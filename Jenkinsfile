@@ -18,7 +18,7 @@ pipeline {
   environment {
     KEYSTORE = credentials('kieker-irl-key')
     UPDATE_SITE_URL = "sftp://repo@repo.se.internal/moobench"
-    BASE_DIR = "frameworks/Kieker/scripts"
+    BASE_DIR = "frameworks/Kieker"
 
     DOCKER_ARGS = ''
   }
