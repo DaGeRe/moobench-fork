@@ -10,7 +10,7 @@ SLEEP_TIME=30            ## 30
 NUM_LOOPS=10            ## 10
 THREADS=1               ## 1
 RECURSIONDEPTH=10       ## 10
-TOTALCALLS=20000000     ## 20000000
+TOTAL_CALLS=20000000     ## 20000000
 METHODTIME=0            ## 0
 
 RAWFN="${RESULTS_DIR}raw"
@@ -23,7 +23,7 @@ configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
 configs.colors=c("black","red","blue","green","yellow","purple")
-results.count=${TOTALCALLS}
+results.count=${TOTAL_CALLS}
 tsconf.min=0
 tsconf.max=25
 source("${R_SCRIPT_DIR}timeseries.r")
@@ -36,7 +36,7 @@ configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
 configs.colors=c("black","red","blue","green","yellow","purple")
-results.count=${TOTALCALLS}
+results.count=${TOTAL_CALLS}
 tsconf.min=0
 tsconf.max=25
 source("${R_SCRIPT_DIR}timeseries-average.r")
@@ -49,7 +49,7 @@ configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
 configs.colors=c("black","red","blue","green","yellow","purple")
-results.count=${TOTALCALLS}
+results.count=${TOTAL_CALLS}
 source("${R_SCRIPT_DIR}throughput.r")
 EOF
 # Throughput-Average
@@ -60,6 +60,6 @@ configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
 configs.colors=c("black","red","blue","green","yellow","purple")
-results.count=${TOTALCALLS}
+results.count=${TOTAL_CALLS}
 source("${R_SCRIPT_DIR}throughput-average.r")
 EOF

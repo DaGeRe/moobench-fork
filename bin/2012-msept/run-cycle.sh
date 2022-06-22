@@ -5,10 +5,10 @@ SUDOCMD="pfexec"
 SLEEP_TIME=30            ## 30
 NUM_LOOPS=10            ## 10
 RECURSION_DEPTH=1     ## 10
-TOTALCALLS=2000000      ## 2000000
+TOTAL_CALLS=2000000      ## 2000000
 METHODTIME=500000       ## 500000
 
-TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSION_DEPTH}`
+TIME=`expr ${METHODTIME} \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSION_DEPTH}`
 echo "Each experiment will take circa ${TIME} seconds."
 
 ${SUDOCMD} psrset -c -F 0 1 2 3 # one chip no hyperthreading

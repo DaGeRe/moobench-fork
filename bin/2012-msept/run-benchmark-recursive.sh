@@ -12,10 +12,10 @@ SLEEP_TIME=30            ## 30
 NUM_LOOPS=10            ## 10
 THREADS=1               ## 1
 RECURSION_DEPTH=10    ## 10
-TOTALCALLS=2000000      ## 2000000
+TOTAL_CALLS=2000000      ## 2000000
 METHODTIME=500000       ## 500000
 
-TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSION_DEPTH}`
+TIME=`expr ${METHODTIME} \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSION_DEPTH}`
 echo "Experiment will take circa ${TIME} seconds."
 
 # determine correct classpath separator
@@ -59,7 +59,7 @@ echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}configuration.txt
 echo "" >>${RESULTS_DIR}configuration.txt
 echo "SLEEP_TIME=${SLEEP_TIME}" >>${RESULTS_DIR}configuration.txt
 echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTS_DIR}configuration.txt
-echo "TOTALCALLS=${TOTALCALLS}" >>${RESULTS_DIR}configuration.txt
+echo "TOTAL_CALLS=${TOTAL_CALLS}" >>${RESULTS_DIR}configuration.txt
 echo "METHODTIME=${METHODTIME}" >>${RESULTS_DIR}configuration.txt
 echo "THREADS=${THREADS}" >>${RESULTS_DIR}configuration.txt
 echo "RECURSION_DEPTH=${RECURSION_DEPTH}" >>${RESULTS_DIR}configuration.txt
@@ -80,7 +80,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-1.txt &
         ${BINDJAVA} java  ${JAVA_ARGS_NOINSTR} ${JAR} \
             --output-filename ${RESULTSFN}-${i}-${j}-1.csv \
-            --totalcalls ${TOTALCALLS} \
+            --totalcalls ${TOTAL_CALLS} \
             --methodtime ${METHODTIME} \
             --totalthreads ${THREADS} \
             --recursiondepth ${j}
@@ -98,7 +98,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-2.txt &
         ${BINDJAVA} java  ${JAVA_ARGS_KIEKER_DEACTV} ${JAR} \
             --output-filename ${RESULTSFN}-${i}-${j}-2.csv \
-            --totalcalls ${TOTALCALLS} \
+            --totalcalls ${TOTAL_CALLS} \
             --methodtime ${METHODTIME} \
             --totalthreads ${THREADS} \
             --recursiondepth ${j}
@@ -118,7 +118,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-3.txt &
         ${BINDJAVA} java  ${JAVA_ARGS_KIEKER_NOLOGGING} ${JAR} \
             --output-filename ${RESULTSFN}-${i}-${j}-3.csv \
-            --totalcalls ${TOTALCALLS} \
+            --totalcalls ${TOTAL_CALLS} \
             --methodtime ${METHODTIME} \
             --totalthreads ${THREADS} \
             --recursiondepth ${j}
@@ -138,7 +138,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-4.txt &
         ${BINDJAVA} java  ${JAVA_ARGS_KIEKER_LOGGING} ${JAR} \
             --output-filename ${RESULTSFN}-${i}-${j}-4.csv \
-            --totalcalls ${TOTALCALLS} \
+            --totalcalls ${TOTAL_CALLS} \
             --methodtime ${METHODTIME} \
             --totalthreads ${THREADS} \
             --recursiondepth ${j}

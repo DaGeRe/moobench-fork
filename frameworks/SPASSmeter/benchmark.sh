@@ -54,7 +54,7 @@ echo "Runtime: circa ${TIME} seconds" >> "${RESULTS_DIR}/configuration.txt"
 echo "" >> "${RESULTS_DIR}/configuration.txt"
 echo "SLEEP_TIME=${SLEEP_TIME}" >> "${RESULTS_DIR}/configuration.txt"
 echo "NUM_LOOPS=${NUM_LOOPS}" >> "${RESULTS_DIR}/configuration.txt"
-echo "TOTALCALLS=${TOTAL_CALLS}" >> "${RESULTS_DIR}/configuration.txt"
+echo "TOTAL_CALLS=${TOTAL_CALLS}" >> "${RESULTS_DIR}/configuration.txt"
 echo "METHODTIME=${METHOD_TIME}" >> "${RESULTS_DIR}/configuration.txt"
 echo "THREADS=${THREADS}" >> "${RESULTS_DIR}/configuration.txt"
 echo "RECURSIONDEPTH=${RECURSION_DEPTH}" >> "${RESULTS_DIR}/configuration.txt"
@@ -112,7 +112,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVA_BIN} ${JAVA_ARGS_LTW_ASM} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --total-calls ${TOTALCALLS} \
+        --total-calls ${TOTAL_CALLS} \
         --method-time ${METHODTIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${j} \
