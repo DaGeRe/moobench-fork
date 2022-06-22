@@ -16,19 +16,12 @@ else
 	exit 1
 fi
 
-if [ -f "${BASE_DIR}/config" ] ; then
+if [ -f "${BASE_DIR}/common-functions.sh" ] ; then
 	. "${BASE_DIR}../common-functions.sh"
 else
-	echo "Missing configuration: ${BASE_DIR}/common-functions.sh"
+	echo "Missing configuration: ${BASE_DIR}/../common-functions.sh"
 	exit 1
 fi
-
-getKiekerAgent
-
-# copy receiver
-tar -xvpf ${BASE_DIR}/../../tools/receiver/build/distributions/receiver.tar
-# copy result compiler
-tar -xvpf ${BASE_DIR}/../../tools/compile-results/build/distributions/compile-results.tar
 
 if [ -f "${BASE_DIR}/common-functions" ] ; then
 	. ${BASE_DIR}/common-functions
@@ -37,6 +30,10 @@ else
 	exit 1
 fi
 
+getKiekerAgent
+
+PARENT=`dirname "${RESULTS_DIR}"`
+RECEIVER="${BASE_DIR}/receiver/bin/receiver"
 
 # check command line parameters
 if [ "$1" == "" ] ; then
@@ -53,10 +50,9 @@ fi
 # test input parameters and configuration
 #checkFile R-script "${RSCRIPT_PATH}"
 checkDirectory DATA_DIR "${DATA_DIR}" create
-
-PARENT=`dirname "${RESULTS_DIR}"`
-checkDirectory result-base "$PARENT"
+checkDirectory result-base "${PARENT}"
 checkFile ApsectJ-Agent "${AGENT}"
+checkExecutable Receiver "${RECEIVER}"
 
 information "----------------------------------"
 information "Running benchmark..."
@@ -95,8 +91,8 @@ WRITER_CONFIG[2]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=ki
 WRITER_CONFIG[3]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.FileWriter -Dkieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.TextLogStreamHandler -Dkieker.monitoring.writer.filesystem.FileWriter.customStoragePath=${DATA_DIR}/"
 WRITER_CONFIG[4]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.FileWriter -Dkieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.BinaryLogStreamHandler -Dkieker.monitoring.writer.filesystem.FileWriter.bufferSize=8192 -Dkieker.monitoring.writer.filesystem.FileWriter.customStoragePath=${DATA_DIR}/"
 WRITER_CONFIG[5]="-Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.SingleSocketTcpWriter -Dkieker.monitoring.writer.tcp.SingleSocketTcpWriter.port=2345"
-RECEIVER[5]="${BASE_DIR}/collector-2.0/bin/collector -p 2345"
-RECEIVER[5]="${BASE_DIR}/receiver/bin/receiver 2345"
+#RECEIVER[5]="${BASE_DIR}/collector-2.0/bin/collector -p 2345"
+RECEIVER[5]="${RECEIVER} 2345"
 
 ## Write configuration
 uname -a >${RESULTS_DIR}/configuration.txt
@@ -183,7 +179,7 @@ function execute-benchmark() {
     recursion=${RECURSION_DEPTH}
 
     information "## Starting iteration ${loop}/${NUM_OF_LOOPS}"
-    echo "## Starting iteration ${loop}/${NUM_OF_LOOPS}" >>${DATA_DIR}/kieker.log
+    echo "## Starting iteration ${loop}/${NUM_OF_LOOPS}" >> "${DATA_DIR}/kieker.log"
 
     for ((index=0;index<${#WRITER_CONFIG[@]};index+=1)); do
       execute-benchmark-body $index $loop $recursion
@@ -192,9 +188,9 @@ function execute-benchmark() {
     printIntermediaryResults
   done
 
-  mv ${DATA_DIR}/kieker.log ${RESULTS_DIR}/kieker.log
-  [ -f ${RESULTS_DIR}/hotspot-1-${RECURSION_DEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}/hotspot-*.log > ${RESULTS_DIR}/log.log
-  [ -f ${DATA_DIR}/errorlog.txt ] && mv ${DATA_DIR}/errorlog.txt ${RESULTS_DIR}
+  mv "${DATA_DIR}/kieker.log" "${RESULTS_DIR}/kieker.log"
+  [ -f "${RESULTS_DIR}/hotspot-1-${RECURSION_DEPTH}-1.log" ] && grep "<task " "${RESULTS_DIR}"/hotspot-*.log > "${RESULTS_DIR}/log.log"
+  [ -f "${DATA_DIR}/errorlog.txt" ] && mv "${DATA_DIR}/errorlog.txt" "${RESULTS_DIR}"
 }
 
 ## Execute benchmark

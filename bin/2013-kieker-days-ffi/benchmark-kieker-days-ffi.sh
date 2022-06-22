@@ -249,3 +249,5 @@ rm -f ${RAWFN}*
 zip -jqr ${RESULTS_DIR}/worker.zip ${RESULTS_DIR}/worker*.log
 rm -f ${RESULTS_DIR}/worker*.log
 [ -f ${BASE_DIR}/nohup.out ] && mv ${BASE_DIR}/nohup.out ${RESULTS_DIR}
+
+# end

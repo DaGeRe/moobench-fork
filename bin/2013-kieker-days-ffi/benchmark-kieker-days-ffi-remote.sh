@@ -1,6 +1,7 @@
 #!/bin/bash
 
-JAVABIN="/localhome/ffi/jdk1.7.0_25/bin/"
+JAVA_BIN="/localhome/ffi/jdk1.7.0_25/bin/java"
+
 REMOTEHOST="blade1"
 REMOTEBASE_DIR="/localhome/ffi/"
 
