@@ -131,7 +131,7 @@ function writeConfiguration() {
 function printIntermediaryResults {
    for ((index=0;index<${#TITLE[@]};index+=1)); do
       echo -n "Intermediary results "${TITLE[$index]}" "
-      cat $RESULTS_DIR/raw-*-${RECURSION_DEPTH}-${index}.csv | awk -F';' '{print $2}' | getSum
+      cat ${RESULTS_DIR}/raw-*-${RECURSION_DEPTH}-${index}.csv | awk -F';' '{print $2}' | getSum
    done
 }
 

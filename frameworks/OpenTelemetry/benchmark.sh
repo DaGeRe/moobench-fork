@@ -131,7 +131,7 @@ MORE_PARAMS="--application moobench.application.MonitoredClassSimple ${MOREPARAM
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
 
-echo "Cleaning and recreating '$RESULTS_DIR'"
+echo "Cleaning and recreating '${RESULTS_DIR}'"
 (rm -rf ${RESULTS_DIR}/**csv) && mkdir -p ${RESULTS_DIR}
 #mkdir ${RESULTS_DIR}stat/
 

@@ -24,7 +24,7 @@ if [ ! -z "$(uname | grep -i WIN)" ]; then CPSEPCHAR=";"; fi
 # echo "Classpath separator: '${CPSEPCHAR}'"
 
 RESULTS_DIR="${BASEDIR}tmp/results-benchmark-recursive-linear/"
-echo "Removing and recreating '$RESULTS_DIR'"
+echo "Removing and recreating '${RESULTS_DIR}'"
 (${SUDOCMD} rm -rf ${RESULTS_DIR}) && mkdir ${RESULTS_DIR}
 mkdir ${RESULTS_DIR}stat/
 

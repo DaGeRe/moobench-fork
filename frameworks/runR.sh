@@ -16,7 +16,7 @@ source common-functions.sh
 
 source $1/labels.sh
 
-echo "RESULTS_DIR: $RESULTS_DIR"
+echo "RESULTS_DIR: ${RESULTS_DIR}"
 echo "Rawfn: $RAWFN"
 
 RSCRIPT_PATH=stats.csv.r

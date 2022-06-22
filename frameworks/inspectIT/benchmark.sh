@@ -114,7 +114,7 @@ MORE_PARAMS="${MORE_PARAMS}"
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
 
-echo "Removing and recreating '$RESULTS_DIR'"
+echo "Removing and recreating '${RESULTS_DIR}'"
 (rm -rf "${RESULTS_DIR}/"**csv) && mkdir -p "${RESULTS_DIR}"
 
 # Clear inspectit.log and initialize logging
@@ -133,7 +133,7 @@ JAVA_ARGS_INSPECTIT_NULLWRITER="${JAVA_ARGS_LTW} -Dinspectit.service-name=mooben
 JAVA_ARGS_INSPECTIT_ZIPKIN="${JAVA_ARGS_LTW} -Dinspectit.service-name=moobench-inspectit -Dinspectit.exporters.metrics.prometheus.enabled=false -Dinspectit.exporters.tracing.zipkin.url=http://127.0.0.1:9411/api/v2/spans -Dinspectit.config.file-based.path=${BASE_DIR}/config/zipkin/"
 JAVA_ARGS_INSPECTIT_PROMETHEUS="${JAVA_ARGS_LTW} -Dinspectit.service-name=moobench-inspectit -Dinspectit.exporters.metrics.zipkin.enabled=false -Dinspectit.exporters.metrics.prometheus.enabled=true -Dinspectit.config.file-based.path=${BASE_DIR}/config/prometheus/"
 
-echo "RESULTS_DIR: $RESULTS_DIR"
+echo "RESULTS_DIR: ${RESULTS_DIR}"
 echo "RAWFN: $RAWFN"
 writeConfiguration
 

@@ -65,7 +65,7 @@ information "----------------------------------"
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 information "Experiment will take circa ${TIME} seconds."
 
-information "Removing and recreating '$RESULTS_DIR'"
+information "Removing and recreating '${RESULTS_DIR}'"
 (rm -rf ${RESULTS_DIR}/*csv) && mkdir -p ${RESULTS_DIR}
 
 # Clear kieker.log and initialize logging

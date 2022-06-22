@@ -17,7 +17,7 @@ EOF
 
 function createVariantsString {
 	local LABELS=""
-	local variants=$(ls $RESULTS_DIR | grep ".csv" | awk -F'[.-]' '{print $4}' | sort | uniq | sed '/^[[:space:]]*$/d')
+	local variants=$(ls ${RESULTS_DIR} | grep ".csv" | awk -F'[.-]' '{print $4}' | sort | uniq | sed '/^[[:space:]]*$/d')
 	for variant in $variants
 	do
 		if [ -z "$LABELS" ]
@@ -31,7 +31,7 @@ function createVariantsString {
 }
 
 function createLatexTable {
-	cat $RESULTS_DIR/results-text.txt | tail -n 8 > transposeMe.csv
+	cat ${RESULTS_DIR}/results-text.txt | tail -n 8 > transposeMe.csv
 	awk '
 	{ 
 	    for (i=1; i<=NF; i++)  {
@@ -61,7 +61,7 @@ fi
 
 RESULTS_DIR=$1
 
-RAWFN=$RESULTS_DIR/raw
+RAWFN=${RESULTS_DIR}/raw
 NUM_OF_LOOPS=10
 RECURSION_DEPTH=10
 TOTAL_NUM_OF_CALLS=2000000

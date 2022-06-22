@@ -19,7 +19,7 @@ MORE_PARAMS=""
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
 
-echo "Removing and recreating '$RESULTS_DIR'"
+echo "Removing and recreating '${RESULTS_DIR}'"
 (rm -rf ${RESULTS_DIR}/) && mkdir ${RESULTS_DIR}/
 mkdir ${RESULTS_DIR}/stat/
 
