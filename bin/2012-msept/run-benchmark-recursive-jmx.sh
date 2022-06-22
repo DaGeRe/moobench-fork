@@ -6,7 +6,7 @@ SUDOCMD=""
 BINDJAVA=""
 
 BIN_DIR=bin/
-BASEDIR=
+BASE_DIR=
 
 SLEEPTIME=30            ## 30
 NUM_LOOPS=10            ## 10
@@ -23,14 +23,14 @@ CPSEPCHAR=":" # default :, ; for windows
 if [ ! -z "$(uname | grep -i WIN)" ]; then CPSEPCHAR=";"; fi
 # echo "Classpath separator: '${CPSEPCHAR}'"
 
-RESULTS_DIR="${BASEDIR}tmp/results-benchmark-recursive/"
+RESULTS_DIR="${BASE_DIR}tmp/results-benchmark-recursive/"
 echo "Removing and recreating '${RESULTS_DIR}'"
 (${SUDOCMD} rm -rf ${RESULTS_DIR}) && mkdir ${RESULTS_DIR}
 mkdir ${RESULTS_DIR}stat/
 
 # Clear kieker.log and initialize logging
-rm -f ${BASEDIR}kieker.log
-touch ${BASEDIR}kieker.log
+rm -f ${BASE_DIR}kieker.log
+touch ${BASE_DIR}kieker.log
 
 RESULTSFN="${RESULTS_DIR}results.csv"
 
@@ -44,7 +44,7 @@ JAVA_ARGS="${JAVA_ARGS} -verbose:gc -XX:+PrintCompilation"
 JAR="-jar MooBench.jar"
 
 JAVA_ARGS_NOINSTR="${JAVA_ARGS}"
-JAVA_ARGS_LTW="${JAVA_ARGS} -javaagent:${BASEDIR}lib/kieker-1.9-SNAPSHOT_aspectj.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false"
+JAVA_ARGS_LTW="${JAVA_ARGS} -javaagent:${BASE_DIR}lib/kieker-1.9-SNAPSHOT_aspectj.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false"
 JAVA_ARGS_KIEKER_DEACTV="${JAVA_ARGS_LTW} -Dkieker.monitoring.adaptiveMonitoring.configFile=META-INF/kieker.monitoring.adaptiveMonitoring.disabled.conf -Dkieker.monitoring.writer=kieker.monitoring.writer.DummyWriter"
 JAVA_ARGS_KIEKER_NOLOGGING="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.DummyWriter"
 JAVA_ARGS_KIEKER_LOGGING="${JAVA_ARGS_LTW} -Dkieker.monitoring.jmx=true -Dkieker.monitoring.jmx.remote=true -Dkieker.monitoring.writer=kieker.monitoring.writer.jmx.JMXWriter""
@@ -86,9 +86,9 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         kill %mpstat
         kill %vmstat
         kill %iostat
-        [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-1.log
-        echo >>${BASEDIR}kieker.log
-        echo >>${BASEDIR}kieker.log
+        [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-1.log
+        echo >>${BASE_DIR}kieker.log
+        echo >>${BASE_DIR}kieker.log
         sync
         sleep ${SLEEPTIME}
 
@@ -107,9 +107,9 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         kill %vmstat
         kill %iostat
         mkdir -p ${RESULTS_DIR}kiekerlog/
-        [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-2.log
-        echo >>${BASEDIR}kieker.log
-        echo >>${BASEDIR}kieker.log
+        [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-2.log
+        echo >>${BASE_DIR}kieker.log
+        echo >>${BASE_DIR}kieker.log
         sync
         sleep ${SLEEPTIME}
     
@@ -119,7 +119,7 @@ done
 tar cf ${RESULTS_DIR}stat.tar ${RESULTS_DIR}stat
 rm -rf ${RESULTS_DIR}stat/
 gzip -9 ${RESULTS_DIR}stat.tar
-mv ${BASEDIR}kieker.log ${RESULTS_DIR}kieker.log
+mv ${BASE_DIR}kieker.log ${RESULTS_DIR}kieker.log
 [ -f ${RESULTS_DIR}hotspot-1-1-1.log ] && grep "<task " ${RESULTS_DIR}hotspot-*.log >${RESULTS_DIR}log.log
-[ -f ${BASEDIR}nohup.out ] && mv ${BASEDIR}nohup.out ${RESULTS_DIR}
-[ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTS_DIR}
+[ -f ${BASE_DIR}nohup.out ] && mv ${BASE_DIR}nohup.out ${RESULTS_DIR}
+[ -f ${BASE_DIR}errorlog.txt ] && mv ${BASE_DIR}errorlog.txt ${RESULTS_DIR}

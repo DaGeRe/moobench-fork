@@ -13,24 +13,24 @@ function startJaeger {
 }
 
 function cleanup {
-	[ -f ${BASE_DIR}/hotspot.log ] && mv ${BASE_DIR}/hotspot.log ${RESULTS_DIR}/hotspot-${i}-$RECURSION_DEPTH-${k}.log
-	echo >>${BASE_DIR}/OpenTelemetry.log
-	echo >>${BASE_DIR}/OpenTelemetry.log
+	[ -f "${BASE_DIR}/hotspot.log" ] && mv "${BASE_DIR}/hotspot.log" "${RESULTS_DIR}/hotspot-${i}-$RECURSION_DEPTH-${k}.log"
+	echo >> "${BASE_DIR}/OpenTelemetry.log"
+	echo >> "${BASE_DIR}/OpenTelemetry.log"
 	sync
-	sleep ${SLEEP_TIME}
+	sleep "${SLEEP_TIME}"
 }
 
 function runNoInstrumentation {
     # No instrumentation
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}"
+    echo " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}" >> "${BASE_DIR}/OpenTelemetry.log"
     ${JAVA_BIN} ${JAVA_ARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
         --recursion-depth $RECURSION_DEPTH \
-        ${MORE_PARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
+        ${MORE_PARAMS} &> "${RESULTS_DIR}/output_${i}_${RECURSION_DEPTH}_${k}.txt"
 }
 
 function runOpenTelemetryNoLogging {
@@ -39,19 +39,19 @@ function runOpenTelemetryNoLogging {
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
     ${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_LOGGING_DEACTIVATED} ${JAR} \
-        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
+        --output-filename "${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv" \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
-        --recursion-depth $RECURSION_DEPTH \
-        ${MORE_PARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
+        --recursion-depth ${RECURSION_DEPTH} \
+        ${MORE_PARAMS} &> "${RESULTS_DIR}/output_${i}_${RECURSION_DEPTH}_${k}.txt"
 }
 
 function runOpenTelemetryLogging {
     # OpenTelemetry Instrumentation Logging
     k=`expr ${k} + 1`
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}"
+    echo " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}" >> "${BASE_DIR}/OpenTelemetry.log"
     ${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_LOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
@@ -194,4 +194,6 @@ cleanup-results
 mv ${BASE_DIR}/OpenTelemetry.log ${RESULTS_DIR}/OpenTelemetry.log
 [ -f "${RESULTS_DIR}/hotspot-1-${RECURSION_DEPTH}-1.log" ] && grep "<task " ${RESULTS_DIR}/hotspot-*.log > "${RESULTS_DIR}/log.log"
 [ -f "${BASE_DIR}/errorlog.txt" ] && mv "${BASE_DIR}/errorlog.txt" ${RESULTS_DIR}
+
+# end
 

@@ -3,7 +3,7 @@
 JAVABIN="/localhome/ffi/jdk1.7.0_25/bin/"
 
 R_SCRIPT_DIR=bin/icpe/r/
-BASEDIR=./
+BASE_DIR=./
 RESULTS_DIR="${BASE_DIR}/tmp/results-benchmark-tcp-kieker/"
 
 SLEEP_TIME=30            ## 30

@@ -3,8 +3,8 @@
 JAVABIN=""
 
 R_SCRIPT_DIR=bin/r-scripts/
-BASEDIR=./
-RESULTS_DIR="${BASEDIR}tmp/ffi-exp/"
+BASE_DIR=./
+RESULTS_DIR="${BASE_DIR}tmp/ffi-exp/"
 
 SLEEPTIME=30            ## 30
 NUM_LOOPS=10            ## 10

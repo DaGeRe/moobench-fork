@@ -3,7 +3,7 @@
 
 JAVA_BIN=""
 
-RSCRIPT_DIR=r
+R_SCRIPT_DIR=r
 BASE_DIR=.
 RESULTS_DIR="${BASE_DIR}/tmp/results-spassmeter"
 

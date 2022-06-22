@@ -3,8 +3,8 @@
 JAVABIN="/localhome/ffi/jdk1.7.0_25/bin/"
 
 R_SCRIPT_DIR=bin/icpe/r/
-BASEDIR=./
-RESULTS_DIR="${BASEDIR}tmp/results-benchmark-disk/"
+BASE_DIR=./
+RESULTS_DIR="${BASE_DIR}tmp/results-benchmark-disk/"
 
 SLEEPTIME=30            ## 30
 NUM_LOOPS=10            ## 10
@@ -24,8 +24,8 @@ echo "Removing and recreating '${RESULTS_DIR}'"
 mkdir ${RESULTS_DIR}stat/
 
 # Clear kieker.log and initialize logging
-rm -f ${BASEDIR}kieker.log
-touch ${BASEDIR}kieker.log
+rm -f ${BASE_DIR}kieker.log
+touch ${BASE_DIR}kieker.log
 
 RAWFN="${RESULTS_DIR}raw"
 
@@ -39,12 +39,12 @@ JAVA_ARGS="${JAVA_ARGS} -verbose:gc -XX:+PrintCompilation"
 JAR="-jar dist/OverheadEvaluationMicrobenchmarkKieker.jar"
 
 JAVA_ARGS_NOINSTR="${JAVA_ARGS}"
-JAVA_ARGS_LTW="${JAVA_ARGS} -javaagent:${BASEDIR}lib/kieker-1.8-SNAPSHOT_aspectj.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dkieker.monitoring.adaptiveMonitoring.enabled=false -Dorg.aspectj.weaver.loadtime.configuration=META-INF/kieker.aop.xml"
+JAVA_ARGS_LTW="${JAVA_ARGS} -javaagent:${BASE_DIR}lib/kieker-1.8-SNAPSHOT_aspectj.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dkieker.monitoring.adaptiveMonitoring.enabled=false -Dorg.aspectj.weaver.loadtime.configuration=META-INF/kieker.aop.xml"
 JAVA_ARGS_KIEKER_DEACTV="${JAVA_ARGS_LTW} -Dkieker.monitoring.enabled=false -Dkieker.monitoring.writer=kieker.monitoring.writer.DummyWriter"
 JAVA_ARGS_KIEKER_NOLOGGING="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.DummyWriter"
-JAVA_ARGS_KIEKER_LOGGING1="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncBinaryFsWriter -Dkieker.monitoring.writer.filesystem.AsyncBinaryFsWriter.customStoragePath=${BASEDIR}tmp -Dkieker.monitoring.writer.filesystem.AsyncBinaryFsWriter.QueueFullBehavior=1"
-JAVA_ARGS_KIEKER_LOGGING2="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncBinaryZipWriter -Dkieker.monitoring.writer.filesystem.AsyncBinaryZipWriter.customStoragePath=${BASEDIR}tmp -Dkieker.monitoring.writer.filesystem.AsyncBinaryZipWriter.QueueFullBehavior=1"
-JAVA_ARGS_KIEKER_LOGGING3="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncFsWriter -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.customStoragePath=${BASEDIR}tmp -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.QueueFullBehavior=1"
+JAVA_ARGS_KIEKER_LOGGING1="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncBinaryFsWriter -Dkieker.monitoring.writer.filesystem.AsyncBinaryFsWriter.customStoragePath=${BASE_DIR}tmp -Dkieker.monitoring.writer.filesystem.AsyncBinaryFsWriter.QueueFullBehavior=1"
+JAVA_ARGS_KIEKER_LOGGING2="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncBinaryZipWriter -Dkieker.monitoring.writer.filesystem.AsyncBinaryZipWriter.customStoragePath=${BASE_DIR}tmp -Dkieker.monitoring.writer.filesystem.AsyncBinaryZipWriter.QueueFullBehavior=1"
+JAVA_ARGS_KIEKER_LOGGING3="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncFsWriter -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.customStoragePath=${BASE_DIR}tmp -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.QueueFullBehavior=1"
 
 ## Write configuration
 uname -a >${RESULTS_DIR}configuration.txt
@@ -66,12 +66,12 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     j=${RECURSIONDEPTH}
     k=0
     echo "## Starting iteration ${i}/${NUM_LOOPS}"
-    echo "## Starting iteration ${i}/${NUM_LOOPS}" >>${BASEDIR}kieker.log
+    echo "## Starting iteration ${i}/${NUM_LOOPS}" >>${BASE_DIR}kieker.log
 
     # No instrumentation
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} No instrumentation"
-    echo " # ${i}.${j}.${k} No instrumentation" >>${BASEDIR}kieker.log
+    echo " # ${i}.${j}.${k} No instrumentation" >>${BASE_DIR}kieker.log
     mpstat 1 > ${RESULTS_DIR}stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-${k}.txt &
@@ -85,16 +85,16 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     kill %mpstat
     kill %vmstat
     kill %iostat
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
-    echo >>${BASEDIR}kieker.log
-    echo >>${BASEDIR}kieker.log
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    echo >>${BASE_DIR}kieker.log
+    echo >>${BASE_DIR}kieker.log
     sync
     sleep ${SLEEPTIME}
 
     # Deactivated probe
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Deactivated probe"
-    echo " # ${i}.${j}.${k} Deactivated probe" >>${BASEDIR}kieker.log
+    echo " # ${i}.${j}.${k} Deactivated probe" >>${BASE_DIR}kieker.log
     mpstat 1 > ${RESULTS_DIR}stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-${k}.txt &
@@ -108,16 +108,16 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     kill %mpstat
     kill %vmstat
     kill %iostat
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
-    echo >>${BASEDIR}kieker.log
-    echo >>${BASEDIR}kieker.log
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    echo >>${BASE_DIR}kieker.log
+    echo >>${BASE_DIR}kieker.log
     sync
     sleep ${SLEEPTIME}
 
     # No logging
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} No logging (null writer)"
-    echo " # ${i}.${j}.${k} No logging (null writer)" >>${BASEDIR}kieker.log
+    echo " # ${i}.${j}.${k} No logging (null writer)" >>${BASE_DIR}kieker.log
     mpstat 1 > ${RESULTS_DIR}stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-${k}.txt &
@@ -131,16 +131,16 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     kill %mpstat
     kill %vmstat
     kill %iostat
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
-    echo >>${BASEDIR}kieker.log
-    echo >>${BASEDIR}kieker.log
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    echo >>${BASE_DIR}kieker.log
+    echo >>${BASE_DIR}kieker.log
     sync
     sleep ${SLEEPTIME}
 
     # Logging 1
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Logging 1"
-    echo " # ${i}.${j}.${k} Logging 1" >>${BASEDIR}kieker.log
+    echo " # ${i}.${j}.${k} Logging 1" >>${BASE_DIR}kieker.log
     mpstat 1 > ${RESULTS_DIR}stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-${k}.txt &
@@ -154,17 +154,17 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     kill %mpstat
     kill %vmstat
     kill %iostat
-    rm -rf ${BASEDIR}tmp/kieker-*
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
-    echo >>${BASEDIR}kieker.log
-    echo >>${BASEDIR}kieker.log
+    rm -rf ${BASE_DIR}tmp/kieker-*
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    echo >>${BASE_DIR}kieker.log
+    echo >>${BASE_DIR}kieker.log
     sync
     sleep ${SLEEPTIME}
 
     # Logging 2
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Logging 2"
-    echo " # ${i}.${j}.${k} Logging 2" >>${BASEDIR}kieker.log
+    echo " # ${i}.${j}.${k} Logging 2" >>${BASE_DIR}kieker.log
     mpstat 1 > ${RESULTS_DIR}stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-${k}.txt &
@@ -178,17 +178,17 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     kill %mpstat
     kill %vmstat
     kill %iostat
-    rm -rf ${BASEDIR}tmp/kieker-*
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
-    echo >>${BASEDIR}kieker.log
-    echo >>${BASEDIR}kieker.log
+    rm -rf ${BASE_DIR}tmp/kieker-*
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    echo >>${BASE_DIR}kieker.log
+    echo >>${BASE_DIR}kieker.log
     sync
     sleep ${SLEEPTIME}
 
     # Logging 3
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Logging 3"
-    echo " # ${i}.${j}.${k} Logging 3" >>${BASEDIR}kieker.log
+    echo " # ${i}.${j}.${k} Logging 3" >>${BASE_DIR}kieker.log
     mpstat 1 > ${RESULTS_DIR}stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-${k}.txt &
@@ -202,19 +202,19 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     kill %mpstat
     kill %vmstat
     kill %iostat
-    rm -rf ${BASEDIR}tmp/kieker-*
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
-    echo >>${BASEDIR}kieker.log
-    echo >>${BASEDIR}kieker.log
+    rm -rf ${BASE_DIR}tmp/kieker-*
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    echo >>${BASE_DIR}kieker.log
+    echo >>${BASE_DIR}kieker.log
     sync
     sleep ${SLEEPTIME}
 
 done
 zip -jqr ${RESULTS_DIR}stat.zip ${RESULTS_DIR}stat
 rm -rf ${RESULTS_DIR}stat/
-mv ${BASEDIR}kieker.log ${RESULTS_DIR}kieker.log
+mv ${BASE_DIR}kieker.log ${RESULTS_DIR}kieker.log
 [ -f ${RESULTS_DIR}hotspot-1-${RECURSIONDEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}hotspot-*.log >${RESULTS_DIR}log.log
-[ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTS_DIR}
+[ -f ${BASE_DIR}errorlog.txt ] && mv ${BASE_DIR}errorlog.txt ${RESULTS_DIR}
 
 ## Generate Results file
 # Timeseries
@@ -283,4 +283,4 @@ EOF
 ## Clean up raw results
 zip -jqr ${RESULTS_DIR}results.zip ${RAWFN}*
 rm -f ${RAWFN}*
-[ -f ${BASEDIR}nohup.out ] && mv ${BASEDIR}nohup.out ${RESULTS_DIR}
+[ -f ${BASE_DIR}nohup.out ] && mv ${BASE_DIR}nohup.out ${RESULTS_DIR}

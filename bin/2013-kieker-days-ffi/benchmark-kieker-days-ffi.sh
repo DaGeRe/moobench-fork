@@ -3,8 +3,8 @@
 JAVABIN="/localhome/ffi/jdk1.7.0_25/bin/"
 
 R_SCRIPT_DIR=bin/icpe/r/
-BASEDIR=./
-RESULTS_DIR="${BASEDIR}tmp/results-benchmark-kieker-days-ffi/"
+BASE_DIR=./
+RESULTS_DIR="${BASE_DIR}tmp/results-benchmark-kieker-days-ffi/"
 
 SLEEPTIME=30            ## 30
 NUM_LOOPS=1            ## 10
@@ -38,7 +38,7 @@ JARCollecting="-jar dist/OverheadEvaluationMicrobenchmarkTCPffiCollecting.jar"
 JARNORMAL="-jar dist/OverheadEvaluationMicrobenchmarkTCPffiNormal.jar"
 
 JAVA_ARGS_NOINSTR="${JAVA_ARGS}"
-JAVA_ARGS_LTW="${JAVA_ARGS} -javaagent:${BASEDIR}lib/aspectjweaver.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dorg.aspectj.weaver.loadtime.configuration=META-INF/kieker-overhead-benchmark.aop.xml"
+JAVA_ARGS_LTW="${JAVA_ARGS} -javaagent:${BASE_DIR}lib/aspectjweaver.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dorg.aspectj.weaver.loadtime.configuration=META-INF/kieker-overhead-benchmark.aop.xml"
 
 ## Write configuration
 uname -a >${RESULTS_DIR}configuration.txt
@@ -74,7 +74,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --recursiondepth ${j} \
         ${MOREPARAMS}
     kill %sar
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEPTIME}
 
@@ -93,7 +93,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         ${MOREPARAMS}
     kill %sar
     pkill -f 'java -jar'
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEPTIME}
 	
@@ -112,7 +112,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         ${MOREPARAMS}
     kill %sar
     pkill -f 'java -jar'
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEPTIME}
 
@@ -131,7 +131,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         ${MOREPARAMS}
     kill %sar
     pkill -f 'java -jar'
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEPTIME}
 	
@@ -150,7 +150,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         ${MOREPARAMS}
     kill %sar
     pkill -f 'java -jar'
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEPTIME}
 
@@ -169,7 +169,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         ${MOREPARAMS}
     kill %sar
     pkill -f 'java -jar'
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEPTIME}
 	
@@ -177,7 +177,7 @@ done
 zip -jqr ${RESULTS_DIR}stat.zip ${RESULTS_DIR}stat
 rm -rf ${RESULTS_DIR}stat/
 [ -f ${RESULTS_DIR}hotspot-1-${RECURSIONDEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}hotspot-*.log >${RESULTS_DIR}log.log
-[ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTS_DIR}
+[ -f ${BASE_DIR}errorlog.txt ] && mv ${BASE_DIR}errorlog.txt ${RESULTS_DIR}
 
 ## Generate Results file
 # Timeseries
@@ -248,4 +248,4 @@ zip -jqr ${RESULTS_DIR}results.zip ${RAWFN}*
 rm -f ${RAWFN}*
 zip -jqr ${RESULTS_DIR}worker.zip ${RESULTS_DIR}worker*.log
 rm -f ${RESULTS_DIR}worker*.log
-[ -f ${BASEDIR}nohup.out ] && mv ${BASEDIR}nohup.out ${RESULTS_DIR}
+[ -f ${BASE_DIR}nohup.out ] && mv ${BASE_DIR}nohup.out ${RESULTS_DIR}

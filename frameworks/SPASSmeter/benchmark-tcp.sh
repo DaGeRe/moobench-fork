@@ -4,7 +4,7 @@
 JAVABIN=""
 
 R_SCRIPT_DIR=r/
-BASEDIR=./
+BASE_DIR=./
 RESULTS_DIR="${BASE_DIR}/tmp/results-spassmeter/"
 
 SLEEPTIME=30           ## 30

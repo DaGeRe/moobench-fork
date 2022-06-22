@@ -3,7 +3,7 @@
 JAVA_BIN="/localhome/ffi/jdk1.7.0_25/bin/java"
 
 R_SCRIPT_DIR=bin/icpe/r/
-BASEDIR=./
+BASE_DIR=./
 RESULTS_DIR="${BASE_DIR}/tmp/results-benchmark-disk-slow/"
 
 SLEEP_TIME=30            ## 30
