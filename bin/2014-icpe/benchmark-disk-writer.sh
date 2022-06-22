@@ -1,6 +1,6 @@
 #!/bin/bash
 
-JAVABIN="/localhome/ffi/jdk1.7.0_25/bin/"
+JAVA_BIN="/localhome/ffi/jdk1.7.0_25/bin/java"
 
 R_SCRIPT_DIR=bin/icpe/r/
 BASE_DIR=./
@@ -48,7 +48,7 @@ JAVA_ARGS_KIEKER_LOGGING3="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.mo
 
 ## Write configuration
 uname -a >${RESULTS_DIR}/configuration.txt
-${JAVABIN}java ${JAVA_ARGS} -version 2>>${RESULTS_DIR}/configuration.txt
+${JAVA_BIN} ${JAVA_ARGS} -version 2>>${RESULTS_DIR}/configuration.txt
 echo "JAVA_ARGS: ${JAVA_ARGS}" >>${RESULTS_DIR}/configuration.txt
 echo "" >>${RESULTS_DIR}/configuration.txt
 echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}/configuration.txt
@@ -75,12 +75,12 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     mpstat 1 > ${RESULTS_DIR}/stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}/stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}/stat/iostat-${i}-${j}-${k}.txt &
-    ${JAVABIN}java  ${JAVA_ARGS_NOINSTR} ${JAR} \
+    ${JAVA_BIN}  ${JAVA_ARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     kill %mpstat
     kill %vmstat
@@ -98,12 +98,12 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     mpstat 1 > ${RESULTS_DIR}/stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}/stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}/stat/iostat-${i}-${j}-${k}.txt &
-    ${JAVABIN}java  ${JAVA_ARGS_KIEKER_DEACTV} ${JAR} \
+    ${JAVA_BIN}  ${JAVA_ARGS_KIEKER_DEACTV} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     kill %mpstat
     kill %vmstat
@@ -121,12 +121,12 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     mpstat 1 > ${RESULTS_DIR}/stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}/stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}/stat/iostat-${i}-${j}-${k}.txt &
-    ${JAVABIN}java  ${JAVA_ARGS_KIEKER_NOLOGGING} ${JAR} \
+    ${JAVA_BIN}  ${JAVA_ARGS_KIEKER_NOLOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     kill %mpstat
     kill %vmstat
@@ -144,12 +144,12 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     mpstat 1 > ${RESULTS_DIR}/stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}/stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}/stat/iostat-${i}-${j}-${k}.txt &
-    ${JAVABIN}java  ${JAVA_ARGS_KIEKER_LOGGING1} ${JAR} \
+    ${JAVA_BIN}  ${JAVA_ARGS_KIEKER_LOGGING1} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     kill %mpstat
     kill %vmstat
@@ -168,12 +168,12 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     mpstat 1 > ${RESULTS_DIR}/stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}/stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}/stat/iostat-${i}-${j}-${k}.txt &
-    ${JAVABIN}java  ${JAVA_ARGS_KIEKER_LOGGING2} ${JAR} \
+    ${JAVA_BIN}  ${JAVA_ARGS_KIEKER_LOGGING2} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     kill %mpstat
     kill %vmstat
@@ -192,12 +192,12 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     mpstat 1 > ${RESULTS_DIR}/stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}/stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}/stat/iostat-${i}-${j}-${k}.txt &
-    ${JAVABIN}java  ${JAVA_ARGS_KIEKER_LOGGING3} ${JAR} \
+    ${JAVA_BIN}  ${JAVA_ARGS_KIEKER_LOGGING3} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     kill %mpstat
     kill %vmstat
@@ -284,3 +284,5 @@ EOF
 zip -jqr ${RESULTS_DIR}/results.zip ${RAWFN}*
 rm -f ${RAWFN}*
 [ -f ${BASE_DIR}/nohup.out ] && mv ${BASE_DIR}/nohup.out ${RESULTS_DIR}
+
+# end

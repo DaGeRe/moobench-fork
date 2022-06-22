@@ -74,10 +74,10 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVA_BIN} ${JAVA_ARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     #kill %sar
     [ -f "${BASE_DIR}/hotspot.log" ] && mv "${BASE_DIR}/hotspot.log" "${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log"
@@ -94,10 +94,10 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     ${JAVA_BIN} ${SERVER} 1>>server.out 2>&1 &
     ${JAVA_BIN} ${JAVA_ARGS_LTW},mainDefault=NONE -DSpassmeterNoWriter=true ${JAR} -f \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     kill -9 $!
     #kill %sar
@@ -115,10 +115,10 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     ${JAVA_BIN} ${SERVER} 1>>server.out 2>&1 &
     ${JAVA_BIN} ${JAVA_ARGS_LTW} -DSpassmeterNoWriter=true ${JAR} -f \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     kill -9 $!
     #kill %sar
@@ -136,10 +136,10 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     ${JAVA_BIN} ${SERVER} 1>>server.out 2>&1 &
     ${JAVA_BIN} ${JAVA_ARGS_LTW} -DSpassmeterNoWriter=fals ${JAR} -f \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     kill -9 $!
     #kill %sar

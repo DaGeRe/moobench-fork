@@ -77,10 +77,10 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     iostat -xn 10 > ${RESULTS_DIR}/stat/iostat-${i}-${j}-${k}.txt &
     ${JAVA_BIN}  ${JAVA_ARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     kill %mpstat
     kill %vmstat

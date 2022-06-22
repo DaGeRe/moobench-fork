@@ -48,7 +48,7 @@ JAVA_ARGS_LTW="${JAVA_ARGS} -javaagent:${BASE_DIR}/lib/aspectjweaver.jar -Dorg.a
 
 ## Write configuration
 uname -a >${RESULTS_DIR}/configuration.txt
-${JAVABIN}java ${JAVA_ARGS} -version 2>>${RESULTS_DIR}/configuration.txt
+${JAVA_BIN} ${JAVA_ARGS} -version 2>>${RESULTS_DIR}/configuration.txt
 echo "JAVA_ARGS: ${JAVA_ARGS}" >>${RESULTS_DIR}/configuration.txt
 echo "" >>${RESULTS_DIR}/configuration.txt
 echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}/configuration.txt
@@ -72,12 +72,12 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} No instrumentation"
 	sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java  ${JAVA_ARGS_NOINSTR} ${JARNoInstru} \
+    ${JAVA_BIN}  ${JAVA_ARGS_NOINSTR} ${JARNoInstru} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     kill %sar
     [ -f ${BASE_DIR}/hotspot.log ] && mv ${BASE_DIR}/hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
@@ -88,14 +88,14 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Deactivated Probe"
 	sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ssh ${REMOTEHOST} "nohup ${JAVABIN}java -jar ${REMOTERESULTS_DIR}/dist/explorviz_worker.jar >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log &"
+    ssh ${REMOTEHOST} "nohup ${JAVA_BIN} -jar ${REMOTERESULTS_DIR}/dist/explorviz_worker.jar >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log &"
     sleep 5
-    ${JAVABIN}java  ${JAVA_ARGS_LTW} ${JARDeactived} \
+    ${JAVA_BIN}  ${JAVA_ARGS_LTW} ${JARDeactived} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     kill %sar
     pkill -f 'java -jar'
@@ -108,14 +108,14 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Collecting"
 	sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ssh ${REMOTEHOST} "nohup ${JAVABIN}java -jar ${REMOTERESULTS_DIR}/dist/explorviz_worker.jar >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log &"
+    ssh ${REMOTEHOST} "nohup ${JAVA_BIN} -jar ${REMOTERESULTS_DIR}/dist/explorviz_worker.jar >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log &"
     sleep 5
-    ${JAVABIN}java  ${JAVA_ARGS_LTW} ${JARCollecting} \
+    ${JAVA_BIN}  ${JAVA_ARGS_LTW} ${JARCollecting} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     kill %sar
     pkill -f 'java -jar'
@@ -128,14 +128,14 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Logging"
 	sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ssh ${REMOTEHOST} "nohup ${JAVABIN}java -jar ${REMOTERESULTS_DIR}/dist/explorviz_worker.jar >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log &"
+    ssh ${REMOTEHOST} "nohup ${JAVA_BIN} -jar ${REMOTERESULTS_DIR}/dist/explorviz_worker.jar >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log &"
     sleep 5
-    ${JAVABIN}java  ${JAVA_ARGS_LTW} ${JARNORMAL} \
+    ${JAVA_BIN}  ${JAVA_ARGS_LTW} ${JARNORMAL} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     kill %sar
     pkill -f 'java -jar'
@@ -148,14 +148,14 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Reconstruction"
 	sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ssh ${REMOTEHOST} "nohup ${JAVABIN}java -jar ${REMOTERESULTS_DIR}/dist/explorviz_workerReconstruction.jar >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log &"
+    ssh ${REMOTEHOST} "nohup ${JAVA_BIN} -jar ${REMOTERESULTS_DIR}/dist/explorviz_workerReconstruction.jar >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log &"
     sleep 5
-    ${JAVABIN}java  ${JAVA_ARGS_LTW} ${JARNORMAL} \
+    ${JAVA_BIN}  ${JAVA_ARGS_LTW} ${JARNORMAL} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     kill %sar
     pkill -f 'java -jar'
@@ -168,14 +168,14 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Reduction"
 	sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ssh ${REMOTEHOST} "nohup ${JAVABIN}java -jar ${REMOTERESULTS_DIR}/dist/explorviz_workerReduction.jar >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log &"
+    ssh ${REMOTEHOST} "nohup ${JAVA_BIN} -jar ${REMOTERESULTS_DIR}/dist/explorviz_workerReduction.jar >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log &"
     sleep 5
-    ${JAVABIN}java  ${JAVA_ARGS_LTW} ${JARNORMAL} \
+    ${JAVA_BIN}  ${JAVA_ARGS_LTW} ${JARNORMAL} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     kill %sar
     pkill -f 'java -jar'

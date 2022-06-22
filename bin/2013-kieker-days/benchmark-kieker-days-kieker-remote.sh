@@ -52,7 +52,7 @@ JAVA_ARGS_KIEKER_LOGGING="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.mon
 
 ## Write configuration
 uname -a >${RESULTS_DIR}/configuration.txt
-${JAVABIN}java ${JAVA_ARGS} -version 2>>${RESULTS_DIR}/configuration.txt
+${JAVA_BIN} ${JAVA_ARGS} -version 2>>${RESULTS_DIR}/configuration.txt
 echo "JAVA_ARGS: ${JAVA_ARGS}" >>${RESULTS_DIR}/configuration.txt
 echo "" >>${RESULTS_DIR}/configuration.txt
 echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}/configuration.txt
@@ -77,12 +77,12 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} No instrumentation"
     echo " # ${i}.${j}.${k} No instrumentation" >>${BASE_DIR}/kieker.log
     #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java  ${JAVA_ARGS_NOINSTR} ${JAR} \
+    ${JAVA_BIN}  ${JAVA_ARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     #kill %sar
     [ -f ${BASE_DIR}/hotspot.log ] && mv ${BASE_DIR}/hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
@@ -96,12 +96,12 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} Deactivated probe"
     echo " # ${i}.${j}.${k} Deactivated probe" >>${BASE_DIR}/kieker.log
     #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java  ${JAVA_ARGS_KIEKER_DEACTV} ${JAR} \
+    ${JAVA_BIN}  ${JAVA_ARGS_KIEKER_DEACTV} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     #kill %sar
     [ -f ${BASE_DIR}/hotspot.log ] && mv ${BASE_DIR}/hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
@@ -115,12 +115,12 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} No logging (null writer)"
     echo " # ${i}.${j}.${k} No logging (null writer)" >>${BASE_DIR}/kieker.log
     #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java  ${JAVA_ARGS_KIEKER_NOLOGGING} ${JAR} \
+    ${JAVA_BIN}  ${JAVA_ARGS_KIEKER_NOLOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     #kill %sar
     [ -f ${BASE_DIR}/hotspot.log ] && mv ${BASE_DIR}/hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
@@ -134,14 +134,14 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} Logging"
     echo " # ${i}.${j}.${k} Logging" >>${BASE_DIR}/kieker.log
     #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-	ssh ${REMOTEHOST} "${JAVABIN}java ${JAVA_ARGS} -jar ${REMOTEBASE_DIR}/dist/KiekerTCPReader1.jar </dev/null >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log 2>&1 &"
+	ssh ${REMOTEHOST} "${JAVA_BIN} ${JAVA_ARGS} -jar ${REMOTEBASE_DIR}/dist/KiekerTCPReader1.jar </dev/null >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log 2>&1 &"
     sleep 5
-    ${JAVABIN}java  ${JAVA_ARGS_KIEKER_LOGGING} ${JAR} \
+    ${JAVA_BIN}  ${JAVA_ARGS_KIEKER_LOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     #kill %sar
     killall java
@@ -158,14 +158,14 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} Logging"
     echo " # ${i}.${j}.${k} Logging" >>${BASE_DIR}/kieker.log
     #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-	ssh ${REMOTEHOST} "${JAVABIN}java ${JAVA_ARGS} -jar ${REMOTEBASE_DIR}/dist/KiekerTCPReader2.jar </dev/null >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log 2>&1 &"
+	ssh ${REMOTEHOST} "${JAVA_BIN} ${JAVA_ARGS} -jar ${REMOTEBASE_DIR}/dist/KiekerTCPReader2.jar </dev/null >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log 2>&1 &"
     sleep 5
-    ${JAVABIN}java  ${JAVA_ARGS_KIEKER_LOGGING} ${JAR} \
+    ${JAVA_BIN}  ${JAVA_ARGS_KIEKER_LOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
 	#kill %sar
     killall java
@@ -182,14 +182,14 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} Logging"
     echo " # ${i}.${j}.${k} Logging" >>${BASE_DIR}/kieker.log
     #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-	ssh ${REMOTEHOST} "${JAVABIN}java ${JAVA_ARGS} -jar ${REMOTEBASE_DIR}/dist/KiekerTCPReader3.jar </dev/null >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log 2>&1 &"
+	ssh ${REMOTEHOST} "${JAVA_BIN} ${JAVA_ARGS} -jar ${REMOTEBASE_DIR}/dist/KiekerTCPReader3.jar </dev/null >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log 2>&1 &"
     sleep 5
-    ${JAVABIN}java  ${JAVA_ARGS_KIEKER_LOGGING} ${JAR} \
+    ${JAVA_BIN}  ${JAVA_ARGS_KIEKER_LOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
 	#kill %sar
     killall java
