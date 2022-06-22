@@ -6,8 +6,8 @@ REMOTEBASE_DIR="/localhome/ffi/"
 
 R_SCRIPT_DIR=bin/icpe/r/
 BASE_DIR=./
-RESULTS_DIR="${BASE_DIR}tmp/results-benchmark-kieker-days-ffi/"
-REMOTERESULTS_DIR="${REMOTEBASE_DIR}tmp/results-benchmark-kieker-days-ffi/"
+RESULTS_DIR="${BASE_DIR}/tmp/results-benchmark-kieker-days-ffi/"
+REMOTERESULTS_DIR="${REMOTEBASE_DIR}/tmp/results-benchmark-kieker-days-ffi/"
 
 SLEEP_TIME=1            ## 30
 NUM_LOOPS=1            ## 10
@@ -44,7 +44,7 @@ JARCollecting="-jar dist/OverheadEvaluationMicrobenchmarkTCPffiCollecting.jar"
 JARNORMAL="-jar dist/OverheadEvaluationMicrobenchmarkTCPffiNormal.jar"
 
 JAVA_ARGS_NOINSTR="${JAVA_ARGS}"
-JAVA_ARGS_LTW="${JAVA_ARGS} -javaagent:${BASE_DIR}lib/aspectjweaver.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dorg.aspectj.weaver.loadtime.configuration=META-INF/kieker-overhead-benchmark.aop.xml"
+JAVA_ARGS_LTW="${JAVA_ARGS} -javaagent:${BASE_DIR}/lib/aspectjweaver.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dorg.aspectj.weaver.loadtime.configuration=META-INF/kieker-overhead-benchmark.aop.xml"
 
 ## Write configuration
 uname -a >${RESULTS_DIR}/configuration.txt
@@ -80,7 +80,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --recursiondepth ${j} \
         ${MOREPARAMS}
     kill %sar
-    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}/hotspot.log ] && mv ${BASE_DIR}/hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEP_TIME}
 
@@ -100,7 +100,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     kill %sar
     pkill -f 'java -jar'
 	ssh ${REMOTEHOST} "pkill -f 'java -jar'"
-    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}/hotspot.log ] && mv ${BASE_DIR}/hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEP_TIME}
 	
@@ -120,7 +120,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     kill %sar
     pkill -f 'java -jar'
 	ssh ${REMOTEHOST} "pkill -f 'java -jar'"
-    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}/hotspot.log ] && mv ${BASE_DIR}/hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEP_TIME}
 
@@ -140,7 +140,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     kill %sar
     pkill -f 'java -jar'
 	ssh ${REMOTEHOST} "pkill -f 'java -jar'"
-    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}/hotspot.log ] && mv ${BASE_DIR}/hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEP_TIME}
 	
@@ -160,7 +160,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     kill %sar
     pkill -f 'java -jar'
 	ssh ${REMOTEHOST} "pkill -f 'java -jar'"
-    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}/hotspot.log ] && mv ${BASE_DIR}/hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEP_TIME}
 
@@ -180,7 +180,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     kill %sar
     pkill -f 'java -jar'
 	ssh ${REMOTEHOST} "pkill -f 'java -jar'"
-    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}/hotspot.log ] && mv ${BASE_DIR}/hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEP_TIME}
 	
@@ -188,7 +188,7 @@ done
 zip -jqr ${RESULTS_DIR}/stat.zip ${RESULTS_DIR}/stat
 rm -rf ${RESULTS_DIR}/stat/
 [ -f ${RESULTS_DIR}/hotspot-1-${RECURSIONDEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}/hotspot-*.log >${RESULTS_DIR}/log.log
-[ -f ${BASE_DIR}errorlog.txt ] && mv ${BASE_DIR}errorlog.txt ${RESULTS_DIR}
+[ -f ${BASE_DIR}/errorlog.txt ] && mv ${BASE_DIR}/errorlog.txt ${RESULTS_DIR}
 
 ## Generate Results file
 # Timeseries
@@ -259,4 +259,4 @@ zip -jqr ${RESULTS_DIR}/results.zip ${RAWFN}*
 rm -f ${RAWFN}*
 zip -jqr ${RESULTS_DIR}/worker.zip ${RESULTS_DIR}/worker*.log
 rm -f ${RESULTS_DIR}/worker*.log
-[ -f ${BASE_DIR}nohup.out ] && mv ${BASE_DIR}nohup.out ${RESULTS_DIR}
+[ -f ${BASE_DIR}/nohup.out ] && mv ${BASE_DIR}/nohup.out ${RESULTS_DIR}
