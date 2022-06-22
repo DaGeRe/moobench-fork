@@ -162,7 +162,7 @@ for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
 done
 
 mv "${BASE_DIR}/inspectIT.log" "${RESULTS_DIR}/inspectIT.log"
-[ -f "${RESULTS_DIR}/Hotspot-1-${RECURSION_DEPTH}-1.log" ] && grep "<task " ${RESULTS_DIR}hotspot-*.log > "${RESULTS_DIR}/log.log"
+[ -f "${RESULTS_DIR}/Hotspot-1-${RECURSION_DEPTH}-1.log" ] && grep "<task " ${RESULTS_DIR}/hotspot-*.log > "${RESULTS_DIR}/log.log"
 [ -f "${BASE_DIR}/errorlog.txt" ] && mv "${BASE_DIR}/errorlog.txt" "${RESULTS_DIR}"
 
 # Create R labels

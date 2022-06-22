@@ -151,7 +151,7 @@ function execute-experiment() {
 
     rm -rf ${DATA_DIR}/kieker-*
 
-    [ -f ${DATA_DIR}/hotspot.log ] && mv ${DATA_DIR}/hotspot.log ${RESULTS_DIR}hotspot-${loop}-${recursion}-${index}.log
+    [ -f ${DATA_DIR}/hotspot.log ] && mv ${DATA_DIR}/hotspot.log ${RESULTS_DIR}/hotspot-${loop}-${recursion}-${index}.log
     echo >> ${DATA_DIR}/kieker.log
     echo >> ${DATA_DIR}/kieker.log
     sync

@@ -133,7 +133,7 @@ echo "Experiment will take circa ${TIME} seconds."
 
 echo "Cleaning and recreating '${RESULTS_DIR}'"
 (rm -rf ${RESULTS_DIR}/**csv) && mkdir -p ${RESULTS_DIR}
-#mkdir ${RESULTS_DIR}stat/
+#mkdir ${RESULTS_DIR}/stat/
 
 # Clear OpenTelemetry.log and initialize logging
 rm -f ${BASE_DIR}/OpenTelemetry.log
@@ -189,8 +189,8 @@ run-r
 
 cleanup-results
 
-#zip -jqr ${RESULTS_DIR}stat.zip ${RESULTS_DIR}stat
-#rm -rf ${RESULTS_DIR}stat/
+#zip -jqr ${RESULTS_DIR}/stat.zip ${RESULTS_DIR}/stat
+#rm -rf ${RESULTS_DIR}/stat/
 mv ${BASE_DIR}/OpenTelemetry.log ${RESULTS_DIR}/OpenTelemetry.log
 [ -f "${RESULTS_DIR}/hotspot-1-${RECURSION_DEPTH}-1.log" ] && grep "<task " ${RESULTS_DIR}/hotspot-*.log > "${RESULTS_DIR}/log.log"
 [ -f "${BASE_DIR}/errorlog.txt" ] && mv "${BASE_DIR}/errorlog.txt" ${RESULTS_DIR}

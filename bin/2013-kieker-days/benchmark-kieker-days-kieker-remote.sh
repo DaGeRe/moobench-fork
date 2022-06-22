@@ -24,16 +24,16 @@ echo "Experiment will take circa ${TIME} seconds."
 
 echo "Removing and recreating '${RESULTS_DIR}'"
 (rm -rf ${RESULTS_DIR}) && mkdir ${RESULTS_DIR}
-mkdir ${RESULTS_DIR}stat/
+mkdir ${RESULTS_DIR}/stat/
 
 ssh ${REMOTEHOST} "(rm -rf ${REMOTERESULTS_DIR}) && mkdir ${REMOTERESULTS_DIR}"
-ssh ${REMOTEHOST} "mkdir ${REMOTERESULTS_DIR}stat/"
+ssh ${REMOTEHOST} "mkdir ${REMOTERESULTS_DIR}/stat/"
 
 # Clear kieker.log and initialize logging
 rm -f ${BASE_DIR}kieker.log
 touch ${BASE_DIR}kieker.log
 
-RAWFN="${RESULTS_DIR}raw"
+RAWFN="${RESULTS_DIR}/raw"
 
 JAVA_ARGS="-server"
 JAVA_ARGS="${JAVA_ARGS} -d64"
@@ -76,7 +76,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} No instrumentation"
     echo " # ${i}.${j}.${k} No instrumentation" >>${BASE_DIR}kieker.log
-    #sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+    #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java  ${JAVA_ARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTAL_CALLS} \
@@ -85,7 +85,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --recursiondepth ${j} \
         ${MOREPARAMS}
     #kill %sar
-    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
     echo >>${BASE_DIR}kieker.log
     echo >>${BASE_DIR}kieker.log
     sync
@@ -95,7 +95,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Deactivated probe"
     echo " # ${i}.${j}.${k} Deactivated probe" >>${BASE_DIR}kieker.log
-    #sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+    #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java  ${JAVA_ARGS_KIEKER_DEACTV} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTAL_CALLS} \
@@ -104,7 +104,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --recursiondepth ${j} \
         ${MOREPARAMS}
     #kill %sar
-    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
     echo >>${BASE_DIR}kieker.log
     echo >>${BASE_DIR}kieker.log
     sync
@@ -114,7 +114,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} No logging (null writer)"
     echo " # ${i}.${j}.${k} No logging (null writer)" >>${BASE_DIR}kieker.log
-    #sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+    #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java  ${JAVA_ARGS_KIEKER_NOLOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTAL_CALLS} \
@@ -123,7 +123,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --recursiondepth ${j} \
         ${MOREPARAMS}
     #kill %sar
-    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
     echo >>${BASE_DIR}kieker.log
     echo >>${BASE_DIR}kieker.log
     sync
@@ -133,8 +133,8 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Logging"
     echo " # ${i}.${j}.${k} Logging" >>${BASE_DIR}kieker.log
-    #sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-	ssh ${REMOTEHOST} "${JAVABIN}java ${JAVA_ARGS} -jar ${REMOTEBASE_DIR}dist/KiekerTCPReader1.jar </dev/null >${REMOTERESULTS_DIR}worker-${i}-${j}-${k}.log 2>&1 &"
+    #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+	ssh ${REMOTEHOST} "${JAVABIN}java ${JAVA_ARGS} -jar ${REMOTEBASE_DIR}dist/KiekerTCPReader1.jar </dev/null >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log 2>&1 &"
     sleep 5
     ${JAVABIN}java  ${JAVA_ARGS_KIEKER_LOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
@@ -147,7 +147,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     killall java
 	ssh ${REMOTEHOST} "killall java"
     rm -rf ${BASE_DIR}tmp/kieker-*
-    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
     echo >>${BASE_DIR}kieker.log
     echo >>${BASE_DIR}kieker.log
     sync
@@ -157,8 +157,8 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Logging"
     echo " # ${i}.${j}.${k} Logging" >>${BASE_DIR}kieker.log
-    #sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-	ssh ${REMOTEHOST} "${JAVABIN}java ${JAVA_ARGS} -jar ${REMOTEBASE_DIR}dist/KiekerTCPReader2.jar </dev/null >${REMOTERESULTS_DIR}worker-${i}-${j}-${k}.log 2>&1 &"
+    #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+	ssh ${REMOTEHOST} "${JAVABIN}java ${JAVA_ARGS} -jar ${REMOTEBASE_DIR}dist/KiekerTCPReader2.jar </dev/null >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log 2>&1 &"
     sleep 5
     ${JAVABIN}java  ${JAVA_ARGS_KIEKER_LOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
@@ -171,7 +171,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     killall java
 	ssh ${REMOTEHOST} "killall java"
     rm -rf ${BASE_DIR}tmp/kieker-*
-    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
     echo >>${BASE_DIR}kieker.log
     echo >>${BASE_DIR}kieker.log
     sync
@@ -181,8 +181,8 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Logging"
     echo " # ${i}.${j}.${k} Logging" >>${BASE_DIR}kieker.log
-    #sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-	ssh ${REMOTEHOST} "${JAVABIN}java ${JAVA_ARGS} -jar ${REMOTEBASE_DIR}dist/KiekerTCPReader3.jar </dev/null >${REMOTERESULTS_DIR}worker-${i}-${j}-${k}.log 2>&1 &"
+    #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+	ssh ${REMOTEHOST} "${JAVABIN}java ${JAVA_ARGS} -jar ${REMOTEBASE_DIR}dist/KiekerTCPReader3.jar </dev/null >${REMOTERESULTS_DIR}/worker-${i}-${j}-${k}.log 2>&1 &"
     sleep 5
     ${JAVABIN}java  ${JAVA_ARGS_KIEKER_LOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
@@ -195,24 +195,24 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     killall java
 	ssh ${REMOTEHOST} "killall java"
     rm -rf ${BASE_DIR}tmp/kieker-*
-    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASE_DIR}hotspot.log ] && mv ${BASE_DIR}hotspot.log ${RESULTS_DIR}/hotspot-${i}-${j}-${k}.log
     echo >>${BASE_DIR}kieker.log
     echo >>${BASE_DIR}kieker.log
     sync
     sleep ${SLEEP_TIME}
 	
 done
-zip -jqr ${RESULTS_DIR}stat.zip ${RESULTS_DIR}stat
-rm -rf ${RESULTS_DIR}stat/
-mv ${BASE_DIR}kieker.log ${RESULTS_DIR}kieker.log
-[ -f ${RESULTS_DIR}hotspot-1-${RECURSIONDEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}hotspot-*.log >${RESULTS_DIR}log.log
+zip -jqr ${RESULTS_DIR}/stat.zip ${RESULTS_DIR}/stat
+rm -rf ${RESULTS_DIR}/stat/
+mv ${BASE_DIR}kieker.log ${RESULTS_DIR}/kieker.log
+[ -f ${RESULTS_DIR}/hotspot-1-${RECURSIONDEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}/hotspot-*.log >${RESULTS_DIR}/log.log
 [ -f ${BASE_DIR}errorlog.txt ] && mv ${BASE_DIR}errorlog.txt ${RESULTS_DIR}
 
 ## Generate Results file
 # Bars
 R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
-outtxt_fn="${RESULTS_DIR}results-text.txt"
+outtxt_fn="${RESULTS_DIR}/results-text.txt"
 configs.threads=${THREADS}
 configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
@@ -223,8 +223,8 @@ source("${R_SCRIPT_DIR}stats.r")
 EOF
 
 ## Clean up raw results
-zip -jqr ${RESULTS_DIR}results.zip ${RAWFN}*
+zip -jqr ${RESULTS_DIR}/results.zip ${RAWFN}*
 rm -f ${RAWFN}*
-zip -jqr ${RESULTS_DIR}worker.zip ${RESULTS_DIR}worker*.log
-rm -f ${RESULTS_DIR}worker*.log
+zip -jqr ${RESULTS_DIR}/worker.zip ${RESULTS_DIR}/worker*.log
+rm -f ${RESULTS_DIR}/worker*.log
 [ -f ${BASE_DIR}nohup.out ] && mv ${BASE_DIR}nohup.out ${RESULTS_DIR}
