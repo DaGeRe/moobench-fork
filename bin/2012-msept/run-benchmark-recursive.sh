@@ -11,11 +11,11 @@ BASE_DIR=
 SLEEP_TIME=30            ## 30
 NUM_LOOPS=10            ## 10
 THREADS=1               ## 1
-MAXRECURSIONDEPTH=10    ## 10
+RECURSION_DEPTH=10    ## 10
 TOTALCALLS=2000000      ## 2000000
 METHODTIME=500000       ## 500000
 
-TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${MAXRECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_LOOPS}  \* ${MAXRECURSIONDEPTH}`
+TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSION_DEPTH}`
 echo "Experiment will take circa ${TIME} seconds."
 
 # determine correct classpath separator
@@ -62,7 +62,7 @@ echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTS_DIR}configuration.txt
 echo "TOTALCALLS=${TOTALCALLS}" >>${RESULTS_DIR}configuration.txt
 echo "METHODTIME=${METHODTIME}" >>${RESULTS_DIR}configuration.txt
 echo "THREADS=${THREADS}" >>${RESULTS_DIR}configuration.txt
-echo "MAXRECURSIONDEPTH=${MAXRECURSIONDEPTH}" >>${RESULTS_DIR}configuration.txt
+echo "RECURSION_DEPTH=${RECURSION_DEPTH}" >>${RESULTS_DIR}configuration.txt
 sync
 
 ## Execute Benchmark
@@ -70,8 +70,8 @@ sync
 for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo "## Starting iteration ${i}/${NUM_LOOPS}"
 
-    for ((j=1;j<=${MAXRECURSIONDEPTH};j+=1)); do
-        echo "# Starting recursion ${i}.${j}/${MAXRECURSIONDEPTH}"
+    for ((j=1;j<=${RECURSION_DEPTH};j+=1)); do
+        echo "# Starting recursion ${i}.${j}/${RECURSION_DEPTH}"
 
         # 1 No instrumentation
         echo " # ${i}.1 No instrumentation"
