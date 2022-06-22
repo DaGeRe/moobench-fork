@@ -10,21 +10,21 @@ fi
 
 # load configuration and common functions
 if [ -f "${BASE_DIR}/config" ] ; then
-	. ${BASE_DIR}/config
+	. "${BASE_DIR}/config"
 else
 	echo "Missing configuration: ${BASE_DIR}/config"
 	exit 1
 fi
 
-if [ -f "${BASE_DIR}/common-functions.sh" ] ; then
-	. "${BASE_DIR}../common-functions.sh"
+if [ -f "${BASE_DIR}/../common-functions.sh" ] ; then
+	. "${BASE_DIR}/../common-functions.sh"
 else
 	echo "Missing configuration: ${BASE_DIR}/../common-functions.sh"
 	exit 1
 fi
 
 if [ -f "${BASE_DIR}/common-functions" ] ; then
-	. ${BASE_DIR}/common-functions
+	. "${BASE_DIR}/common-functions"
 else
 	echo "Missing configuration: ${BASE_DIR}/common-functions"
 	exit 1
@@ -33,7 +33,7 @@ fi
 getKiekerAgent
 
 PARENT=`dirname "${RESULTS_DIR}"`
-RECEIVER="${BASE_DIR}/receiver/bin/receiver"
+RECEIVER_BIN="${BASE_DIR}/receiver/bin/receiver"
 
 # check command line parameters
 if [ "$1" == "" ] ; then
@@ -52,7 +52,7 @@ fi
 checkDirectory DATA_DIR "${DATA_DIR}" create
 checkDirectory result-base "${PARENT}"
 checkFile ApsectJ-Agent "${AGENT}"
-checkExecutable Receiver "${RECEIVER}"
+checkExecutable Receiver "${RECEIVER_BIN}"
 
 information "----------------------------------"
 information "Running benchmark..."
@@ -92,7 +92,7 @@ WRITER_CONFIG[3]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=ki
 WRITER_CONFIG[4]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.FileWriter -Dkieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.BinaryLogStreamHandler -Dkieker.monitoring.writer.filesystem.FileWriter.bufferSize=8192 -Dkieker.monitoring.writer.filesystem.FileWriter.customStoragePath=${DATA_DIR}/"
 WRITER_CONFIG[5]="-Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.SingleSocketTcpWriter -Dkieker.monitoring.writer.tcp.SingleSocketTcpWriter.port=2345"
 #RECEIVER[5]="${BASE_DIR}/collector-2.0/bin/collector -p 2345"
-RECEIVER[5]="${RECEIVER} 2345"
+RECEIVER[5]="${RECEIVER_BIN} 2345"
 
 ## Write configuration
 uname -a >${RESULTS_DIR}/configuration.txt
