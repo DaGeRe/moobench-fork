@@ -9,14 +9,14 @@ RESULTS_DIR="${BASE_DIR}/tmp/results-benchmark-kieker-days-kieker/"
 SLEEP_TIME=30            ## 30
 NUM_LOOPS=1            ## 10
 THREADS=1               ## 1
-RECURSIONDEPTH=10       ## 10
+RECURSION_DEPTH=10       ## 10
 TOTAL_CALLS=2000000     ## 20000000
 METHOD_TIME=0            ## 0
 
-#MOREPARAMS=""
-MOREPARAMS="--quickstart"
+#MORE_PARAMS=""
+MORE_PARAMS="--quickstart"
 
-TIME=`expr ${METHOD_TIME} \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSIONDEPTH} + 50 \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} `
+TIME=`expr ${METHOD_TIME} \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
 
 echo "Removing and recreating '${RESULTS_DIR}'"
@@ -56,12 +56,12 @@ echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTS_DIR}/configuration.txt
 echo "TOTAL_CALLS=${TOTAL_CALLS}" >>${RESULTS_DIR}/configuration.txt
 echo "METHOD_TIME=${METHOD_TIME}" >>${RESULTS_DIR}/configuration.txt
 echo "THREADS=${THREADS}" >>${RESULTS_DIR}/configuration.txt
-echo "RECURSIONDEPTH=${RECURSIONDEPTH}" >>${RESULTS_DIR}/configuration.txt
+echo "RECURSION_DEPTH=${RECURSION_DEPTH}" >>${RESULTS_DIR}/configuration.txt
 sync
 
 ## Execute Benchmark
 for ((i=1;i<=${NUM_LOOPS};i+=1)); do
-    j=${RECURSIONDEPTH}
+    j=${RECURSION_DEPTH}
     k=0
     echo "## Starting iteration ${i}/${NUM_LOOPS}"
     echo "## Starting iteration ${i}/${NUM_LOOPS}" >>${BASE_DIR}/kieker.log
@@ -79,7 +79,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --methodtime ${METHOD_TIME} \
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
-        ${MOREPARAMS}
+        ${MORE_PARAMS}
     kill %mpstat
     kill %vmstat
     kill %iostat
@@ -102,7 +102,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --methodtime ${METHOD_TIME} \
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
-        ${MOREPARAMS}
+        ${MORE_PARAMS}
     kill %mpstat
     kill %vmstat
     kill %iostat
@@ -125,7 +125,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --methodtime ${METHOD_TIME} \
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
-        ${MOREPARAMS}
+        ${MORE_PARAMS}
     kill %mpstat
     kill %vmstat
     kill %iostat
@@ -150,7 +150,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --methodtime ${METHOD_TIME} \
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
-        ${MOREPARAMS}
+        ${MORE_PARAMS}
     kill %mpstat
     kill %vmstat
     kill %iostat
@@ -177,7 +177,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --methodtime ${METHOD_TIME} \
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
-        ${MOREPARAMS}
+        ${MORE_PARAMS}
     kill %mpstat
     kill %vmstat
     kill %iostat
@@ -204,7 +204,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --methodtime ${METHOD_TIME} \
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
-        ${MOREPARAMS}
+        ${MORE_PARAMS}
     kill %mpstat
     kill %vmstat
     kill %iostat
@@ -220,7 +220,7 @@ done
 zip -jqr ${RESULTS_DIR}/stat.zip ${RESULTS_DIR}/stat
 rm -rf ${RESULTS_DIR}/stat/
 mv ${BASE_DIR}/kieker.log ${RESULTS_DIR}/kieker.log
-[ -f ${RESULTS_DIR}/hotspot-1-${RECURSIONDEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}/hotspot-*.log >${RESULTS_DIR}/log.log
+[ -f ${RESULTS_DIR}/hotspot-1-${RECURSION_DEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}/hotspot-*.log >${RESULTS_DIR}/log.log
 [ -f ${BASE_DIR}/errorlog.txt ] && mv ${BASE_DIR}/errorlog.txt ${RESULTS_DIR}
 
 ## Generate Results file
@@ -229,7 +229,7 @@ R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
 output_fn="${RESULTS_DIR}/results-timeseries.pdf"
 configs.loop=${NUM_LOOPS}
-configs.recursion=c(${RECURSIONDEPTH})
+configs.recursion=c(${RECURSION_DEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
 configs.colors=c("black","red","blue","green","yellow","purple")
 results.count=${TOTAL_CALLS}
@@ -242,7 +242,7 @@ R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
 output_fn="${RESULTS_DIR}/results-timeseries-average.pdf"
 configs.loop=${NUM_LOOPS}
-configs.recursion=c(${RECURSIONDEPTH})
+configs.recursion=c(${RECURSION_DEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
 configs.colors=c("black","red","blue","green","yellow","purple")
 results.count=${TOTAL_CALLS}
@@ -255,7 +255,7 @@ R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
 output_fn="${RESULTS_DIR}/results-throughput.pdf"
 configs.loop=${NUM_LOOPS}
-configs.recursion=c(${RECURSIONDEPTH})
+configs.recursion=c(${RECURSION_DEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
 configs.colors=c("black","red","blue","green","yellow","purple")
 results.count=${TOTAL_CALLS}
@@ -266,7 +266,7 @@ R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
 output_fn="${RESULTS_DIR}/results-throughput-average.pdf"
 configs.loop=${NUM_LOOPS}
-configs.recursion=c(${RECURSIONDEPTH})
+configs.recursion=c(${RECURSION_DEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
 configs.colors=c("black","red","blue","green","yellow","purple")
 results.count=${TOTAL_CALLS}
@@ -278,7 +278,7 @@ results_fn="${RAWFN}"
 output_fn="${RESULTS_DIR}/results-bars.pdf"
 outtxt_fn="${RESULTS_DIR}/results-text.txt"
 configs.loop=${NUM_LOOPS}
-configs.recursion=c(${RECURSIONDEPTH})
+configs.recursion=c(${RECURSION_DEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
 results.count=${TOTAL_CALLS}
 results.skip=${TOTAL_CALLS}/2

@@ -80,10 +80,10 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         iostat -xn 10 > ${RESULTS_DIR}/stat/iostat-${i}-${j}-1.txt &
         ${BINDJAVA} java  ${JAVA_ARGS_NOINSTR} ${JAR} \
             --output-filename ${RESULTSFN}-${i}-${j}-1.csv \
-            --totalcalls ${TOTAL_CALLS} \
-            --methodtime ${METHOD_TIME} \
-            --totalthreads ${THREADS} \
-            --recursiondepth ${j}
+            --total-calls ${TOTAL_CALLS} \
+            --method-time ${METHOD_TIME} \
+            --total-threads ${THREADS} \
+            --recursion-depth ${j}
         kill %mpstat
         kill %vmstat
         kill %iostat
@@ -98,10 +98,10 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         iostat -xn 10 > ${RESULTS_DIR}/stat/iostat-${i}-${j}-2.txt &
         ${BINDJAVA} java  ${JAVA_ARGS_KIEKER_DEACTV} ${JAR} \
             --output-filename ${RESULTSFN}-${i}-${j}-2.csv \
-            --totalcalls ${TOTAL_CALLS} \
-            --methodtime ${METHOD_TIME} \
-            --totalthreads ${THREADS} \
-            --recursiondepth ${j}
+            --total-calls ${TOTAL_CALLS} \
+            --method-time ${METHOD_TIME} \
+            --total-threads ${THREADS} \
+            --recursion-depth ${j}
         kill %mpstat
         kill %vmstat
         kill %iostat
@@ -118,10 +118,10 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         iostat -xn 10 > ${RESULTS_DIR}/stat/iostat-${i}-${j}-3.txt &
         ${BINDJAVA} java  ${JAVA_ARGS_KIEKER_NOLOGGING} ${JAR} \
             --output-filename ${RESULTSFN}-${i}-${j}-3.csv \
-            --totalcalls ${TOTAL_CALLS} \
-            --methodtime ${METHOD_TIME} \
-            --totalthreads ${THREADS} \
-            --recursiondepth ${j}
+            --total-calls ${TOTAL_CALLS} \
+            --method-time ${METHOD_TIME} \
+            --total-threads ${THREADS} \
+            --recursion-depth ${j}
         kill %mpstat
         kill %vmstat
         kill %iostat
@@ -138,10 +138,10 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         iostat -xn 10 > ${RESULTS_DIR}/stat/iostat-${i}-${j}-4.txt &
         ${BINDJAVA} java  ${JAVA_ARGS_KIEKER_LOGGING} ${JAR} \
             --output-filename ${RESULTSFN}-${i}-${j}-4.csv \
-            --totalcalls ${TOTAL_CALLS} \
-            --methodtime ${METHOD_TIME} \
-            --totalthreads ${THREADS} \
-            --recursiondepth ${j}
+            --total-calls ${TOTAL_CALLS} \
+            --method-time ${METHOD_TIME} \
+            --total-threads ${THREADS} \
+            --recursion-depth ${j}
         kill %mpstat
         kill %vmstat
         kill %iostat

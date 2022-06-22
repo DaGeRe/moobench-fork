@@ -57,7 +57,7 @@ echo "NUM_LOOPS=${NUM_LOOPS}" >> "${RESULTS_DIR}/configuration.txt"
 echo "TOTAL_CALLS=${TOTAL_CALLS}" >> "${RESULTS_DIR}/configuration.txt"
 echo "METHOD_TIME=${METHOD_TIME}" >> "${RESULTS_DIR}/configuration.txt"
 echo "THREADS=${THREADS}" >> "${RESULTS_DIR}/configuration.txt"
-echo "RECURSIONDEPTH=${RECURSION_DEPTH}" >> "${RESULTS_DIR}/configuration.txt"
+echo "RECURSION_DEPTH=${RECURSION_DEPTH}" >> "${RESULTS_DIR}/configuration.txt"
 sync
 
 ## Execute Benchmark
@@ -154,7 +154,7 @@ done
 #zip -jqr ${RESULTS_DIR}/stat.zip ${RESULTS_DIR}/stat
 #rm -rf ${RESULTS_DIR}/stat/
 mv "${BASE_DIR}/spassmeter.log" "${RESULTS_DIR}/spassmeter.log"
-[ -f "${RESULTS_DIR}/hotspot-1-${RECURSIONDEPTH}-1.log" ] && grep "<task " ${RESULTS_DIR}/hotspot-*.log > "${RESULTS_DIR}/log.log"
+[ -f "${RESULTS_DIR}/hotspot-1-${RECURSION_DEPTH}-1.log" ] && grep "<task " ${RESULTS_DIR}/hotspot-*.log > "${RESULTS_DIR}/log.log"
 [ -f "${BASE_DIR}/errorlog.txt" ] && mv "${BASE_DIR}/errorlog.txt" "${RESULTS_DIR}/"
 
 ## Clean up raw results

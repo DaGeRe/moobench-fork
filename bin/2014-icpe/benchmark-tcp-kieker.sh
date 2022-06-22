@@ -75,10 +75,10 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     iostat -xn 10 > ${RESULTS_DIR}/stat/iostat-${i}-${j}-${k}.txt &
     ${JAVA_BIN}  ${JAVA_ARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
-        --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHOD_TIME} \
-        --totalthreads ${THREADS} \
-        --recursiondepth ${j} \
+        --total-calls ${TOTAL_CALLS} \
+        --method-time ${METHOD_TIME} \
+        --total-threads ${THREADS} \
+        --recursion-depth ${j} \
         ${MORE_PARAMS}
     kill %mpstat
     kill %vmstat
@@ -139,7 +139,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Logging"
     echo " # ${i}.${j}.${k} Logging" >>${BASE_DIR}/kieker.log
-    mpstat 1 > "${RESULTS_DIR}/stat/mpstat-${i}-${j}-${k}.txt &
+    mpstat 1 > "${RESULTS_DIR}/stat/mpstat-${i}-${j}-${k}.txt" &
     vmstat 1 > ${RESULTS_DIR}/stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}/stat/iostat-${i}-${j}-${k}.txt &
     ${JAVA_BIN} -jar dist/KiekerTCPReader.jar >${RESULTS_DIR}/worker-${i}-${j}-${k}.log &

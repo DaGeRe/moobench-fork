@@ -126,7 +126,7 @@ source ../common-functions.sh
 source labels.sh
 
 #MORE_PARAMS="--quickstart"
-MORE_PARAMS="--application moobench.application.MonitoredClassSimple ${MOREPARAMS}"
+MORE_PARAMS="--application moobench.application.MonitoredClassSimple ${MORE_PARAMS}"
 
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
