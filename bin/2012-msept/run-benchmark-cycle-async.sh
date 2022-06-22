@@ -44,7 +44,7 @@ echo "" >>${RESULTS_DIR}configuration.txt
 echo "SLEEP_TIME=${SLEEP_TIME}" >>${RESULTS_DIR}configuration.txt
 echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTS_DIR}configuration.txt
 echo "TOTAL_CALLS=${TOTAL_CALLS}" >>${RESULTS_DIR}configuration.txt
-echo "METHODTIME=${METHODTIME}" >>${RESULTS_DIR}configuration.txt
+echo "METHOD_TIME=${METHOD_TIME}" >>${RESULTS_DIR}configuration.txt
 echo "THREADS=${THREADS}" >>${RESULTS_DIR}configuration.txt
 echo "RECURSION_DEPTH=${RECURSION_DEPTH}" >>${RESULTS_DIR}configuration.txt
 sync
@@ -65,7 +65,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         ${BINDJAVA} java  ${JAVA_ARGS_NOINSTR} ${JAR} \
             --output-filename ${RESULTSFN}-${i}-${j}-1.csv \
             --totalcalls ${TOTAL_CALLS} \
-            --methodtime ${METHODTIME} \
+            --methodtime ${METHOD_TIME} \
             --totalthreads ${THREADS} \
             --recursiondepth ${j}
         kill %mpstat
@@ -83,7 +83,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         ${BINDJAVA} java  ${JAVA_ARGS_KIEKER_DEACTV} ${JAR} \
             --output-filename ${RESULTSFN}-${i}-${j}-2.csv \
             --totalcalls ${TOTAL_CALLS} \
-            --methodtime ${METHODTIME} \
+            --methodtime ${METHOD_TIME} \
             --totalthreads ${THREADS} \
             --recursiondepth ${j}
         kill %mpstat
@@ -103,7 +103,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         ${BINDJAVA} java  ${JAVA_ARGS_KIEKER_NOLOGGING} ${JAR} \
             --output-filename ${RESULTSFN}-${i}-${j}-3.csv \
             --totalcalls ${TOTAL_CALLS} \
-            --methodtime ${METHODTIME} \
+            --methodtime ${METHOD_TIME} \
             --totalthreads ${THREADS} \
             --recursiondepth ${j}
         kill %mpstat
@@ -123,7 +123,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         ${BINDJAVA} java  ${JAVA_ARGS_KIEKER_LOGGING} ${JAR} \
             --output-filename ${RESULTSFN}-${i}-${j}-4.csv \
             --totalcalls ${TOTAL_CALLS} \
-            --methodtime ${METHODTIME} \
+            --methodtime ${METHOD_TIME} \
             --totalthreads ${THREADS} \
             --recursiondepth ${j}
         kill %mpstat

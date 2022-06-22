@@ -11,12 +11,12 @@ NUM_LOOPS=1            ## 10
 THREADS=1               ## 1
 RECURSIONDEPTH=10       ## 10
 TOTAL_CALLS=20000000     ## 20000000
-METHODTIME=0            ## 0
+METHOD_TIME=0            ## 0
 
 MOREPARAMS=""
 #MOREPARAMS="--quickstart"
 
-TIME=`expr ${METHODTIME} \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSIONDEPTH} + 50 \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} `
+TIME=`expr ${METHOD_TIME} \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSIONDEPTH} + 50 \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
 
 echo "Removing and recreating '${RESULTS_DIR}'"
@@ -50,7 +50,7 @@ echo "" >>${RESULTS_DIR}configuration.txt
 echo "SLEEP_TIME=${SLEEP_TIME}" >>${RESULTS_DIR}configuration.txt
 echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTS_DIR}configuration.txt
 echo "TOTAL_CALLS=${TOTAL_CALLS}" >>${RESULTS_DIR}configuration.txt
-echo "METHODTIME=${METHODTIME}" >>${RESULTS_DIR}configuration.txt
+echo "METHOD_TIME=${METHOD_TIME}" >>${RESULTS_DIR}configuration.txt
 echo "THREADS=${THREADS}" >>${RESULTS_DIR}configuration.txt
 echo "RECURSIONDEPTH=${RECURSIONDEPTH}" >>${RESULTS_DIR}configuration.txt
 sync
@@ -69,7 +69,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     ${JAVABIN}java  ${JAVA_ARGS_NOINSTR} ${JARNoInstru} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHODTIME} \
+        --methodtime ${METHOD_TIME} \
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
         ${MOREPARAMS}
@@ -87,7 +87,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     ${JAVABIN}java  ${JAVA_ARGS_LTW} ${JARDeactived} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHODTIME} \
+        --methodtime ${METHOD_TIME} \
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
         ${MOREPARAMS}
@@ -106,7 +106,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     ${JAVABIN}java  ${JAVA_ARGS_LTW} ${JARCollecting} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHODTIME} \
+        --methodtime ${METHOD_TIME} \
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
         ${MOREPARAMS}
@@ -125,7 +125,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     ${JAVABIN}java  ${JAVA_ARGS_LTW} ${JARNORMAL} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHODTIME} \
+        --methodtime ${METHOD_TIME} \
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
         ${MOREPARAMS}
@@ -144,7 +144,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     ${JAVABIN}java  ${JAVA_ARGS_LTW} ${JARNORMAL} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHODTIME} \
+        --methodtime ${METHOD_TIME} \
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
         ${MOREPARAMS}
@@ -163,7 +163,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     ${JAVABIN}java  ${JAVA_ARGS_LTW} ${JARNORMAL} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTAL_CALLS} \
-        --methodtime ${METHODTIME} \
+        --methodtime ${METHOD_TIME} \
         --totalthreads ${THREADS} \
         --recursiondepth ${j} \
         ${MOREPARAMS}
@@ -189,8 +189,8 @@ configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
 configs.colors=c("black","red","blue","green","yellow","purple")
 results.count=${TOTAL_CALLS}
-tsconf.min=(${METHODTIME}/1000)
-tsconf.max=(${METHODTIME}/1000)+40
+tsconf.min=(${METHOD_TIME}/1000)
+tsconf.max=(${METHOD_TIME}/1000)+40
 source("${R_SCRIPT_DIR}timeseries.r")
 EOF
 # Timeseries-Average
@@ -202,8 +202,8 @@ configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
 configs.colors=c("black","red","blue","green","yellow","purple")
 results.count=${TOTAL_CALLS}
-tsconf.min=(${METHODTIME}/1000)
-tsconf.max=(${METHODTIME}/1000)+40
+tsconf.min=(${METHOD_TIME}/1000)
+tsconf.max=(${METHOD_TIME}/1000)+40
 source("${R_SCRIPT_DIR}timeseries-average.r")
 EOF
 # Throughput
@@ -238,8 +238,8 @@ configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
 results.count=${TOTAL_CALLS}
 results.skip=${TOTAL_CALLS}/2
-bars.minval=(${METHODTIME}/1000)
-bars.maxval=(${METHODTIME}/1000)+40
+bars.minval=(${METHOD_TIME}/1000)
+bars.maxval=(${METHOD_TIME}/1000)+40
 source("${R_SCRIPT_DIR}bar.r")
 EOF
 

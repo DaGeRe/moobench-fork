@@ -7,9 +7,9 @@ NUM_LOOPS=10            ## 10
 THREADS=1               ## 1
 RECURSION_DEPTH=1     ## 10
 TOTAL_CALLS=2000000      ## 200000
-METHODTIME=500000       ## 500000
+METHOD_TIME=500000       ## 500000
 
-TIME=`expr ${METHODTIME} \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSION_DEPTH}`
+TIME=`expr ${METHOD_TIME} \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSION_DEPTH}`
 echo "Each experiment will take circa ${TIME} seconds."
 
 

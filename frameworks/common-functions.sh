@@ -122,7 +122,7 @@ function writeConfiguration() {
 	echo "SLEEP_TIME=${SLEEP_TIME}" >>${RESULTS_DIR}/configuration.txt
 	echo "NUM_OF_LOOPS=${NUM_OF_LOOPS}" >>${RESULTS_DIR}/configuration.txt
 	echo "TOTAL_NUM_OF_CALLS=${TOTAL_NUM_OF_CALLS}" >>${RESULTS_DIR}/configuration.txt
-	echo "METHODTIME=${METHOD_TIME}" >>${RESULTS_DIR}/configuration.txt
+	echo "METHOD_TIME=${METHOD_TIME}" >>${RESULTS_DIR}/configuration.txt
 	echo "THREADS=${THREADS}" >>${RESULTS_DIR}/configuration.txt
 	echo "RECURSION_DEPTH=${RECURSION_DEPTH}" >>${RESULTS_DIR}/configuration.txt
 	sync

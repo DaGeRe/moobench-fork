@@ -55,7 +55,7 @@ echo "" >> "${RESULTS_DIR}/configuration.txt"
 echo "SLEEP_TIME=${SLEEP_TIME}" >> "${RESULTS_DIR}/configuration.txt"
 echo "NUM_LOOPS=${NUM_LOOPS}" >> "${RESULTS_DIR}/configuration.txt"
 echo "TOTAL_CALLS=${TOTAL_CALLS}" >> "${RESULTS_DIR}/configuration.txt"
-echo "METHODTIME=${METHOD_TIME}" >> "${RESULTS_DIR}/configuration.txt"
+echo "METHOD_TIME=${METHOD_TIME}" >> "${RESULTS_DIR}/configuration.txt"
 echo "THREADS=${THREADS}" >> "${RESULTS_DIR}/configuration.txt"
 echo "RECURSIONDEPTH=${RECURSION_DEPTH}" >> "${RESULTS_DIR}/configuration.txt"
 sync

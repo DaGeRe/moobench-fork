@@ -11,7 +11,7 @@ NUM_LOOPS=10            ## 10
 THREADS=1               ## 1
 RECURSIONDEPTH=10       ## 10
 TOTAL_CALLS=20000000     ## 20000000
-METHODTIME=0            ## 0
+METHOD_TIME=0            ## 0
 
 RAWFN="${RESULTS_DIR}raw"
 

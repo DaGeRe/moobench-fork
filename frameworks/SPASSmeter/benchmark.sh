@@ -55,7 +55,7 @@ echo "" >> "${RESULTS_DIR}/configuration.txt"
 echo "SLEEP_TIME=${SLEEP_TIME}" >> "${RESULTS_DIR}/configuration.txt"
 echo "NUM_LOOPS=${NUM_LOOPS}" >> "${RESULTS_DIR}/configuration.txt"
 echo "TOTAL_CALLS=${TOTAL_CALLS}" >> "${RESULTS_DIR}/configuration.txt"
-echo "METHODTIME=${METHOD_TIME}" >> "${RESULTS_DIR}/configuration.txt"
+echo "METHOD_TIME=${METHOD_TIME}" >> "${RESULTS_DIR}/configuration.txt"
 echo "THREADS=${THREADS}" >> "${RESULTS_DIR}/configuration.txt"
 echo "RECURSIONDEPTH=${RECURSION_DEPTH}" >> "${RESULTS_DIR}/configuration.txt"
 sync
@@ -113,7 +113,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     ${JAVA_BIN} ${JAVA_ARGS_LTW_ASM} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --total-calls ${TOTAL_CALLS} \
-        --method-time ${METHODTIME} \
+        --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${j} \
         ${MORE_PARAMS}
