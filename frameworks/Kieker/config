@@ -14,4 +14,14 @@ BATCH_MODE="yes"
 # in-jar locations
 AOP="file:"$(pwd)"/src/META-INF/kieker.aop.xml"
 
+# Initialize all unset parameters
+SLEEP_TIME=30                ## 30
+NUM_OF_LOOPS=10              ## 10
+THREADS=1                    ## 1
+RECURSION_DEPTH=10           ## 10
+TOTAL_NUM_OF_CALLS=2000000   ## 2 000 000
+METHOD_TIME=0                ## 0 / 500 000
+DEBUG=false		     ## false
+
+
 # end
