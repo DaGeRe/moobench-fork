@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BINDIR=bin/
+BIN_DIR=bin/
 BASEDIR=
 
 # determine correct classpath separator

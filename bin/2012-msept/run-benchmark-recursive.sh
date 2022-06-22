@@ -5,7 +5,7 @@ SUDOCMD=""
 #BINDJAVA="${SUDOCMD} psrset -e 1"
 BINDJAVA=""
 
-BINDIR=bin/
+BIN_DIR=bin/
 BASEDIR=
 
 SLEEPTIME=30            ## 30

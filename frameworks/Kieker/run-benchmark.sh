@@ -24,7 +24,7 @@ fi
 
 ## setup
 
-export RESULT_FILE="${RESULT_DIR}/results-text.csv"
+export RESULT_FILE="${RESULTS_DIR}/results-text.csv"
 COLLECTED_DATA_FILE="${BASE_DIR}/results.csv"
 BENCHMARK="${BASE_DIR}/benchmark.sh"
 
@@ -40,7 +40,7 @@ tar -xvpf ${BASE_DIR}/../../../tools/receiver/build/distributions/receiver.tar
 tar -xvpf ${BASE_DIR}/../../../tools/compile-results/build/distributions/compile-results.tar
 
 # Create benchmark results
-mkdir -p ${RESULT_DIR}
+mkdir -p ${RESULTS_DIR}
 
 rm -f ${COLLECTED_DATA_FILE}
 
