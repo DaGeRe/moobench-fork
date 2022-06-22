@@ -4,7 +4,7 @@ JAVA_BIN="/localhome/ffi/jdk1.7.0_25/bin/java"
 
 R_SCRIPT_DIR=bin/icpe/r/
 BASEDIR=./
-RESULTSDIR="${BASE_DIR}/tmp/results-benchmark-disk-slow/"
+RESULTS_DIR="${BASE_DIR}/tmp/results-benchmark-disk-slow/"
 
 SLEEP_TIME=30            ## 30
 NUM_LOOPS=10            ## 10
@@ -19,7 +19,7 @@ MORE_PARAMS=""
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
 
-echo "Removing and recreating '$RESULTSDIR'"
+echo "Removing and recreating '$RESULTS_DIR'"
 (rm -rf ${RESULTS_DIR}/) && mkdir ${RESULTS_DIR}/
 mkdir ${RESULTS_DIR}/stat/
 

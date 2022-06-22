@@ -5,7 +5,7 @@ JAVABIN=""
 
 RSCRIPTDIR=r/
 BASEDIR=./
-RESULTSDIR="${BASE_DIR}/tmp/results-spassmeter/"
+RESULTS_DIR="${BASE_DIR}/tmp/results-spassmeter/"
 
 SLEEPTIME=30           ## 30
 NUM_LOOPS=10           ## 10
@@ -20,7 +20,7 @@ MORE_PARAMS="--application mooBench.monitoredApplication.MonitoredClassSimple ${
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSIONDEPTH} + 50 \* ${TOTAL_CALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
 
-echo "Removing and recreating '$RESULTSDIR'"
+echo "Removing and recreating '$RESULTS_DIR'"
 (rm -rf ${RESULTS_DIR}/) && mkdir ${RESULTS_DIR}/
 #mkdir ${RESULTS_DIR}/stat/
 

@@ -6,8 +6,8 @@ REMOTEBASEDIR="/localhome/ffi/"
 
 RSCRIPTDIR=bin/icpe/r/
 BASEDIR=./
-RESULTSDIR="${BASEDIR}tmp/results-benchmark-kieker-days-ffi/"
-REMOTERESULTSDIR="${REMOTEBASEDIR}tmp/results-benchmark-kieker-days-ffi/"
+RESULTS_DIR="${BASEDIR}tmp/results-benchmark-kieker-days-ffi/"
+REMOTERESULTS_DIR="${REMOTEBASEDIR}tmp/results-benchmark-kieker-days-ffi/"
 
 SLEEPTIME=1            ## 30
 NUM_LOOPS=1            ## 10
@@ -22,14 +22,14 @@ MOREPARAMS="--quickstart"
 TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEPTIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSIONDEPTH} + 50 \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
 
-echo "Removing and recreating '$RESULTSDIR'"
-(rm -rf ${RESULTSDIR}) && mkdir ${RESULTSDIR}
-mkdir ${RESULTSDIR}stat/
+echo "Removing and recreating '$RESULTS_DIR'"
+(rm -rf ${RESULTS_DIR}) && mkdir ${RESULTS_DIR}
+mkdir ${RESULTS_DIR}stat/
 
-ssh ${REMOTEHOST} "(rm -rf ${REMOTERESULTSDIR}) && mkdir ${REMOTERESULTSDIR}"
-ssh ${REMOTEHOST} "mkdir ${REMOTERESULTSDIR}stat/"
+ssh ${REMOTEHOST} "(rm -rf ${REMOTERESULTS_DIR}) && mkdir ${REMOTERESULTS_DIR}"
+ssh ${REMOTEHOST} "mkdir ${REMOTERESULTS_DIR}stat/"
 
-RAWFN="${RESULTSDIR}raw"
+RAWFN="${RESULTS_DIR}raw"
 
 JAVAARGS="-server"
 JAVAARGS="${JAVAARGS} -d64"
@@ -47,18 +47,18 @@ JAVAARGS_NOINSTR="${JAVAARGS}"
 JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}lib/aspectjweaver.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dorg.aspectj.weaver.loadtime.configuration=META-INF/kieker-overhead-benchmark.aop.xml"
 
 ## Write configuration
-uname -a >${RESULTSDIR}configuration.txt
-${JAVABIN}java ${JAVAARGS} -version 2>>${RESULTSDIR}configuration.txt
-echo "JAVAARGS: ${JAVAARGS}" >>${RESULTSDIR}configuration.txt
-echo "" >>${RESULTSDIR}configuration.txt
-echo "Runtime: circa ${TIME} seconds" >>${RESULTSDIR}configuration.txt
-echo "" >>${RESULTSDIR}configuration.txt
-echo "SLEEPTIME=${SLEEPTIME}" >>${RESULTSDIR}configuration.txt
-echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTSDIR}configuration.txt
-echo "TOTALCALLS=${TOTALCALLS}" >>${RESULTSDIR}configuration.txt
-echo "METHODTIME=${METHODTIME}" >>${RESULTSDIR}configuration.txt
-echo "THREADS=${THREADS}" >>${RESULTSDIR}configuration.txt
-echo "RECURSIONDEPTH=${RECURSIONDEPTH}" >>${RESULTSDIR}configuration.txt
+uname -a >${RESULTS_DIR}configuration.txt
+${JAVABIN}java ${JAVAARGS} -version 2>>${RESULTS_DIR}configuration.txt
+echo "JAVAARGS: ${JAVAARGS}" >>${RESULTS_DIR}configuration.txt
+echo "" >>${RESULTS_DIR}configuration.txt
+echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}configuration.txt
+echo "" >>${RESULTS_DIR}configuration.txt
+echo "SLEEPTIME=${SLEEPTIME}" >>${RESULTS_DIR}configuration.txt
+echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTS_DIR}configuration.txt
+echo "TOTALCALLS=${TOTALCALLS}" >>${RESULTS_DIR}configuration.txt
+echo "METHODTIME=${METHODTIME}" >>${RESULTS_DIR}configuration.txt
+echo "THREADS=${THREADS}" >>${RESULTS_DIR}configuration.txt
+echo "RECURSIONDEPTH=${RECURSIONDEPTH}" >>${RESULTS_DIR}configuration.txt
 sync
 
 ## Execute Benchmark
@@ -71,7 +71,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     # No instrumentation
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} No instrumentation"
-	sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+	sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java  ${JAVAARGS_NOINSTR} ${JARNoInstru} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
@@ -80,15 +80,15 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         --recursiondepth ${j} \
         ${MOREPARAMS}
     kill %sar
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEPTIME}
 
     # Deactivated Probe
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Deactivated Probe"
-	sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ssh ${REMOTEHOST} "nohup ${JAVABIN}java -jar ${REMOTERESULTSDIR}dist/explorviz_worker.jar >${REMOTERESULTSDIR}worker-${i}-${j}-${k}.log &"
+	sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+    ssh ${REMOTEHOST} "nohup ${JAVABIN}java -jar ${REMOTERESULTS_DIR}dist/explorviz_worker.jar >${REMOTERESULTS_DIR}worker-${i}-${j}-${k}.log &"
     sleep 5
     ${JAVABIN}java  ${JAVAARGS_LTW} ${JARDeactived} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
@@ -100,15 +100,15 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     kill %sar
     pkill -f 'java -jar'
 	ssh ${REMOTEHOST} "pkill -f 'java -jar'"
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEPTIME}
 	
     # Collecting
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Collecting"
-	sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ssh ${REMOTEHOST} "nohup ${JAVABIN}java -jar ${REMOTERESULTSDIR}dist/explorviz_worker.jar >${REMOTERESULTSDIR}worker-${i}-${j}-${k}.log &"
+	sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+    ssh ${REMOTEHOST} "nohup ${JAVABIN}java -jar ${REMOTERESULTS_DIR}dist/explorviz_worker.jar >${REMOTERESULTS_DIR}worker-${i}-${j}-${k}.log &"
     sleep 5
     ${JAVABIN}java  ${JAVAARGS_LTW} ${JARCollecting} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
@@ -120,15 +120,15 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     kill %sar
     pkill -f 'java -jar'
 	ssh ${REMOTEHOST} "pkill -f 'java -jar'"
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEPTIME}
 
     # Logging
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Logging"
-	sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ssh ${REMOTEHOST} "nohup ${JAVABIN}java -jar ${REMOTERESULTSDIR}dist/explorviz_worker.jar >${REMOTERESULTSDIR}worker-${i}-${j}-${k}.log &"
+	sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+    ssh ${REMOTEHOST} "nohup ${JAVABIN}java -jar ${REMOTERESULTS_DIR}dist/explorviz_worker.jar >${REMOTERESULTS_DIR}worker-${i}-${j}-${k}.log &"
     sleep 5
     ${JAVABIN}java  ${JAVAARGS_LTW} ${JARNORMAL} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
@@ -140,15 +140,15 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     kill %sar
     pkill -f 'java -jar'
 	ssh ${REMOTEHOST} "pkill -f 'java -jar'"
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEPTIME}
 	
     # Reconstruction
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Reconstruction"
-	sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ssh ${REMOTEHOST} "nohup ${JAVABIN}java -jar ${REMOTERESULTSDIR}dist/explorviz_workerReconstruction.jar >${REMOTERESULTSDIR}worker-${i}-${j}-${k}.log &"
+	sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+    ssh ${REMOTEHOST} "nohup ${JAVABIN}java -jar ${REMOTERESULTS_DIR}dist/explorviz_workerReconstruction.jar >${REMOTERESULTS_DIR}worker-${i}-${j}-${k}.log &"
     sleep 5
     ${JAVABIN}java  ${JAVAARGS_LTW} ${JARNORMAL} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
@@ -160,15 +160,15 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     kill %sar
     pkill -f 'java -jar'
 	ssh ${REMOTEHOST} "pkill -f 'java -jar'"
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEPTIME}
 
     # Reduction
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} Reduction"
-	sar -o ${RESULTSDIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ssh ${REMOTEHOST} "nohup ${JAVABIN}java -jar ${REMOTERESULTSDIR}dist/explorviz_workerReduction.jar >${REMOTERESULTSDIR}worker-${i}-${j}-${k}.log &"
+	sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
+    ssh ${REMOTEHOST} "nohup ${JAVABIN}java -jar ${REMOTERESULTS_DIR}dist/explorviz_workerReduction.jar >${REMOTERESULTS_DIR}worker-${i}-${j}-${k}.log &"
     sleep 5
     ${JAVABIN}java  ${JAVAARGS_LTW} ${JARNORMAL} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
@@ -180,21 +180,21 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     kill %sar
     pkill -f 'java -jar'
 	ssh ${REMOTEHOST} "pkill -f 'java -jar'"
-    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-${k}.log
+    [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-${k}.log
     sync
     sleep ${SLEEPTIME}
 	
 done
-zip -jqr ${RESULTSDIR}stat.zip ${RESULTSDIR}stat
-rm -rf ${RESULTSDIR}stat/
-[ -f ${RESULTSDIR}hotspot-1-${RECURSIONDEPTH}-1.log ] && grep "<task " ${RESULTSDIR}hotspot-*.log >${RESULTSDIR}log.log
-[ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTSDIR}
+zip -jqr ${RESULTS_DIR}stat.zip ${RESULTS_DIR}stat
+rm -rf ${RESULTS_DIR}stat/
+[ -f ${RESULTS_DIR}hotspot-1-${RECURSIONDEPTH}-1.log ] && grep "<task " ${RESULTS_DIR}hotspot-*.log >${RESULTS_DIR}log.log
+[ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTS_DIR}
 
 ## Generate Results file
 # Timeseries
 R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
-output_fn="${RESULTSDIR}results-timeseries.pdf"
+output_fn="${RESULTS_DIR}results-timeseries.pdf"
 configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
@@ -207,7 +207,7 @@ EOF
 # Timeseries-Average
 R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
-output_fn="${RESULTSDIR}results-timeseries-average.pdf"
+output_fn="${RESULTS_DIR}results-timeseries-average.pdf"
 configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
@@ -220,7 +220,7 @@ EOF
 # Throughput
 R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
-output_fn="${RESULTSDIR}results-throughput.pdf"
+output_fn="${RESULTS_DIR}results-throughput.pdf"
 configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
@@ -231,7 +231,7 @@ EOF
 # Throughput-Average
 R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
-output_fn="${RESULTSDIR}results-throughput-average.pdf"
+output_fn="${RESULTS_DIR}results-throughput-average.pdf"
 configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
@@ -242,8 +242,8 @@ EOF
 # Bars
 R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
-output_fn="${RESULTSDIR}results-bars.pdf"
-outtxt_fn="${RESULTSDIR}results-text.txt"
+output_fn="${RESULTS_DIR}results-bars.pdf"
+outtxt_fn="${RESULTS_DIR}results-text.txt"
 configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
@@ -255,8 +255,8 @@ source("${RSCRIPTDIR}bar.r")
 EOF
 
 ## Clean up raw results
-zip -jqr ${RESULTSDIR}results.zip ${RAWFN}*
+zip -jqr ${RESULTS_DIR}results.zip ${RAWFN}*
 rm -f ${RAWFN}*
-zip -jqr ${RESULTSDIR}worker.zip ${RESULTSDIR}worker*.log
-rm -f ${RESULTSDIR}worker*.log
-[ -f ${BASEDIR}nohup.out ] && mv ${BASEDIR}nohup.out ${RESULTSDIR}
+zip -jqr ${RESULTS_DIR}worker.zip ${RESULTS_DIR}worker*.log
+rm -f ${RESULTS_DIR}worker*.log
+[ -f ${BASEDIR}nohup.out ] && mv ${BASEDIR}nohup.out ${RESULTS_DIR}

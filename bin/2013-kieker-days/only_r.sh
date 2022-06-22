@@ -4,7 +4,7 @@ JAVABIN=""
 
 RSCRIPTDIR=bin/r-scripts/
 BASEDIR=./
-RESULTSDIR="${BASEDIR}tmp/ffi-exp/"
+RESULTS_DIR="${BASEDIR}tmp/ffi-exp/"
 
 SLEEPTIME=30            ## 30
 NUM_LOOPS=10            ## 10
@@ -13,12 +13,12 @@ RECURSIONDEPTH=10       ## 10
 TOTALCALLS=20000000     ## 20000000
 METHODTIME=0            ## 0
 
-RAWFN="${RESULTSDIR}raw"
+RAWFN="${RESULTS_DIR}raw"
 
 # Timeseries
 R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
-output_fn="${RESULTSDIR}results-timeseries.pdf"
+output_fn="${RESULTS_DIR}results-timeseries.pdf"
 configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
@@ -31,7 +31,7 @@ EOF
 # Timeseries-Average
 R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
-output_fn="${RESULTSDIR}results-timeseries-average.pdf"
+output_fn="${RESULTS_DIR}results-timeseries-average.pdf"
 configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
@@ -44,7 +44,7 @@ EOF
 # Throughput
 R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
-output_fn="${RESULTSDIR}results-throughput.pdf"
+output_fn="${RESULTS_DIR}results-throughput.pdf"
 configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
@@ -55,7 +55,7 @@ EOF
 # Throughput-Average
 R --vanilla --silent <<EOF
 results_fn="${RAWFN}"
-output_fn="${RESULTSDIR}results-throughput-average.pdf"
+output_fn="${RESULTS_DIR}results-throughput-average.pdf"
 configs.loop=${NUM_LOOPS}
 configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")

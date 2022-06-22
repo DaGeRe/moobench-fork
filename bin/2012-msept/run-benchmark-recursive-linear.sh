@@ -23,16 +23,16 @@ CPSEPCHAR=":" # default :, ; for windows
 if [ ! -z "$(uname | grep -i WIN)" ]; then CPSEPCHAR=";"; fi
 # echo "Classpath separator: '${CPSEPCHAR}'"
 
-RESULTSDIR="${BASEDIR}tmp/results-benchmark-recursive-linear/"
-echo "Removing and recreating '$RESULTSDIR'"
-(${SUDOCMD} rm -rf ${RESULTSDIR}) && mkdir ${RESULTSDIR}
-mkdir ${RESULTSDIR}stat/
+RESULTS_DIR="${BASEDIR}tmp/results-benchmark-recursive-linear/"
+echo "Removing and recreating '$RESULTS_DIR'"
+(${SUDOCMD} rm -rf ${RESULTS_DIR}) && mkdir ${RESULTS_DIR}
+mkdir ${RESULTS_DIR}stat/
 
 # Clear kieker.log and initialize logging
 rm -f ${BASEDIR}kieker.log
 touch ${BASEDIR}kieker.log
 
-RESULTSFN="${RESULTSDIR}results.csv"
+RESULTSFN="${RESULTS_DIR}results.csv"
 
 JAVAARGS="-server"
 JAVAARGS="${JAVAARGS} -d64"
@@ -51,18 +51,18 @@ JAVAARGS_KIEKER_NOLOGGING="${JAVAARGS_LTW} -Dkieker.monitoring.writer=kieker.mon
 JAVAARGS_KIEKER_LOGGING="${JAVAARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncBinaryFsWriter -Dkieker.monitoring.writer.filesystem.AsyncBinaryFsWriter.customStoragePath=${BASEDIR}tmp"
 
 ## Write configuration
-uname -a >${RESULTSDIR}configuration.txt
-java ${JAVAARGS} -version 2>>${RESULTSDIR}configuration.txt
-echo "JAVAARGS: ${JAVAARGS}" >>${RESULTSDIR}configuration.txt
-echo "" >>${RESULTSDIR}configuration.txt
-echo "Runtime: circa ${TIME} seconds" >>${RESULTSDIR}configuration.txt
-echo "" >>${RESULTSDIR}configuration.txt
-echo "SLEEPTIME=${SLEEPTIME}" >>${RESULTSDIR}configuration.txt
-echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTSDIR}configuration.txt
-echo "TOTALCALLS=${TOTALCALLS}" >>${RESULTSDIR}configuration.txt
-echo "METHODTIME=${METHODTIME}" >>${RESULTSDIR}configuration.txt
-echo "THREADS=${THREADS}" >>${RESULTSDIR}configuration.txt
-echo "MAXRECURSIONDEPTH=${MAXRECURSIONDEPTH}" >>${RESULTSDIR}configuration.txt
+uname -a >${RESULTS_DIR}configuration.txt
+java ${JAVAARGS} -version 2>>${RESULTS_DIR}configuration.txt
+echo "JAVAARGS: ${JAVAARGS}" >>${RESULTS_DIR}configuration.txt
+echo "" >>${RESULTS_DIR}configuration.txt
+echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}configuration.txt
+echo "" >>${RESULTS_DIR}configuration.txt
+echo "SLEEPTIME=${SLEEPTIME}" >>${RESULTS_DIR}configuration.txt
+echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTS_DIR}configuration.txt
+echo "TOTALCALLS=${TOTALCALLS}" >>${RESULTS_DIR}configuration.txt
+echo "METHODTIME=${METHODTIME}" >>${RESULTS_DIR}configuration.txt
+echo "THREADS=${THREADS}" >>${RESULTS_DIR}configuration.txt
+echo "MAXRECURSIONDEPTH=${MAXRECURSIONDEPTH}" >>${RESULTS_DIR}configuration.txt
 sync
 
 ## Execute Benchmark
@@ -76,9 +76,9 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
 
         # 1 No instrumentation
         echo " # ${i}.1 No instrumentation"
-        mpstat 1 > ${RESULTSDIR}stat/mpstat-${i}-${j}-1.txt &
-        vmstat 1 > ${RESULTSDIR}stat/vmstat-${i}-${j}-1.txt &
-        iostat -xn 10 > ${RESULTSDIR}stat/iostat-${i}-${j}-1.txt &
+        mpstat 1 > ${RESULTS_DIR}stat/mpstat-${i}-${j}-1.txt &
+        vmstat 1 > ${RESULTS_DIR}stat/vmstat-${i}-${j}-1.txt &
+        iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-1.txt &
         ${BINDJAVA} java  ${JAVAARGS_NOINSTR} ${JAR} \
             --output-filename ${RESULTSFN}-${i}-${j}-1.csv \
             --totalcalls ${TOTALCALLS} \
@@ -88,15 +88,15 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         kill %mpstat
         kill %vmstat
         kill %iostat
-        [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-1.log
+        [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-1.log
         sync
         sleep ${SLEEPTIME}
 
         # 2 Deactivated probe
         echo " # ${i}.2 Deactivated probe"
-        mpstat 1 > ${RESULTSDIR}stat/mpstat-${i}-${j}-2.txt &
-        vmstat 1 > ${RESULTSDIR}stat/vmstat-${i}-${j}-2.txt &
-        iostat -xn 10 > ${RESULTSDIR}stat/iostat-${i}-${j}-2.txt &
+        mpstat 1 > ${RESULTS_DIR}stat/mpstat-${i}-${j}-2.txt &
+        vmstat 1 > ${RESULTS_DIR}stat/vmstat-${i}-${j}-2.txt &
+        iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-2.txt &
         ${BINDJAVA} java  ${JAVAARGS_KIEKER_DEACTV} ${JAR} \
             --output-filename ${RESULTSFN}-${i}-${j}-2.csv \
             --totalcalls ${TOTALCALLS} \
@@ -106,7 +106,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         kill %mpstat
         kill %vmstat
         kill %iostat
-        [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-2.log
+        [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-2.log
         echo >>${BASEDIR}kieker.log
         echo >>${BASEDIR}kieker.log
         sync
@@ -114,9 +114,9 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
 
         # 3 No logging
         echo " # ${i}.3 No logging (null writer)"
-        mpstat 1 > ${RESULTSDIR}stat/mpstat-${i}-${j}-3.txt &
-        vmstat 1 > ${RESULTSDIR}stat/vmstat-${i}-${j}-3.txt &
-        iostat -xn 10 > ${RESULTSDIR}stat/iostat-${i}-${j}-3.txt &
+        mpstat 1 > ${RESULTS_DIR}stat/mpstat-${i}-${j}-3.txt &
+        vmstat 1 > ${RESULTS_DIR}stat/vmstat-${i}-${j}-3.txt &
+        iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-3.txt &
         ${BINDJAVA} java  ${JAVAARGS_KIEKER_NOLOGGING} ${JAR} \
             --output-filename ${RESULTSFN}-${i}-${j}-3.csv \
             --totalcalls ${TOTALCALLS} \
@@ -126,7 +126,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         kill %mpstat
         kill %vmstat
         kill %iostat
-        [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-3.log
+        [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-3.log
         echo >>${BASEDIR}kieker.log
         echo >>${BASEDIR}kieker.log
         sync
@@ -134,9 +134,9 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
 
         # 4 Logging
         echo " # ${i}.4 Logging"
-        mpstat 1 > ${RESULTSDIR}stat/mpstat-${i}-${j}-4.txt &
-        vmstat 1 > ${RESULTSDIR}stat/vmstat-${i}-${j}-4.txt &
-        iostat -xn 10 > ${RESULTSDIR}stat/iostat-${i}-${j}-4.txt &
+        mpstat 1 > ${RESULTS_DIR}stat/mpstat-${i}-${j}-4.txt &
+        vmstat 1 > ${RESULTS_DIR}stat/vmstat-${i}-${j}-4.txt &
+        iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-4.txt &
         ${BINDJAVA} java  ${JAVAARGS_KIEKER_LOGGING} ${JAR} \
             --output-filename ${RESULTSFN}-${i}-${j}-4.csv \
             --totalcalls ${TOTALCALLS} \
@@ -146,9 +146,9 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         kill %mpstat
         kill %vmstat
         kill %iostat
-        mkdir -p ${RESULTSDIR}kiekerlog/
-        mv ${BASEDIR}tmp/kieker-* ${RESULTSDIR}kiekerlog/
-        [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTSDIR}hotspot-${i}-${j}-4.log
+        mkdir -p ${RESULTS_DIR}kiekerlog/
+        mv ${BASEDIR}tmp/kieker-* ${RESULTS_DIR}kiekerlog/
+        [ -f ${BASEDIR}hotspot.log ] && mv ${BASEDIR}hotspot.log ${RESULTS_DIR}hotspot-${i}-${j}-4.log
         echo >>${BASEDIR}kieker.log
         echo >>${BASEDIR}kieker.log
         sync
@@ -157,13 +157,13 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     done
 
 done
-tar cf ${RESULTSDIR}kiekerlog.tar ${RESULTSDIR}kiekerlog
-${SUDOCMD} rm -rf ${RESULTSDIR}kiekerlog/
-gzip -9 ${RESULTSDIR}kiekerlog.tar
-tar cf ${RESULTSDIR}stat.tar ${RESULTSDIR}stat
-rm -rf ${RESULTSDIR}stat/
-gzip -9 ${RESULTSDIR}stat.tar
-mv ${BASEDIR}kieker.log ${RESULTSDIR}kieker.log
-[ -f ${RESULTSDIR}hotspot-1-1-1.log ] && grep "<task " ${RESULTSDIR}hotspot-*.log >${RESULTSDIR}log.log
-[ -f ${BASEDIR}nohup.out ] && mv ${BASEDIR}nohup.out ${RESULTSDIR}
-[ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTSDIR}
+tar cf ${RESULTS_DIR}kiekerlog.tar ${RESULTS_DIR}kiekerlog
+${SUDOCMD} rm -rf ${RESULTS_DIR}kiekerlog/
+gzip -9 ${RESULTS_DIR}kiekerlog.tar
+tar cf ${RESULTS_DIR}stat.tar ${RESULTS_DIR}stat
+rm -rf ${RESULTS_DIR}stat/
+gzip -9 ${RESULTS_DIR}stat.tar
+mv ${BASEDIR}kieker.log ${RESULTS_DIR}kieker.log
+[ -f ${RESULTS_DIR}hotspot-1-1-1.log ] && grep "<task " ${RESULTS_DIR}hotspot-*.log >${RESULTS_DIR}log.log
+[ -f ${BASEDIR}nohup.out ] && mv ${BASEDIR}nohup.out ${RESULTS_DIR}
+[ -f ${BASEDIR}errorlog.txt ] && mv ${BASEDIR}errorlog.txt ${RESULTS_DIR}
