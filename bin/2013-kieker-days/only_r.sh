@@ -2,7 +2,7 @@
 
 JAVABIN=""
 
-RSCRIPTDIR=bin/r-scripts/
+R_SCRIPT_DIR=bin/r-scripts/
 BASEDIR=./
 RESULTS_DIR="${BASEDIR}tmp/ffi-exp/"
 
@@ -26,7 +26,7 @@ configs.colors=c("black","red","blue","green","yellow","purple")
 results.count=${TOTALCALLS}
 tsconf.min=0
 tsconf.max=25
-source("${RSCRIPTDIR}timeseries.r")
+source("${R_SCRIPT_DIR}timeseries.r")
 EOF
 # Timeseries-Average
 R --vanilla --silent <<EOF
@@ -39,7 +39,7 @@ configs.colors=c("black","red","blue","green","yellow","purple")
 results.count=${TOTALCALLS}
 tsconf.min=0
 tsconf.max=25
-source("${RSCRIPTDIR}timeseries-average.r")
+source("${R_SCRIPT_DIR}timeseries-average.r")
 EOF
 # Throughput
 R --vanilla --silent <<EOF
@@ -50,7 +50,7 @@ configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
 configs.colors=c("black","red","blue","green","yellow","purple")
 results.count=${TOTALCALLS}
-source("${RSCRIPTDIR}throughput.r")
+source("${R_SCRIPT_DIR}throughput.r")
 EOF
 # Throughput-Average
 R --vanilla --silent <<EOF
@@ -61,5 +61,5 @@ configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
 configs.colors=c("black","red","blue","green","yellow","purple")
 results.count=${TOTALCALLS}
-source("${RSCRIPTDIR}throughput-average.r")
+source("${R_SCRIPT_DIR}throughput-average.r")
 EOF

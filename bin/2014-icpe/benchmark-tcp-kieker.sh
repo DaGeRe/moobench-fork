@@ -2,7 +2,7 @@
 
 JAVABIN="/localhome/ffi/jdk1.7.0_25/bin/"
 
-RSCRIPTDIR=bin/icpe/r/
+R_SCRIPT_DIR=bin/icpe/r/
 BASEDIR=./
 RESULTS_DIR="${BASE_DIR}/tmp/results-benchmark-tcp-kieker/"
 
@@ -181,7 +181,7 @@ configs.colors=c("black","red","blue","green")
 results.count=${TOTAL_CALLS}
 tsconf.min=(${METHOD_TIME}/1000)
 tsconf.max=(${METHOD_TIME}/1000)+200
-source("${RSCRIPTDIR}timeseries.r")
+source("${R_SCRIPT_DIR}timeseries.r")
 EOF
 # Timeseries-Average
 R --vanilla --silent <<EOF
@@ -194,7 +194,7 @@ configs.colors=c("black","red","blue","green")
 results.count=${TOTAL_CALLS}
 tsconf.min=(${METHOD_TIME}/1000)
 tsconf.max=(${METHOD_TIME}/1000)+200
-source("${RSCRIPTDIR}timeseries-average.r")
+source("${R_SCRIPT_DIR}timeseries-average.r")
 EOF
 # Throughput
 R --vanilla --silent <<EOF
@@ -205,7 +205,7 @@ configs.recursion=c(${RECURSION_DEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer")
 configs.colors=c("black","red","blue","green")
 results.count=${TOTAL_CALLS}
-source("${RSCRIPTDIR}throughput.r")
+source("${R_SCRIPT_DIR}throughput.r")
 EOF
 # Throughput-Average
 R --vanilla --silent <<EOF
@@ -216,7 +216,7 @@ configs.recursion=c(${RECURSION_DEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer")
 configs.colors=c("black","red","blue","green")
 results.count=${TOTAL_CALLS}
-source("${RSCRIPTDIR}throughput-average.r")
+source("${R_SCRIPT_DIR}throughput-average.r")
 EOF
 # Bars
 R --vanilla --silent <<EOF
@@ -230,7 +230,7 @@ results.count=${TOTAL_CALLS}
 results.skip=${TOTAL_CALLS}/2
 bars.minval=(${METHOD_TIME}/1000)
 bars.maxval=(${METHOD_TIME}/1000)+200
-source("${RSCRIPTDIR}bar.r")
+source("${R_SCRIPT_DIR}bar.r")
 EOF
 
 ## Clean up raw results

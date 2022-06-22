@@ -4,7 +4,7 @@ JAVABIN=""
 REMOTEHOST="ubuntu@10.50.0.7"
 REMOTEBASEDIR="/home/ubuntu/"
 
-RSCRIPTDIR=bin/r-scripts/
+R_SCRIPT_DIR=bin/r-scripts/
 BASEDIR=./
 RESULTS_DIR="${BASEDIR}tmp/results-benchmark-kieker-days-kieker/"
 REMOTERESULTS_DIR="${REMOTEBASEDIR}tmp/results-benchmark-kieker-days-kieker/"
@@ -219,7 +219,7 @@ configs.recursion=c(${RECURSIONDEPTH})
 configs.labels=c("No Probe","Deactivated Probe","Collecting Data","TCP Writer","Reconstruction","Reduction")
 results.count=${TOTALCALLS}
 results.skip=${TOTALCALLS}/2
-source("${RSCRIPTDIR}stats.r")
+source("${R_SCRIPT_DIR}stats.r")
 EOF
 
 ## Clean up raw results
