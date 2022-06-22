@@ -9,7 +9,7 @@ BASE_DIR=./
 RESULTS_DIR="${BASE_DIR}tmp/results-benchmark-kieker-days-kieker/"
 REMOTERESULTS_DIR="${REMOTEBASE_DIR}tmp/results-benchmark-kieker-days-kieker/"
 
-SLEEPTIME=30            ## 30
+SLEEP_TIME=30            ## 30
 NUM_LOOPS=10            ## 10
 THREADS=1               ## 1
 RECURSIONDEPTH=10       ## 10
@@ -19,7 +19,7 @@ METHODTIME=0            ## 0
 MOREPARAMS=""
 #MOREPARAMS="--quickstart"
 
-TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEPTIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSIONDEPTH} + 50 \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} `
+TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_LOOPS}  \* ${RECURSIONDEPTH} + 50 \* ${TOTALCALLS} / 1000000000 \* 4 \* ${RECURSIONDEPTH} \* ${NUM_LOOPS} `
 echo "Experiment will take circa ${TIME} seconds."
 
 echo "Removing and recreating '${RESULTS_DIR}'"
@@ -57,7 +57,7 @@ echo "JAVA_ARGS: ${JAVA_ARGS}" >>${RESULTS_DIR}configuration.txt
 echo "" >>${RESULTS_DIR}configuration.txt
 echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}configuration.txt
 echo "" >>${RESULTS_DIR}configuration.txt
-echo "SLEEPTIME=${SLEEPTIME}" >>${RESULTS_DIR}configuration.txt
+echo "SLEEP_TIME=${SLEEP_TIME}" >>${RESULTS_DIR}configuration.txt
 echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTS_DIR}configuration.txt
 echo "TOTALCALLS=${TOTALCALLS}" >>${RESULTS_DIR}configuration.txt
 echo "METHODTIME=${METHODTIME}" >>${RESULTS_DIR}configuration.txt
@@ -89,7 +89,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo >>${BASE_DIR}kieker.log
     echo >>${BASE_DIR}kieker.log
     sync
-    sleep ${SLEEPTIME}
+    sleep ${SLEEP_TIME}
 
     # Deactivated probe
     k=`expr ${k} + 1`
@@ -108,7 +108,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo >>${BASE_DIR}kieker.log
     echo >>${BASE_DIR}kieker.log
     sync
-    sleep ${SLEEPTIME}
+    sleep ${SLEEP_TIME}
 
     # No logging
     k=`expr ${k} + 1`
@@ -127,7 +127,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo >>${BASE_DIR}kieker.log
     echo >>${BASE_DIR}kieker.log
     sync
-    sleep ${SLEEPTIME}
+    sleep ${SLEEP_TIME}
 
     # Logging
     k=`expr ${k} + 1`
@@ -151,7 +151,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo >>${BASE_DIR}kieker.log
     echo >>${BASE_DIR}kieker.log
     sync
-    sleep ${SLEEPTIME}
+    sleep ${SLEEP_TIME}
 
     # Reconstruction
     k=`expr ${k} + 1`
@@ -175,7 +175,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo >>${BASE_DIR}kieker.log
     echo >>${BASE_DIR}kieker.log
     sync
-    sleep ${SLEEPTIME}
+    sleep ${SLEEP_TIME}
 	
     # Reduction
     k=`expr ${k} + 1`
@@ -199,7 +199,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo >>${BASE_DIR}kieker.log
     echo >>${BASE_DIR}kieker.log
     sync
-    sleep ${SLEEPTIME}
+    sleep ${SLEEP_TIME}
 	
 done
 zip -jqr ${RESULTS_DIR}stat.zip ${RESULTS_DIR}stat

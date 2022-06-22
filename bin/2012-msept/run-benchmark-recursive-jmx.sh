@@ -8,14 +8,14 @@ BINDJAVA=""
 BIN_DIR=bin/
 BASE_DIR=
 
-SLEEPTIME=30            ## 30
+SLEEP_TIME=30            ## 30
 NUM_LOOPS=10            ## 10
 THREADS=1               ## 1
 MAXRECURSIONDEPTH=10    ## 10
 TOTALCALLS=2000000      ## 2000000
 METHODTIME=500000       ## 500000
 
-TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 2 \* ${MAXRECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEPTIME} \* 2 \* ${NUM_LOOPS}  \* ${MAXRECURSIONDEPTH}`
+TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 2 \* ${MAXRECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 2 \* ${NUM_LOOPS}  \* ${MAXRECURSIONDEPTH}`
 echo "Experiment will take circa ${TIME} seconds."
 
 # determine correct classpath separator
@@ -56,7 +56,7 @@ echo "JAVA_ARGS: ${JAVA_ARGS}" >>${RESULTS_DIR}configuration.txt
 echo "" >>${RESULTS_DIR}configuration.txt
 echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}configuration.txt
 echo "" >>${RESULTS_DIR}configuration.txt
-echo "SLEEPTIME=${SLEEPTIME}" >>${RESULTS_DIR}configuration.txt
+echo "SLEEP_TIME=${SLEEP_TIME}" >>${RESULTS_DIR}configuration.txt
 echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTS_DIR}configuration.txt
 echo "TOTALCALLS=${TOTALCALLS}" >>${RESULTS_DIR}configuration.txt
 echo "METHODTIME=${METHODTIME}" >>${RESULTS_DIR}configuration.txt
@@ -90,7 +90,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         echo >>${BASE_DIR}kieker.log
         echo >>${BASE_DIR}kieker.log
         sync
-        sleep ${SLEEPTIME}
+        sleep ${SLEEP_TIME}
 
         # 2 Logging
         echo " # ${i}.2 Logging"
@@ -111,7 +111,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
         echo >>${BASE_DIR}kieker.log
         echo >>${BASE_DIR}kieker.log
         sync
-        sleep ${SLEEPTIME}
+        sleep ${SLEEP_TIME}
     
     done
 

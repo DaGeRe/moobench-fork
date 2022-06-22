@@ -6,7 +6,7 @@ R_SCRIPT_DIR=bin/r-scripts/
 BASE_DIR=./
 RESULTS_DIR="${BASE_DIR}tmp/ffi-exp/"
 
-SLEEPTIME=30            ## 30
+SLEEP_TIME=30            ## 30
 NUM_LOOPS=10            ## 10
 THREADS=1               ## 1
 RECURSIONDEPTH=10       ## 10

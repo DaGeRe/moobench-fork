@@ -52,7 +52,7 @@ echo "JAVA_ARGS: ${JAVA_ARGS}" >> "${RESULTS_DIR}/configuration.txt"
 echo "" >> "${RESULTS_DIR}/configuration.txt"
 echo "Runtime: circa ${TIME} seconds" >> "${RESULTS_DIR}/configuration.txt"
 echo "" >> "${RESULTS_DIR}/configuration.txt"
-echo "SLEEPTIME=${SLEEP_TIME}" >> "${RESULTS_DIR}/configuration.txt"
+echo "SLEEP_TIME=${SLEEP_TIME}" >> "${RESULTS_DIR}/configuration.txt"
 echo "NUM_LOOPS=${NUM_LOOPS}" >> "${RESULTS_DIR}/configuration.txt"
 echo "TOTALCALLS=${TOTAL_CALLS}" >> "${RESULTS_DIR}/configuration.txt"
 echo "METHODTIME=${METHOD_TIME}" >> "${RESULTS_DIR}/configuration.txt"
@@ -122,7 +122,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo >> "${BASE_DIR}/spassmeter.log"
     echo >> "${BASE_DIR}/spassmeter.log"
     sync
-    sleep ${SLEEPTIME}
+    sleep ${SLEEP_TIME}
 
 done
 #zip -jqr ${RESULTS_DIR}/stat.zip ${RESULTS_DIR}/stat

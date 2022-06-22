@@ -119,7 +119,7 @@ function writeConfiguration() {
 	echo "" >>${RESULTS_DIR}/configuration.txt
 	echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}/configuration.txt
 	echo "" >>${RESULTS_DIR}/configuration.txt
-	echo "SLEEPTIME=${SLEEP_TIME}" >>${RESULTS_DIR}/configuration.txt
+	echo "SLEEP_TIME=${SLEEP_TIME}" >>${RESULTS_DIR}/configuration.txt
 	echo "NUM_OF_LOOPS=${NUM_OF_LOOPS}" >>${RESULTS_DIR}/configuration.txt
 	echo "TOTAL_NUM_OF_CALLS=${TOTAL_NUM_OF_CALLS}" >>${RESULTS_DIR}/configuration.txt
 	echo "METHODTIME=${METHOD_TIME}" >>${RESULTS_DIR}/configuration.txt

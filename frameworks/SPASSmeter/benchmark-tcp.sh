@@ -7,7 +7,7 @@ R_SCRIPT_DIR=r/
 BASE_DIR=./
 RESULTS_DIR="${BASE_DIR}/tmp/results-spassmeter/"
 
-SLEEPTIME=30           ## 30
+SLEEP_TIME=30           ## 30
 NUM_LOOPS=10           ## 10
 THREADS=1              ## 1
 RECURSIONDEPTH=10      ## 10
@@ -52,7 +52,7 @@ echo "JAVA_ARGS: ${JAVA_ARGS}" >>${RESULTS_DIR}/configuration.txt
 echo "" >>${RESULTS_DIR}/configuration.txt
 echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}/configuration.txt
 echo "" >>${RESULTS_DIR}/configuration.txt
-echo "SLEEPTIME=${SLEEP_TIME}" >>${RESULTS_DIR}/configuration.txt
+echo "SLEEP_TIME=${SLEEP_TIME}" >>${RESULTS_DIR}/configuration.txt
 echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTS_DIR}/configuration.txt
 echo "TOTAL_CALLS=${TOTAL_CALLS}" >>${RESULTS_DIR}/configuration.txt
 echo "METHOD_TIME=${METHOD_TIME}" >>${RESULTS_DIR}/configuration.txt

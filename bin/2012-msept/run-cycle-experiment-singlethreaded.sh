@@ -2,14 +2,14 @@
 
 SUDOCMD="pfexec"
 
-SLEEPTIME=30            ## 30
+SLEEP_TIME=30            ## 30
 NUM_LOOPS=10            ## 10
 THREADS=1               ## 1
 MAXRECURSIONDEPTH=1     ## 10
 TOTALCALLS=2000000      ## 200000
 METHODTIME=500000       ## 500000
 
-TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${MAXRECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEPTIME} \* 4 \* ${NUM_LOOPS}  \* ${MAXRECURSIONDEPTH}`
+TIME=`expr ${METHODTIME} \* ${TOTALCALLS} / 1000000000 \* 4 \* ${MAXRECURSIONDEPTH} \* ${NUM_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_LOOPS}  \* ${MAXRECURSIONDEPTH}`
 echo "Each experiment will take circa ${TIME} seconds."
 
 
