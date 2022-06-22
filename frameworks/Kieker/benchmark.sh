@@ -16,7 +16,12 @@ else
 	exit 1
 fi
 
-source ../common-functions.sh
+if [ -f "${BASE_DIR}/config" ] ; then
+	. "${BASE_DIR}../common-functions.sh"
+else
+	echo "Missing configuration: ${BASE_DIR}/common-functions.sh"
+	exit 1
+fi
 
 getKiekerAgent
 
@@ -136,7 +141,7 @@ function execute-experiment() {
     
     echo ${BENCHMARK_OPTS}" -jar MooBench.jar"
 
-    ${JAVABIN}java ${BENCHMARK_OPTS} -jar MooBench.jar \
+    ${JAVA_BIN} ${BENCHMARK_OPTS} -jar MooBench.jar \
 	--application moobench.application.MonitoredClassSimple \
         --output-filename ${RAWFN}-${loop}-${recursion}-${index}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \

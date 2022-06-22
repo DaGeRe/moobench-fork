@@ -42,10 +42,10 @@ function getInspectItAgent() {
 }
 
 function getOpentelemetryAgent() {
-	if [ ! -f ${BASEDIR}lib/opentelemetry-javaagent-all.jar ]
+	if [ ! -f "${BASE_DIR}/lib/opentelemetry-javaagent-all.jar" ]
 	then
-		mkdir -p ${BASEDIR}lib
-		wget --output-document=${BASEDIR}lib/opentelemetry-javaagent-all.jar \
+		mkdir -p "${BASE_DIR}/lib"
+		wget --output-document=${BASE_DIR}/lib/opentelemetry-javaagent-all.jar \
 			https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent-all.jar
 	fi
 }
@@ -114,15 +114,15 @@ function stopBackgroundProcess {
 
 function writeConfiguration() {
 	uname -a >${RESULTS_DIR}/configuration.txt
-	${JAVABIN}java ${JAVAARGS} -version 2>>${RESULTS_DIR}/configuration.txt
-	echo "JAVAARGS: ${JAVAARGS}" >>${RESULTS_DIR}/configuration.txt
+	${JAVA_BIN} ${JAVA_ARGS} -version 2>>${RESULTS_DIR}/configuration.txt
+	echo "JAVAARGS: ${JAVA_ARGS}" >>${RESULTS_DIR}/configuration.txt
 	echo "" >>${RESULTS_DIR}/configuration.txt
 	echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}/configuration.txt
 	echo "" >>${RESULTS_DIR}/configuration.txt
-	echo "SLEEPTIME=${SLEEPTIME}" >>${RESULTS_DIR}/configuration.txt
+	echo "SLEEPTIME=${SLEEP_TIME}" >>${RESULTS_DIR}/configuration.txt
 	echo "NUM_OF_LOOPS=${NUM_OF_LOOPS}" >>${RESULTS_DIR}/configuration.txt
 	echo "TOTAL_NUM_OF_CALLS=${TOTAL_NUM_OF_CALLS}" >>${RESULTS_DIR}/configuration.txt
-	echo "METHODTIME=${METHODTIME}" >>${RESULTS_DIR}/configuration.txt
+	echo "METHODTIME=${METHOD_TIME}" >>${RESULTS_DIR}/configuration.txt
 	echo "THREADS=${THREADS}" >>${RESULTS_DIR}/configuration.txt
 	echo "RECURSION_DEPTH=${RECURSION_DEPTH}" >>${RESULTS_DIR}/configuration.txt
 	sync
@@ -136,9 +136,9 @@ function printIntermediaryResults {
 }
 
 
-FRAMEWORK_NAME=$(basename -- "$BASE_DIR")
-RESULTS_DIR="$BASE_DIR/results-$FRAMEWORK_NAME"
-RAWFN=$RESULTS_DIR"/raw"
+FRAMEWORK_NAME=$(basename -- "${BASE_DIR}")
+RESULTS_DIR="${BASE_DIR}/results-${FRAMEWORK_NAME}"
+RAWFN="${RESULTS_DIR}/raw"
 
 # Initialize all unset parameters
 if [ -z $SLEEP_TIME ]; then

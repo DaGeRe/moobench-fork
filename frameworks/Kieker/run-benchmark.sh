@@ -15,10 +15,16 @@ else
 	echo "Missing configuration: ${BASE_DIR}/common-functions"
 	exit 1
 fi
+if [ -f "${BASE_DIR}/../common-functions.sh" ] ; then
+	. ${BASE_DIR}/../common-functions.sh
+else
+	echo "Missing configuration: ${BASE_DIR}/../common-functions.sh"
+	exit 1
+fi
 
 ## setup
 
-export RESULT_FILE="${BASE_DIR}/results-kieker/results-text.csv"
+export RESULT_FILE="${RESULT_DIR}/results-text.csv"
 COLLECTED_DATA_FILE="${BASE_DIR}/results.csv"
 BENCHMARK="${BASE_DIR}/benchmark.sh"
 
@@ -34,7 +40,7 @@ tar -xvpf ${BASE_DIR}/../../../tools/receiver/build/distributions/receiver.tar
 tar -xvpf ${BASE_DIR}/../../../tools/compile-results/build/distributions/compile-results.tar
 
 # Create benchmark results
-mkdir -p ${BASE_DIR}/results-kieker
+mkdir -p ${RESULT_DIR}
 
 rm -f ${COLLECTED_DATA_FILE}
 
