@@ -115,7 +115,7 @@ function stopBackgroundProcess {
 function writeConfiguration() {
 	uname -a >${RESULTS_DIR}/configuration.txt
 	${JAVA_BIN} ${JAVA_ARGS} -version 2>>${RESULTS_DIR}/configuration.txt
-	echo "JAVAARGS: ${JAVA_ARGS}" >>${RESULTS_DIR}/configuration.txt
+	echo "JAVA_ARGS: ${JAVA_ARGS}" >>${RESULTS_DIR}/configuration.txt
 	echo "" >>${RESULTS_DIR}/configuration.txt
 	echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}/configuration.txt
 	echo "" >>${RESULTS_DIR}/configuration.txt

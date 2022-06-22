@@ -42,7 +42,7 @@ JAR="-jar MooBench.jar"
 
 JAVA_ARGS_NOINSTR="${JAVA_ARGS}"
 JAVA_ARGS_LTW="${JAVA_ARGS} -javaagent:${BASE_DIR}/lib/linux/spass-meter-ia.jar=xmlconfig=${BASE_DIR}/lib/config.xml,out=${RESULTS_DIR}/spassmeter.txt"
-JAVAARGS_LTW_ASM="${JAVAARGS_LTW} -Dspass-meter.iFactory=de.uni_hildesheim.sse.monitoring.runtime.instrumentation.asmTree.Factory"
+JAVA_ARGS_LTW_ASM="${JAVA_ARGS_LTW} -Dspass-meter.iFactory=de.uni_hildesheim.sse.monitoring.runtime.instrumentation.asmTree.Factory"
 
 
 ## Write configuration
@@ -91,7 +91,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} SPASSmeter Javassist"
     echo " # ${i}.${j}.${k} SPASSmeter Javassist" >> "${BASE_DIR}/spassmeter.log"
     #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVA_BIN} ${JAVAARGS_LTW} ${JAR} \
+    ${JAVA_BIN} ${JAVA_ARGS_LTW} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --total-calls ${TOTAL_CALLS} \
         --method-time ${METHOD_TIME} \
@@ -110,7 +110,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} SPASSmeter ASM"
     echo " # ${i}.${j}.${k} SPASSmeter ASM" >> "${BASE_DIR}/spassmeter.log"
     #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVA_BIN} ${JAVAARGS_LTW_ASM} ${JAR} \
+    ${JAVA_BIN} ${JAVA_ARGS_LTW_ASM} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --total-calls ${TOTALCALLS} \
         --method-time ${METHODTIME} \

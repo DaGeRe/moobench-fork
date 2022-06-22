@@ -25,25 +25,25 @@ mkdir ${RESULTS_DIR}stat/
 
 RAWFN="${RESULTS_DIR}raw"
 
-JAVAARGS="-server"
-JAVAARGS="${JAVAARGS} -d64"
-JAVAARGS="${JAVAARGS} -Xms1G -Xmx4G"
-JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
-#JAVAARGS="${JAVAARGS} -XX:+PrintInlining"
-#JAVAARGS="${JAVAARGS} -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation"
-#JAVAARGS="${JAVAARGS} -Djava.compiler=NONE"
+JAVA_ARGS="-server"
+JAVA_ARGS="${JAVA_ARGS} -d64"
+JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx4G"
+JAVA_ARGS="${JAVA_ARGS} -verbose:gc -XX:+PrintCompilation"
+#JAVA_ARGS="${JAVA_ARGS} -XX:+PrintInlining"
+#JAVA_ARGS="${JAVA_ARGS} -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation"
+#JAVA_ARGS="${JAVA_ARGS} -Djava.compiler=NONE"
 JARNoInstru="-jar dist/OverheadEvaluationMicrobenchmarkTCPffiNoInstru.jar"
 JARDeactived="-jar dist/OverheadEvaluationMicrobenchmarkTCPffiDeactivated.jar"
 JARCollecting="-jar dist/OverheadEvaluationMicrobenchmarkTCPffiCollecting.jar"
 JARNORMAL="-jar dist/OverheadEvaluationMicrobenchmarkTCPffiNormal.jar"
 
-JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}lib/aspectjweaver.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dorg.aspectj.weaver.loadtime.configuration=META-INF/kieker-overhead-benchmark.aop.xml"
+JAVA_ARGS_NOINSTR="${JAVA_ARGS}"
+JAVA_ARGS_LTW="${JAVA_ARGS} -javaagent:${BASEDIR}lib/aspectjweaver.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dorg.aspectj.weaver.loadtime.configuration=META-INF/kieker-overhead-benchmark.aop.xml"
 
 ## Write configuration
 uname -a >${RESULTS_DIR}configuration.txt
-${JAVABIN}java ${JAVAARGS} -version 2>>${RESULTS_DIR}configuration.txt
-echo "JAVAARGS: ${JAVAARGS}" >>${RESULTS_DIR}configuration.txt
+${JAVABIN}java ${JAVA_ARGS} -version 2>>${RESULTS_DIR}configuration.txt
+echo "JAVA_ARGS: ${JAVA_ARGS}" >>${RESULTS_DIR}configuration.txt
 echo "" >>${RESULTS_DIR}configuration.txt
 echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}configuration.txt
 echo "" >>${RESULTS_DIR}configuration.txt
@@ -66,7 +66,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     k=`expr ${k} + 1`
     echo " # ${i}.${j}.${k} No instrumentation"
 	sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVABIN}java  ${JAVAARGS_NOINSTR} ${JARNoInstru} \
+    ${JAVABIN}java  ${JAVA_ARGS_NOINSTR} ${JARNoInstru} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
@@ -84,7 +84,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
 	sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java -jar dist/explorviz_worker.jar >${RESULTS_DIR}worker-${i}-${j}-${k}.log &
     sleep 5
-    ${JAVABIN}java  ${JAVAARGS_LTW} ${JARDeactived} \
+    ${JAVABIN}java  ${JAVA_ARGS_LTW} ${JARDeactived} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
@@ -103,7 +103,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
 	sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java -jar dist/explorviz_worker.jar >${RESULTS_DIR}worker-${i}-${j}-${k}.log &
     sleep 5
-    ${JAVABIN}java  ${JAVAARGS_LTW} ${JARCollecting} \
+    ${JAVABIN}java  ${JAVA_ARGS_LTW} ${JARCollecting} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
@@ -122,7 +122,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
 	sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java -jar dist/explorviz_worker.jar >${RESULTS_DIR}worker-${i}-${j}-${k}.log &
     sleep 5
-    ${JAVABIN}java  ${JAVAARGS_LTW} ${JARNORMAL} \
+    ${JAVABIN}java  ${JAVA_ARGS_LTW} ${JARNORMAL} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
@@ -141,7 +141,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
 	sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java -jar dist/explorviz_workerReconstruction.jar >${RESULTS_DIR}worker-${i}-${j}-${k}.log &
     sleep 5
-    ${JAVABIN}java  ${JAVAARGS_LTW} ${JARNORMAL} \
+    ${JAVABIN}java  ${JAVA_ARGS_LTW} ${JARNORMAL} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
@@ -160,7 +160,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
 	sar -o ${RESULTS_DIR}stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVABIN}java -jar dist/explorviz_workerReduction.jar >${RESULTS_DIR}worker-${i}-${j}-${k}.log &
     sleep 5
-    ${JAVABIN}java  ${JAVAARGS_LTW} ${JARNORMAL} \
+    ${JAVABIN}java  ${JAVA_ARGS_LTW} ${JARNORMAL} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \

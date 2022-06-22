@@ -29,27 +29,27 @@ touch ${BASEDIR}kieker.log
 
 RAWFN="${RESULTS_DIR}raw"
 
-JAVAARGS="-server"
-JAVAARGS="${JAVAARGS} -d64"
-JAVAARGS="${JAVAARGS} -Xms1G -Xmx4G"
-JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
-#JAVAARGS="${JAVAARGS} -XX:+PrintInlining"
-#JAVAARGS="${JAVAARGS} -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation"
-#JAVAARGS="${JAVAARGS} -Djava.compiler=NONE"
+JAVA_ARGS="-server"
+JAVA_ARGS="${JAVA_ARGS} -d64"
+JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx4G"
+JAVA_ARGS="${JAVA_ARGS} -verbose:gc -XX:+PrintCompilation"
+#JAVA_ARGS="${JAVA_ARGS} -XX:+PrintInlining"
+#JAVA_ARGS="${JAVA_ARGS} -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation"
+#JAVA_ARGS="${JAVA_ARGS} -Djava.compiler=NONE"
 JAR="-jar dist/OverheadEvaluationMicrobenchmarkKieker.jar"
 
-JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASEDIR}lib/kieker-1.8-SNAPSHOT_aspectj.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dkieker.monitoring.adaptiveMonitoring.enabled=false -Dorg.aspectj.weaver.loadtime.configuration=META-INF/kieker.aop.xml"
-JAVAARGS_KIEKER_DEACTV="${JAVAARGS_LTW} -Dkieker.monitoring.enabled=false -Dkieker.monitoring.writer=kieker.monitoring.writer.DummyWriter"
-JAVAARGS_KIEKER_NOLOGGING="${JAVAARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.DummyWriter"
-JAVAARGS_KIEKER_LOGGING1="${JAVAARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncBinaryFsWriter -Dkieker.monitoring.writer.filesystem.AsyncBinaryFsWriter.customStoragePath=${BASEDIR}tmp -Dkieker.monitoring.writer.filesystem.AsyncBinaryFsWriter.QueueFullBehavior=1"
-JAVAARGS_KIEKER_LOGGING2="${JAVAARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncBinaryZipWriter -Dkieker.monitoring.writer.filesystem.AsyncBinaryZipWriter.customStoragePath=${BASEDIR}tmp -Dkieker.monitoring.writer.filesystem.AsyncBinaryZipWriter.QueueFullBehavior=1"
-JAVAARGS_KIEKER_LOGGING3="${JAVAARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncFsWriter -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.customStoragePath=${BASEDIR}tmp -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.QueueFullBehavior=1"
+JAVA_ARGS_NOINSTR="${JAVA_ARGS}"
+JAVA_ARGS_LTW="${JAVA_ARGS} -javaagent:${BASEDIR}lib/kieker-1.8-SNAPSHOT_aspectj.jar -Dorg.aspectj.weaver.showWeaveInfo=false -Daj.weaving.verbose=false -Dkieker.monitoring.adaptiveMonitoring.enabled=false -Dorg.aspectj.weaver.loadtime.configuration=META-INF/kieker.aop.xml"
+JAVA_ARGS_KIEKER_DEACTV="${JAVA_ARGS_LTW} -Dkieker.monitoring.enabled=false -Dkieker.monitoring.writer=kieker.monitoring.writer.DummyWriter"
+JAVA_ARGS_KIEKER_NOLOGGING="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.DummyWriter"
+JAVA_ARGS_KIEKER_LOGGING1="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncBinaryFsWriter -Dkieker.monitoring.writer.filesystem.AsyncBinaryFsWriter.customStoragePath=${BASEDIR}tmp -Dkieker.monitoring.writer.filesystem.AsyncBinaryFsWriter.QueueFullBehavior=1"
+JAVA_ARGS_KIEKER_LOGGING2="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncBinaryZipWriter -Dkieker.monitoring.writer.filesystem.AsyncBinaryZipWriter.customStoragePath=${BASEDIR}tmp -Dkieker.monitoring.writer.filesystem.AsyncBinaryZipWriter.QueueFullBehavior=1"
+JAVA_ARGS_KIEKER_LOGGING3="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncFsWriter -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.customStoragePath=${BASEDIR}tmp -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.QueueFullBehavior=1"
 
 ## Write configuration
 uname -a >${RESULTS_DIR}configuration.txt
-${JAVABIN}java ${JAVAARGS} -version 2>>${RESULTS_DIR}configuration.txt
-echo "JAVAARGS: ${JAVAARGS}" >>${RESULTS_DIR}configuration.txt
+${JAVABIN}java ${JAVA_ARGS} -version 2>>${RESULTS_DIR}configuration.txt
+echo "JAVA_ARGS: ${JAVA_ARGS}" >>${RESULTS_DIR}configuration.txt
 echo "" >>${RESULTS_DIR}configuration.txt
 echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}configuration.txt
 echo "" >>${RESULTS_DIR}configuration.txt
@@ -75,7 +75,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     mpstat 1 > ${RESULTS_DIR}stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-${k}.txt &
-    ${JAVABIN}java  ${JAVAARGS_NOINSTR} ${JAR} \
+    ${JAVABIN}java  ${JAVA_ARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
@@ -98,7 +98,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     mpstat 1 > ${RESULTS_DIR}stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-${k}.txt &
-    ${JAVABIN}java  ${JAVAARGS_KIEKER_DEACTV} ${JAR} \
+    ${JAVABIN}java  ${JAVA_ARGS_KIEKER_DEACTV} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
@@ -121,7 +121,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     mpstat 1 > ${RESULTS_DIR}stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-${k}.txt &
-    ${JAVABIN}java  ${JAVAARGS_KIEKER_NOLOGGING} ${JAR} \
+    ${JAVABIN}java  ${JAVA_ARGS_KIEKER_NOLOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
@@ -144,7 +144,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     mpstat 1 > ${RESULTS_DIR}stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-${k}.txt &
-    ${JAVABIN}java  ${JAVAARGS_KIEKER_LOGGING1} ${JAR} \
+    ${JAVABIN}java  ${JAVA_ARGS_KIEKER_LOGGING1} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
@@ -168,7 +168,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     mpstat 1 > ${RESULTS_DIR}stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-${k}.txt &
-    ${JAVABIN}java  ${JAVAARGS_KIEKER_LOGGING2} ${JAR} \
+    ${JAVABIN}java  ${JAVA_ARGS_KIEKER_LOGGING2} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \
@@ -192,7 +192,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     mpstat 1 > ${RESULTS_DIR}stat/mpstat-${i}-${j}-${k}.txt &
     vmstat 1 > ${RESULTS_DIR}stat/vmstat-${i}-${j}-${k}.txt &
     iostat -xn 10 > ${RESULTS_DIR}stat/iostat-${i}-${j}-${k}.txt &
-    ${JAVABIN}java  ${JAVAARGS_KIEKER_LOGGING3} ${JAR} \
+    ${JAVABIN}java  ${JAVA_ARGS_KIEKER_LOGGING3} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTALCALLS} \
         --methodtime ${METHODTIME} \

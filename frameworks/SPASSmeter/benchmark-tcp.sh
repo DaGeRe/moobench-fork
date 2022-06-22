@@ -30,25 +30,25 @@ touch ${BASE_DIR}/spassmeter.log
 
 RAWFN="${RESULTS_DIR}/raw"
 
-JAVAARGS="-server"
-JAVAARGS="${JAVAARGS} -d64"
-JAVAARGS="${JAVAARGS} -Xms1G -Xmx4G"
-JAVAARGS="${JAVAARGS} -verbose:gc -XX:+PrintCompilation"
-#JAVAARGS="${JAVAARGS} -XX:+PrintInlining"
-#JAVAARGS="${JAVAARGS} -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation"
-#JAVAARGS="${JAVAARGS} -Djava.compiler=NONE"
+JAVA_ARGS="-server"
+JAVA_ARGS="${JAVA_ARGS} -d64"
+JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx4G"
+JAVA_ARGS="${JAVA_ARGS} -verbose:gc -XX:+PrintCompilation"
+#JAVA_ARGS="${JAVA_ARGS} -XX:+PrintInlining"
+#JAVA_ARGS="${JAVA_ARGS} -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation"
+#JAVA_ARGS="${JAVA_ARGS} -Djava.compiler=NONE"
 JAR="-jar MooBench.jar"
 
-JAVAARGS_NOINSTR="${JAVAARGS}"
-JAVAARGS_LTW="${JAVAARGS} -javaagent:${BASE_DIR}/lib/linux/spass-meter-ia.jar=xmlconfig=${BASE_DIR}/lib/config.xml,out=${RESULTS_DIR}/spassmeter.txt,tcp=localhost:6002"
-JAVAARGS_LTW_ASM="${JAVAARGS_LTW} -Dspass-meter.iFactory=de.uni_hildesheim.sse.monitoring.runtime.instrumentation.asmTree.Factory"
+JAVA_ARGS_NOINSTR="${JAVA_ARGS}"
+JAVA_ARGS_LTW="${JAVA_ARGS} -javaagent:${BASE_DIR}/lib/linux/spass-meter-ia.jar=xmlconfig=${BASE_DIR}/lib/config.xml,out=${RESULTS_DIR}/spassmeter.txt,tcp=localhost:6002"
+JAVA_ARGS_LTW_ASM="${JAVA_ARGS_LTW} -Dspass-meter.iFactory=de.uni_hildesheim.sse.monitoring.runtime.instrumentation.asmTree.Factory"
 
-SERVER="${JAVAARGS} -classpath ${BASE_DIR}/lib/linux/spass-meter-ant.jar de.uni_hildesheim.sse.monitoring.runtime.recordingServer.TCPRecordingServer baseDir=. port=6002"
+SERVER="${JAVA_ARGS} -classpath ${BASE_DIR}/lib/linux/spass-meter-ant.jar de.uni_hildesheim.sse.monitoring.runtime.recordingServer.TCPRecordingServer baseDir=. port=6002"
 
 ## Write configuration
 uname -a >${RESULTS_DIR}/configuration.txt
-${JAVA_BIN} ${JAVAARGS} -version 2>>${RESULTS_DIR}/configuration.txt
-echo "JAVAARGS: ${JAVAARGS}" >>${RESULTS_DIR}/configuration.txt
+${JAVA_BIN} ${JAVA_ARGS} -version 2>>${RESULTS_DIR}/configuration.txt
+echo "JAVA_ARGS: ${JAVA_ARGS}" >>${RESULTS_DIR}/configuration.txt
 echo "" >>${RESULTS_DIR}/configuration.txt
 echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}/configuration.txt
 echo "" >>${RESULTS_DIR}/configuration.txt
@@ -72,7 +72,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} No instrumentation"
     echo " # ${i}.${j}.${k} No instrumentation" >>${BASE_DIR}/spassmeter.log
     #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
-    ${JAVA_BIN} ${JAVAARGS_NOINSTR} ${JAR} \
+    ${JAVA_BIN} ${JAVA_ARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTAL_CALLS} \
         --methodtime ${METHOD_TIME} \
@@ -92,7 +92,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} SPASSmeter Javassist" >>${BASE_DIR}/spassmeter.log
     #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVA_BIN} ${SERVER} 1>>server.out 2>&1 &
-    ${JAVA_BIN} ${JAVAARGS_LTW} ${JAR} \
+    ${JAVA_BIN} ${JAVA_ARGS_LTW} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTAL_CALLS} \
         --methodtime ${METHOD_TIME} \
@@ -112,7 +112,7 @@ for ((i=1;i<=${NUM_LOOPS};i+=1)); do
     echo " # ${i}.${j}.${k} SPASSmeter ASM" >>${BASE_DIR}/spassmeter.log
     #sar -o ${RESULTS_DIR}/stat/sar-${i}-${j}-${k}.data 5 2000 1>/dev/null 2>&1 &
     ${JAVA_BIN} ${SERVER} 1>>server.out 2>&1 &
-    ${JAVA_BIN} ${JAVAARGS_LTW_ASM} ${JAR} \
+    ${JAVA_BIN} ${JAVA_ARGS_LTW_ASM} ${JAR} \
         --output-filename ${RAWFN}-${i}-${j}-${k}.csv \
         --totalcalls ${TOTAL_CALLS} \
         --methodtime ${METHOD_TIME} \

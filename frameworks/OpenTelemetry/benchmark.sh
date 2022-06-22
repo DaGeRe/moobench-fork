@@ -149,13 +149,13 @@ checkMoobenchApplication
 
 getOpentelemetryAgent
 
-JAVA_ARGS_NOINSTR="${JAVAARGS}"
-JAVA_ARGS_OPENTELEMETRY_BASIC="${JAVAARGS} -javaagent:${BASE_DIR}/lib/opentelemetry-javaagent-all.jar -Dotel.resource.attributes=service.name=moobench -Dotel.instrumentation.methods.include=moobench.application.MonitoredClassSimple[monitoredMethod];moobench.application.MonitoredClassThreaded[monitoredMethod]"
-JAVA_ARGS_OPENTELEMETRY_LOGGING_DEACTIVATED="${JAVAARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=logging -Dotel.traces.sampler=always_off"
-JAVA_ARGS_OPENTELEMETRY_LOGGING="${JAVAARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=logging"
-JAVA_ARGS_OPENTELEMETRY_ZIPKIN="${JAVAARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=zipkin -Dotel.metrics.exporter=none"
-JAVA_ARGS_OPENTELEMETRY_JAEGER="${JAVAARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=none -Dotel.traces.exporter=jaeger"
-JAVA_ARGS_OPENTELEMETRY_PROMETHEUS="${JAVAARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=none -Dotel.metrics.exporter=prometheus"
+JAVA_ARGS_NOINSTR="${JAVA_ARGS}"
+JAVA_ARGS_OPENTELEMETRY_BASIC="${JAVA_ARGS} -javaagent:${BASE_DIR}/lib/opentelemetry-javaagent-all.jar -Dotel.resource.attributes=service.name=moobench -Dotel.instrumentation.methods.include=moobench.application.MonitoredClassSimple[monitoredMethod];moobench.application.MonitoredClassThreaded[monitoredMethod]"
+JAVA_ARGS_OPENTELEMETRY_LOGGING_DEACTIVATED="${JAVA_ARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=logging -Dotel.traces.sampler=always_off"
+JAVA_ARGS_OPENTELEMETRY_LOGGING="${JAVA_ARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=logging"
+JAVA_ARGS_OPENTELEMETRY_ZIPKIN="${JAVA_ARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=zipkin -Dotel.metrics.exporter=none"
+JAVA_ARGS_OPENTELEMETRY_JAEGER="${JAVA_ARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=none -Dotel.traces.exporter=jaeger"
+JAVA_ARGS_OPENTELEMETRY_PROMETHEUS="${JAVA_ARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=none -Dotel.metrics.exporter=prometheus"
 
 writeConfiguration
 
