@@ -51,18 +51,18 @@ JAVA_ARGS_KIEKER_NOLOGGING="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.m
 JAVA_ARGS_KIEKER_LOGGING="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.TCPWriter -Dkieker.monitoring.writer.tcp.TCPWriter.QueueSize=100000 -Dkieker.monitoring.writer.tcp.TCPWriter.hostname=10.50.0.7 -Dkieker.monitoring.writer.tcp.TCPWriter.QueueFullBehavior=1"
 
 ## Write configuration
-uname -a >${RESULTS_DIR}configuration.txt
-${JAVABIN}java ${JAVA_ARGS} -version 2>>${RESULTS_DIR}configuration.txt
-echo "JAVA_ARGS: ${JAVA_ARGS}" >>${RESULTS_DIR}configuration.txt
-echo "" >>${RESULTS_DIR}configuration.txt
-echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}configuration.txt
-echo "" >>${RESULTS_DIR}configuration.txt
-echo "SLEEP_TIME=${SLEEP_TIME}" >>${RESULTS_DIR}configuration.txt
-echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTS_DIR}configuration.txt
-echo "TOTAL_CALLS=${TOTAL_CALLS}" >>${RESULTS_DIR}configuration.txt
-echo "METHOD_TIME=${METHOD_TIME}" >>${RESULTS_DIR}configuration.txt
-echo "THREADS=${THREADS}" >>${RESULTS_DIR}configuration.txt
-echo "RECURSIONDEPTH=${RECURSIONDEPTH}" >>${RESULTS_DIR}configuration.txt
+uname -a >${RESULTS_DIR}/configuration.txt
+${JAVABIN}java ${JAVA_ARGS} -version 2>>${RESULTS_DIR}/configuration.txt
+echo "JAVA_ARGS: ${JAVA_ARGS}" >>${RESULTS_DIR}/configuration.txt
+echo "" >>${RESULTS_DIR}/configuration.txt
+echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}/configuration.txt
+echo "" >>${RESULTS_DIR}/configuration.txt
+echo "SLEEP_TIME=${SLEEP_TIME}" >>${RESULTS_DIR}/configuration.txt
+echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTS_DIR}/configuration.txt
+echo "TOTAL_CALLS=${TOTAL_CALLS}" >>${RESULTS_DIR}/configuration.txt
+echo "METHOD_TIME=${METHOD_TIME}" >>${RESULTS_DIR}/configuration.txt
+echo "THREADS=${THREADS}" >>${RESULTS_DIR}/configuration.txt
+echo "RECURSIONDEPTH=${RECURSIONDEPTH}" >>${RESULTS_DIR}/configuration.txt
 sync
 
 ## Execute Benchmark

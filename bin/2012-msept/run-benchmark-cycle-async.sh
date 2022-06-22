@@ -35,18 +35,18 @@ JAVA_ARGS_KIEKER_NOLOGGING="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.m
 JAVA_ARGS_KIEKER_LOGGING="${JAVA_ARGS_LTW} -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AsyncFsWriter -Dkieker.monitoring.writer.filesystem.AsyncFsWriter.customStoragePath=${BASE_DIR}tmp"
 
 ## Write configuration
-uname -a >${RESULTS_DIR}configuration.txt
-java ${JAVA_ARGS} -version 2>>${RESULTS_DIR}configuration.txt
-echo "JAVA_ARGS: ${JAVA_ARGS}" >>${RESULTS_DIR}configuration.txt
-echo "" >>${RESULTS_DIR}configuration.txt
-echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}configuration.txt
-echo "" >>${RESULTS_DIR}configuration.txt
-echo "SLEEP_TIME=${SLEEP_TIME}" >>${RESULTS_DIR}configuration.txt
-echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTS_DIR}configuration.txt
-echo "TOTAL_CALLS=${TOTAL_CALLS}" >>${RESULTS_DIR}configuration.txt
-echo "METHOD_TIME=${METHOD_TIME}" >>${RESULTS_DIR}configuration.txt
-echo "THREADS=${THREADS}" >>${RESULTS_DIR}configuration.txt
-echo "RECURSION_DEPTH=${RECURSION_DEPTH}" >>${RESULTS_DIR}configuration.txt
+uname -a >${RESULTS_DIR}/configuration.txt
+java ${JAVA_ARGS} -version 2>>${RESULTS_DIR}/configuration.txt
+echo "JAVA_ARGS: ${JAVA_ARGS}" >>${RESULTS_DIR}/configuration.txt
+echo "" >>${RESULTS_DIR}/configuration.txt
+echo "Runtime: circa ${TIME} seconds" >>${RESULTS_DIR}/configuration.txt
+echo "" >>${RESULTS_DIR}/configuration.txt
+echo "SLEEP_TIME=${SLEEP_TIME}" >>${RESULTS_DIR}/configuration.txt
+echo "NUM_LOOPS=${NUM_LOOPS}" >>${RESULTS_DIR}/configuration.txt
+echo "TOTAL_CALLS=${TOTAL_CALLS}" >>${RESULTS_DIR}/configuration.txt
+echo "METHOD_TIME=${METHOD_TIME}" >>${RESULTS_DIR}/configuration.txt
+echo "THREADS=${THREADS}" >>${RESULTS_DIR}/configuration.txt
+echo "RECURSION_DEPTH=${RECURSION_DEPTH}" >>${RESULTS_DIR}/configuration.txt
 sync
 
 ## Execute Benchmark
