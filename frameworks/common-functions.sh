@@ -42,11 +42,11 @@ function getInspectItAgent() {
 }
 
 function getOpentelemetryAgent() {
-	if [ ! -f ${BASEDIR}lib/opentelemetry-javaagent-all.jar ]
+	if [ ! -f ${BASEDIR}lib/opentelemetry-javaagent.jar ]
 	then
 		mkdir -p ${BASEDIR}lib
-		wget --output-document=${BASEDIR}lib/opentelemetry-javaagent-all.jar \
-			https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent-all.jar
+		wget --output-document=${BASEDIR}lib/opentelemetry-javaagent.jar \
+			https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
 	fi
 }
 
