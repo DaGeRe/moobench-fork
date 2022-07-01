@@ -25,9 +25,15 @@ function getKiekerAgent() {
 	if [ ! -f $AGENT ]
 	then
 		# get agent
-		export VERSION_PATH=`curl "https://oss.sonatype.org/service/local/repositories/snapshots/content/net/kieker-monitoring/kieker/" | grep '<resourceURI>' | sed 's/ *<resourceURI>//g' | sed 's/<\/resourceURI>//g' | grep '/$'`
+		export VERSION_PATH=`curl "https://oss.sonatype.org/service/local/repositories/snapshots/content/net/kieker-monitoring/kieker/" | grep '<resourceURI>' | sed 's/ *<resourceURI>//g' | sed 's/<\/resourceURI>//g' | grep '/$' | grep -v ".xml" | head -n 1`
 		export AGENT_PATH=`curl "${VERSION_PATH}" | grep 'aspectj.jar</resourceURI' | sort | sed 's/ *<resourceURI>//g' | sed 's/<\/resourceURI>//g' | tail -1`
 		curl "${AGENT_PATH}" > "${AGENT}"
+		
+		if [ ! -f $AGENT ] | [ -s $AGENT ]
+		then
+			echo "Kieker download from $AGENT_PATH failed; please asure that a correct Kieker AspectJ file is present!"
+		fi
+		
 	fi
 }
 
@@ -42,11 +48,11 @@ function getInspectItAgent() {
 }
 
 function getOpentelemetryAgent() {
-	if [ ! -f "${BASE_DIR}/lib/opentelemetry-javaagent-all.jar" ]
+	if [ ! -f "${BASE_DIR}/lib/opentelemetry-javaagent.jar" ]
 	then
 		mkdir -p "${BASE_DIR}/lib"
-		wget --output-document=${BASE_DIR}/lib/opentelemetry-javaagent-all.jar \
-			https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent-all.jar
+		wget --output-document=${BASE_DIR}/lib/opentelemetry-javaagent.jar \
+			https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
 	fi
 }
 
