@@ -32,6 +32,15 @@ fi
 
 getKiekerAgent
 
+RECEIVER_ARCHIVE="${BASE_DIR}/../../tools/receiver/build/distributions/receiver.tar"
+
+if [ -f "${RECEIVER_ARCHIVE}" ] ; then
+	tar -xpf "${RECEIVER_ARCHIVE}"
+else
+	echo "Error receiver not found at ${RECEIVER_ARCHIVE}"
+	exit 1
+fi
+
 PARENT=`dirname "${RESULTS_DIR}"`
 RECEIVER_BIN="${BASE_DIR}/receiver/bin/receiver"
 
@@ -62,11 +71,11 @@ TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURS
 information "Experiment will take circa ${TIME} seconds."
 
 information "Removing and recreating '${RESULTS_DIR}'"
-(rm -rf ${RESULTS_DIR}/*csv) && mkdir -p ${RESULTS_DIR}
+rm -rf "${RESULTS_DIR}" && mkdir -p "${RESULTS_DIR}"
 
 # Clear kieker.log and initialize logging
-rm -f ${DATA_DIR}/kieker.log
-touch ${DATA_DIR}/kieker.log
+rm -f "${DATA_DIR}/kieker.log"
+touch "${DATA_DIR}/kieker.log"
 
 # general server arguments
 JAVA_ARGS="-server"
@@ -95,9 +104,9 @@ WRITER_CONFIG[5]="-Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.Single
 RECEIVER[5]="${RECEIVER_BIN} 2345"
 
 ## Write configuration
-uname -a >${RESULTS_DIR}/configuration.txt
-${JAVA_BIN} ${JAVA_ARGS} -version 2>>${RESULTS_DIR}/configuration.txt
-cat << EOF >>${RESULTS_DIR}/configuration.txt
+uname -a > "${RESULTS_DIR}/configuration.txt"
+"${JAVA_BIN}" "${JAVA_ARGS}" -version 2>> "${RESULTS_DIR}/configuration.txt"
+cat << EOF >> "${RESULTS_DIR}/configuration.txt"
 JAVA_ARGS: ${JAVA_ARGS}
 
 Runtime: circa ${TIME} seconds
@@ -127,56 +136,56 @@ function execute-experiment() {
     kieker_parameters="$5"
 
     information " # recursion=${recursion} loop=${loop} writer=${index} ${title}"
-    echo " # ${loop}.${recursion}.${index} ${title}" >> ${DATA_DIR}/kieker.log
+    echo " # ${loop}.${recursion}.${index} ${title}" >> "${DATA_DIR}/kieker.log"
 
     if [  "${kieker_parameters}" = "" ] ; then
-       BENCHMARK_OPTS=${JAVA_ARGS}
+       BENCHMARK_OPTS="${JAVA_ARGS}"
     else
        BENCHMARK_OPTS="${JAVA_ARGS} ${LTW_ARGS} ${KIEKER_ARGS} ${kieker_parameters}"
     fi
-    
-    echo ${BENCHMARK_OPTS}" -jar MooBench.jar"
+
+    echo "Run options: ${BENCHMARK_OPTS} -jar MooBench.jar"
 
     ${JAVA_BIN} ${BENCHMARK_OPTS} -jar MooBench.jar \
 	--application moobench.application.MonitoredClassSimple \
-        --output-filename ${RAWFN}-${loop}-${recursion}-${index}.csv \
-        --total-calls ${TOTAL_NUM_OF_CALLS} \
-        --method-time ${METHOD_TIME} \
+        --output-filename "${RAWFN}-${loop}-${recursion}-${index}.csv" \
+        --total-calls "${TOTAL_NUM_OF_CALLS}" \
+        --method-time "${METHOD_TIME}" \
         --total-threads 1 \
-        --recursion-depth ${recursion} &> ${RESULTS_DIR}/output_"$loop"_"$RECURSION_DEPTH"_$index.txt
+        --recursion-depth "${recursion}" &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
 
-    rm -rf ${DATA_DIR}/kieker-*
+    rm -rf "${DATA_DIR}"/kieker-*
 
-    [ -f ${DATA_DIR}/hotspot.log ] && mv ${DATA_DIR}/hotspot.log ${RESULTS_DIR}/hotspot-${loop}-${recursion}-${index}.log
-    echo >> ${DATA_DIR}/kieker.log
-    echo >> ${DATA_DIR}/kieker.log
+    [ -f "${DATA_DIR}/hotspot.log" ] && mv "${DATA_DIR}/hotspot.log" "${RESULTS_DIR}/hotspot-${loop}-${recursion}-${index}.log"
+    echo >> "${DATA_DIR}/kieker.log"
+    echo >> "${DATA_DIR}/kieker.log"
     sync
-    sleep ${SLEEP_TIME}
+    sleep "${SLEEP_TIME}"
 }
 
 function execute-benchmark-body() {
   index="$1"
   loop="$2"
   recursion="$3"
-  if [[ ${RECEIVER[$index]} ]] ; then
+  if [[ "${RECEIVER[$index]}" ]] ; then
      echo "receiver ${RECEIVER[$index]}"
-     ${RECEIVER[$index]} & #>> ${DATA_DIR}/kieker.receiver-$i-$index.log &
+     ${RECEIVER[$index]} >> "${DATA_DIR}/kieker.receiver-${i}-${index}.log" &
      RECEIVER_PID=$!
      echo "PID $RECEIVER_PID"
   fi
 
   execute-experiment "$loop" "$recursion" "$index" "${TITLE[$index]}" "${WRITER_CONFIG[$index]}"
 
-  if [[ $RECEIVER_PID ]] ; then
-     kill -TERM $RECEIVER_PID
+  if [[ "${RECEIVER_PID}" ]] ; then
+     kill -TERM "${RECEIVER_PID}"
      unset RECEIVER_PID
   fi
 }
 
 ## Execute Benchmark
 function execute-benchmark() {
-  for ((loop=1;loop<=${NUM_OF_LOOPS};loop+=1)); do
-    recursion=${RECURSION_DEPTH}
+  for ((loop=1;loop<="${NUM_OF_LOOPS}";loop+=1)); do
+    recursion="${RECURSION_DEPTH}"
 
     information "## Starting iteration ${loop}/${NUM_OF_LOOPS}"
     echo "## Starting iteration ${loop}/${NUM_OF_LOOPS}" >> "${DATA_DIR}/kieker.log"
@@ -184,7 +193,7 @@ function execute-benchmark() {
     for ((index=0;index<${#WRITER_CONFIG[@]};index+=1)); do
       execute-benchmark-body $index $loop $recursion
     done
-    
+
     printIntermediaryResults
   done
 
@@ -200,11 +209,11 @@ if [ "$MODE" == "execute" ] ; then
    else
      execute-benchmark-body $OPTION 1 1
    fi
-   
+
    # Create R labels
    LABELS=$(createRLabels)
    run-r
-   
+
    cleanup-results
 else
    execute-benchmark-body $OPTION 1 1
