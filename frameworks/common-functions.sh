@@ -1,5 +1,20 @@
 #!/bin/bash
 
+#
+# Common functions used in scripts.
+#
+
+# ensure the script is sourced
+if [ "${BASH_SOURCE[0]}" -ef "$0" ]
+then
+    echo "Hey, you should source this script, not execute it!"
+    exit 1
+fi
+
+#
+# functions
+#
+
 function getSum {
   awk '{sum += $1; square += $1^2} END {print "Average: "sum/NR" Standard Deviation: "sqrt(square / NR - (sum/NR)^2)" Count: "NR}'
 }
@@ -141,6 +156,77 @@ function printIntermediaryResults {
    done
 }
 
+#
+# reporting
+#
+
+export RED='\033[1;31m'
+export WHITE='\033[1;37m'
+export YELLOW='\033[1;33m'
+export NC='\033[0m'
+
+if [ "$BATCH_MODE" == "yes" ] ; then
+	export ERROR="[error]"
+	export WARNING="[warning]"
+	export INFO="[info]"
+else
+	export ERROR="${RED}[error]${NC}"
+	export WARNING="${YELLOW}[warning]${NC}"
+	export INFO="${WHITE}[info]${NC}"
+fi
+
+function error() {
+	echo -e "${ERROR} $@"
+}
+
+function warn() {
+	echo -e "${WARNING} $@"
+}
+
+function info() {
+	echo -e "${INFO} $@"
+}
+
+# $1 = NAME, $2 = EXECUTABLE
+function checkExecutable() {
+	if [ "$2" == "" ] ; then
+		error "$1 variable for executable not set."
+		exit 1
+	fi
+	if [ ! -x "$2" ] ; then
+		error "$1 not found at: $2"
+		exit 1
+	fi
+}
+
+# $1 = NAME, $2 = FILE
+function checkFile() {
+	if [ "$2" == "" ] ; then
+		error "$1 variable for file not set."
+		exit 1
+	fi
+	if [ ! -f "$2" ] ; then
+		error "$1 not found at: $2"
+		exit 1
+	fi
+}
+
+# $1 = NAME, $2 = FILE
+function checkDirectory() {
+	if [ "$2" == "" ] ; then
+		error "$1 directory variable not set."
+		exit 1
+	fi
+	if [ ! -d "$2" ] ; then
+		if [ "$3" == "create" ] ; then
+			information "$1: directory does not exist, creating it"
+			mkdir $2
+		else
+			error "$1: directory $2 does not exist."
+			exit 1
+		fi
+	fi
+}
 
 FRAMEWORK_NAME=$(basename -- "${BASE_DIR}")
 RESULTS_DIR="${BASE_DIR}/results-${FRAMEWORK_NAME}"
