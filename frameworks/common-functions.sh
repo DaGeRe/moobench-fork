@@ -27,15 +27,6 @@ function cleanupResults() {
   [ -f ${DATA_DIR}/nohup.out ] && > ${DATA_DIR}/nohup.out
 }
 
-function getOpentelemetryAgent() {
-	if [ ! -f "${BASE_DIR}/lib/opentelemetry-javaagent.jar" ]
-	then
-		mkdir -p "${BASE_DIR}/lib"
-		wget --output-document=${BASE_DIR}/lib/opentelemetry-javaagent.jar \
-			https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
-	fi
-}
-
 function createRLabels() {
 	# Create R labels
 	LABELS=""

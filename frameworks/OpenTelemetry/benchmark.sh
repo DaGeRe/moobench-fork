@@ -1,153 +1,75 @@
 #!/bin/bash
 
-function startJaeger {
-	if [ ! -d jaeger-1.24.0-linux-amd64 ]
-	then
-		wget https://github.com/jaegertracing/jaeger/releases/download/v1.24.0/jaeger-1.24.0-linux-amd64.tar.gz
-		tar -xvf jaeger-1.24.0-linux-amd64.tar.gz
-		rm jaeger-1.24.0-linux-amd64.tar.gz
-	fi
-	cd jaeger-1.24.0-linux-amd64
-	./jaeger-all-in-one &> jaeger.log &
-	cd ..
-}
+#
+# Kieker benchmark script
+#
+# Usage: benchmark.sh [execute|test]
 
-function cleanup {
-	[ -f "${BASE_DIR}/hotspot.log" ] && mv "${BASE_DIR}/hotspot.log" "${RESULTS_DIR}/hotspot-${i}-$RECURSION_DEPTH-${k}.log"
-	echo >> "${BASE_DIR}/OpenTelemetry.log"
-	echo >> "${BASE_DIR}/OpenTelemetry.log"
-	sync
-	sleep "${SLEEP_TIME}"
-}
+# configure base dir
+BASE_DIR=$(cd "$(dirname "$0")"; pwd)
 
-function runNoInstrumentation {
-    # No instrumentation
-    info " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}"
-    echo " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}" >> "${BASE_DIR}/OpenTelemetry.log"
-    ${JAVA_BIN} ${JAVA_ARGS_NOINSTR} ${JAR} \
-        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
-        --total-calls ${TOTAL_NUM_OF_CALLS} \
-        --method-time ${METHOD_TIME} \
-        --total-threads ${THREADS} \
-        --recursion-depth $RECURSION_DEPTH \
-        ${MORE_PARAMS} &> "${RESULTS_DIR}/output_${i}_${RECURSION_DEPTH}_${k}.txt"
-}
+#
+# source functionality
+#
 
-function runOpenTelemetryNoLogging {
-    # OpenTelemetry Instrumentation Logging Deactivated
-    k=`expr ${k} + 1`
-    info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
-    ${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_LOGGING_DEACTIVATED} ${JAR} \
-        --output-filename "${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv" \
-        --total-calls ${TOTAL_NUM_OF_CALLS} \
-        --method-time ${METHOD_TIME} \
-        --total-threads ${THREADS} \
-        --recursion-depth ${RECURSION_DEPTH} \
-        ${MORE_PARAMS} &> "${RESULTS_DIR}/output_${i}_${RECURSION_DEPTH}_${k}.txt"
-}
+if [ ! -d "${BASE_DIR}" ] ; then
+	echo "Base directory ${BASE_DIR} does not exist."
+	exit 1
+fi
 
-function runOpenTelemetryLogging {
-    # OpenTelemetry Instrumentation Logging
-    k=`expr ${k} + 1`
-    info " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}"
-    echo " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}" >> "${BASE_DIR}/OpenTelemetry.log"
-    ${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_LOGGING} ${JAR} \
-        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
-        --total-calls ${TOTAL_NUM_OF_CALLS} \
-        --method-time ${METHOD_TIME} \
-        --total-threads ${THREADS} \
-        --recursion-depth $RECURSION_DEPTH \
-        ${MORE_PARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
-    if [ ! "$DEBUG" = true ]
-    then
-    	echo "DEBUG is $DEBUG, deleting opentelemetry logging file"
-    	rm ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
-    fi
-}
+# load configuration and common functions
+if [ -f "${BASE_DIR}/config" ] ; then
+	source "${BASE_DIR}/config.rc"
+else
+	echo "Missing configuration: ${BASE_DIR}/config.rc"
+	exit 1
+fi
 
-function runOpenTelemetryZipkin {
-    # OpenTelemetry Instrumentation Zipkin
-    k=`expr ${k} + 1`
-    startZipkin
-    info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
-    ${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_ZIPKIN} ${JAR} \
-        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
-        --total-calls ${TOTAL_NUM_OF_CALLS} \
-        --method-time ${METHOD_TIME} \
-        --total-threads ${THREADS} \
-        --recursion-depth $RECURSION_DEPTH \
-        ${MORE_PARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
-    stopBackgroundProcess
-    sleep $SLEEP_TIME
-}
+if [ -f "${BASE_DIR}/../common-functions.sh" ] ; then
+	source "${BASE_DIR}/../common-functions.sh"
+else
+	echo "Missing library: ${BASE_DIR}/../common-functions.sh"
+	exit 1
+fi
 
-function runOpenTelemetryJaeger {
-	# OpenTelemetry Instrumentation Jaeger
-	k=`expr ${k} + 1`
-	startJaeger
-	info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
-	${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_JAEGER} ${JAR} \
-		--output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
-		--total-calls ${TOTAL_NUM_OF_CALLS} \
-		--method-time ${METHOD_TIME} \
-		--total-threads ${THREADS} \
-		--recursion-depth $RECURSION_DEPTH \
-		${MORE_PARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
-	stopBackgroundProcess
-	sleep $SLEEP_TIME
-}
+if [ -f "${BASE_DIR}/functions.sh" ] ; then
+	source "${BASE_DIR}/functions.sh"
+else
+	echo "Missing: ${BASE_DIR}/functions.sh"
+	exit 1
+fi
+if [ -f "${BASE_DIR}/labels.sh" ] ; then
+	source "${BASE_DIR}/labels.sh"
+else
+	echo "Missing file: ${BASE_DIR}/labels.sh"
+	exit 1
+fi
 
-function runOpenTelemetryPrometheus {
-	# OpenTelemetry Instrumentation Prometheus
-	k=`expr ${k} + 1`
-	startPrometheus
-	info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
-	${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_PROMETHEUS} ${JAR} \
-		--output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
-		--total-calls ${TOTAL_NUM_OF_CALLS} \
-		--method-time ${METHOD_TIME} \
-		--total-threads ${THREADS} \
-		--recursion-depth $RECURSION_DEPTH \
-		${MORE_PARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
-	stopBackgroundProcess
-	sleep $SLEEP_TIME
-}
+#
+# Setup
+#
 
-JAVA_BIN=""
+info "----------------------------------"
+info "Setup..."
+info "----------------------------------"
 
-BASE_DIR=$(pwd)
-RSCRIPT_PATH="../stats.csv.r"
+getAgent
 
-source ../common-functions.sh
-source labels.sh
+checkFile MooBench "${BASE_DIR}/MooBench.jar"
+checkFile log "${BASE_DIR}/OpenTelemetry.log" clean
+checkDirectory results-directory "${RESULTS_DIR}" recreate
+checkExecutable java "${JAVA_BIN}"
+checkFile R-script "${RSCRIPT_PATH}"
 
-#MORE_PARAMS="--quickstart"
-MORE_PARAMS="--application moobench.application.MonitoredClassSimple ${MORE_PARAMS}"
 
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 info "Experiment will take circa ${TIME} seconds."
-
-info "Cleaning and recreating '${RESULTS_DIR}'"
-(rm -rf ${RESULTS_DIR}/**csv) && mkdir -p ${RESULTS_DIR}
-#mkdir ${RESULTS_DIR}/stat/
-
-# Clear OpenTelemetry.log and initialize logging
-rm -f ${BASE_DIR}/OpenTelemetry.log
-touch ${BASE_DIR}/OpenTelemetry.log
 
 JAVA_ARGS="-server"
 JAVA_ARGS="${JAVA_ARGS} "
 JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx2G"
 JAVA_ARGS="${JAVA_ARGS} -verbose:gc "
 JAR="-jar MooBench.jar"
-
-checkMoobenchApplication
-
-getOpentelemetryAgent
 
 JAVA_ARGS_NOINSTR="${JAVA_ARGS}"
 JAVA_ARGS_OPENTELEMETRY_BASIC="${JAVA_ARGS} -javaagent:${BASE_DIR}/lib/opentelemetry-javaagent-all.jar -Dotel.resource.attributes=service.name=moobench -Dotel.instrumentation.methods.include=moobench.application.MonitoredClassSimple[monitoredMethod];moobench.application.MonitoredClassThreaded[monitoredMethod]"
@@ -185,15 +107,13 @@ done
 
 # Create R labels
 LABELS=$(createRLabels)
-run-r
+runR
 
-cleanup-results
+cleanupResults
 
-#zip -jqr ${RESULTS_DIR}/stat.zip ${RESULTS_DIR}/stat
-#rm -rf ${RESULTS_DIR}/stat/
-mv ${BASE_DIR}/OpenTelemetry.log ${RESULTS_DIR}/OpenTelemetry.log
-[ -f "${RESULTS_DIR}/hotspot-1-${RECURSION_DEPTH}-1.log" ] && grep "<task " ${RESULTS_DIR}/hotspot-*.log > "${RESULTS_DIR}/log.log"
-[ -f "${BASE_DIR}/errorlog.txt" ] && mv "${BASE_DIR}/errorlog.txt" ${RESULTS_DIR}
+mv "${BASE_DIR}/OpenTelemetry.log" "${RESULTS_DIR}/OpenTelemetry.log"
+[ -f "${RESULTS_DIR}/hotspot-1-${RECURSION_DEPTH}-1.log" ] && grep "<task " "${RESULTS_DIR}/"hotspot-*.log > "${RESULTS_DIR}/OpenTelemetry.log"
+[ -f "${BASE_DIR}/errorlog.txt" ] && mv "${BASE_DIR}/errorlog.txt" "${RESULTS_DIR}"
 
 # end
 

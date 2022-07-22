@@ -1,0 +1,10 @@
+# OpenTelementry configuraiton
+
+JAVA_BIN="/usr/bin/java"
+
+RSCRIPT_PATH="../stats.csv.r"
+
+#MORE_PARAMS="--quickstart"
+MORE_PARAMS="--application moobench.application.MonitoredClassSimple ${MORE_PARAMS}"
+
+
