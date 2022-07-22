@@ -22,7 +22,7 @@ function cleanup {
 
 function runNoInstrumentation {
     # No instrumentation
-    echo " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}"
+    info " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}"
     echo " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}" >> "${BASE_DIR}/OpenTelemetry.log"
     ${JAVA_BIN} ${JAVA_ARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
@@ -36,7 +36,7 @@ function runNoInstrumentation {
 function runOpenTelemetryNoLogging {
     # OpenTelemetry Instrumentation Logging Deactivated
     k=`expr ${k} + 1`
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+    info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
     ${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_LOGGING_DEACTIVATED} ${JAR} \
         --output-filename "${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv" \
@@ -50,7 +50,7 @@ function runOpenTelemetryNoLogging {
 function runOpenTelemetryLogging {
     # OpenTelemetry Instrumentation Logging
     k=`expr ${k} + 1`
-    echo " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}"
+    info " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}"
     echo " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}" >> "${BASE_DIR}/OpenTelemetry.log"
     ${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_LOGGING} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
@@ -70,7 +70,7 @@ function runOpenTelemetryZipkin {
     # OpenTelemetry Instrumentation Zipkin
     k=`expr ${k} + 1`
     startZipkin
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+    info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
     ${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_ZIPKIN} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
@@ -87,7 +87,7 @@ function runOpenTelemetryJaeger {
 	# OpenTelemetry Instrumentation Jaeger
 	k=`expr ${k} + 1`
 	startJaeger
-	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+	info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
 	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
 	${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_JAEGER} ${JAR} \
 		--output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
@@ -104,7 +104,7 @@ function runOpenTelemetryPrometheus {
 	# OpenTelemetry Instrumentation Prometheus
 	k=`expr ${k} + 1`
 	startPrometheus
-	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+	info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
 	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
 	${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_PROMETHEUS} ${JAR} \
 		--output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
@@ -129,9 +129,9 @@ source labels.sh
 MORE_PARAMS="--application moobench.application.MonitoredClassSimple ${MORE_PARAMS}"
 
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
-echo "Experiment will take circa ${TIME} seconds."
+info "Experiment will take circa ${TIME} seconds."
 
-echo "Cleaning and recreating '${RESULTS_DIR}'"
+info "Cleaning and recreating '${RESULTS_DIR}'"
 (rm -rf ${RESULTS_DIR}/**csv) && mkdir -p ${RESULTS_DIR}
 #mkdir ${RESULTS_DIR}/stat/
 
@@ -162,7 +162,7 @@ writeConfiguration
 ## Execute Benchmark
 for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
     k=0
-    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}"
+    info "## Starting iteration ${i}/${NUM_OF_LOOPS}"
     echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >>${BASE_DIR}/OpenTelemetry.log
 
     runNoInstrumentation

@@ -206,8 +206,18 @@ function checkFile() {
 		exit 1
 	fi
 	if [ ! -f "$2" ] ; then
-		error "$1 not found at: $2"
-		exit 1
+		if [ "$3" == "clean" ] ; then
+			touch "$2"
+		else
+			error "$1 not found at: $2"
+			exit 1
+		fi
+	else
+		if [ "$3" == "clean" ] ; then
+			info "$1 recreated, now empty"
+			rm -f "$2"
+			touch "$2"
+		fi
 	fi
 }
 
@@ -219,11 +229,17 @@ function checkDirectory() {
 	fi
 	if [ ! -d "$2" ] ; then
 		if [ "$3" == "create" ] ; then
-			information "$1: directory does not exist, creating it"
-			mkdir $2
+			info "$1: directory does not exist, creating it"
+			mkdir -p "$2"
 		else
 			error "$1: directory $2 does not exist."
 			exit 1
+		fi
+	else
+		if [ "$3" == "recreate" ] ; then
+			info "$1: exists, recreating it"
+			rm -rf "$2"
+			mkdir -p "$2"
 		fi
 	fi
 }
@@ -234,23 +250,23 @@ RAWFN="${RESULTS_DIR}/raw"
 
 # Initialize all unset parameters
 if [ -z $SLEEP_TIME ]; then
-	SLEEP_TIME=30           ## 30
+	SLEEP_TIME=30             ## 30
 fi
 if [ -z $NUM_OF_LOOPS ]; then
 	NUM_OF_LOOPS=10           ## 10
 fi
 if [ -z $THREADS ]; then
-	THREADS=1              ## 1
+	THREADS=1                 ## 1
 fi
 if [ -z $RECURSION_DEPTH ]; then
-	RECURSION_DEPTH=10      ## 10
+	RECURSION_DEPTH=10        ## 10
 fi
 if [ -z $TOTAL_NUM_OF_CALLS ]; then
 	TOTAL_NUM_OF_CALLS=2000000     ## 2000000
 fi
 if [ -z $METHOD_TIME ]; then
-	METHOD_TIME=0      ## 500000
+	METHOD_TIME=0             ## 500000
 fi
 if [ -z $DEBUG ]; then
-	DEBUG=false		## false
+	DEBUG=false	  	  ## false
 fi

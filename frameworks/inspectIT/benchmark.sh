@@ -2,7 +2,7 @@
 
 function runNoInstrumentation {
     # No instrumentation
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+    info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/inspectIT.log
     ${JAVA_BIN} ${JAVA_ARGS_NOINSTR} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
@@ -15,7 +15,7 @@ function runNoInstrumentation {
 
 function runInspectITDeactivated {
     k=`expr ${k} + 1`
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+    info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/inspectIT.log
     sleep $SLEEP_TIME
     ${JAVA_BIN} ${JAVA_ARGS_INSPECTIT_DEACTIVATED} ${JAR} \
@@ -31,7 +31,7 @@ function runInspectITDeactivated {
 
 function runInspectITNullWriter {
     k=`expr ${k} + 1`
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+    info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/inspectIT.log
     sleep $SLEEP_TIME
     ${JAVA_BIN} ${JAVA_ARGS_INSPECTIT_NULLWRITER} ${JAR} \
@@ -49,7 +49,7 @@ function runInspectITNullWriter {
 function runInspectITZipkin {
     # InspectIT (minimal)
     k=`expr ${k} + 1`
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+    info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/inspectIT.log
     startZipkin
     sleep $SLEEP_TIME
@@ -68,7 +68,7 @@ function runInspectITZipkin {
 function runInspectITPrometheus {
     # InspectIT (minimal)
     k=`expr ${k} + 1`
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
+    info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/inspectIT.log
     startPrometheus
     sleep $SLEEP_TIME
@@ -112,10 +112,10 @@ getInspectItAgent
 MORE_PARAMS="${MORE_PARAMS}"
 
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
-echo "Experiment will take circa ${TIME} seconds."
+info "Experiment will take circa ${TIME} seconds."
 
-echo "Removing and recreating '${RESULTS_DIR}'"
-(rm -rf "${RESULTS_DIR}/"**csv) && mkdir -p "${RESULTS_DIR}"
+info "Removing and recreating '${RESULTS_DIR}'"
+rm -rf "${RESULTS_DIR}" && mkdir -p "${RESULTS_DIR}"
 
 # Clear inspectit.log and initialize logging
 rm -f "${BASE_DIR}/inspectIT.log"
@@ -140,7 +140,7 @@ writeConfiguration
 ## Execute Benchmark
 for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
     k=0
-    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}"
+    info "## Starting iteration ${i}/${NUM_OF_LOOPS}"
     echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >> "${BASE_DIR}/inspectIT.log"
 
     runNoInstrumentation

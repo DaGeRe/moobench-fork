@@ -23,13 +23,6 @@ else
 	exit 1
 fi
 
-if [ -f "${BASE_DIR}/common-functions" ] ; then
-	. "${BASE_DIR}/common-functions"
-else
-	echo "Missing configuration: ${BASE_DIR}/common-functions"
-	exit 1
-fi
-
 getKiekerAgent
 
 RECEIVER_ARCHIVE="${BASE_DIR}/../../tools/receiver/build/distributions/receiver.tar"
@@ -57,25 +50,21 @@ else
 fi
 
 # test input parameters and configuration
-#checkFile R-script "${RSCRIPT_PATH}"
 checkDirectory DATA_DIR "${DATA_DIR}" create
 checkDirectory result-base "${PARENT}"
 checkFile ApsectJ-Agent "${AGENT}"
 checkExecutable Receiver "${RECEIVER_BIN}"
+checkFile Labels "${BASE_DIR}/labels.sh"
+checkFile R-script "${RSCRIPT_PATH}"
+checkDirectory results-directory "${RESULTS_DIR}" recreate
+checkFile log "${DATA_DIR}/kieker.log" clean
 
-information "----------------------------------"
-information "Running benchmark..."
-information "----------------------------------"
+info "----------------------------------"
+info "Running benchmark..."
+info "----------------------------------"
 
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
-information "Experiment will take circa ${TIME} seconds."
-
-information "Removing and recreating '${RESULTS_DIR}'"
-rm -rf "${RESULTS_DIR}" && mkdir -p "${RESULTS_DIR}"
-
-# Clear kieker.log and initialize logging
-rm -f "${DATA_DIR}/kieker.log"
-touch "${DATA_DIR}/kieker.log"
+info "Experiment will take circa ${TIME} seconds."
 
 # general server arguments
 JAVA_ARGS="-server"
@@ -93,14 +82,14 @@ declare -a RECEIVER
 declare -a TITLE
 
 # Configurations
-source labels.sh
+source "${BASE_DIR}/labels.sh"
+
 WRITER_CONFIG[0]=""
 WRITER_CONFIG[1]="-Dkieker.monitoring.enabled=false -Dkieker.monitoring.writer=kieker.monitoring.writer.dump.DumpWriter"
 WRITER_CONFIG[2]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.dump.DumpWriter"
 WRITER_CONFIG[3]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.FileWriter -Dkieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.TextLogStreamHandler -Dkieker.monitoring.writer.filesystem.FileWriter.customStoragePath=${DATA_DIR}/"
 WRITER_CONFIG[4]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.FileWriter -Dkieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.BinaryLogStreamHandler -Dkieker.monitoring.writer.filesystem.FileWriter.bufferSize=8192 -Dkieker.monitoring.writer.filesystem.FileWriter.customStoragePath=${DATA_DIR}/"
 WRITER_CONFIG[5]="-Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.SingleSocketTcpWriter -Dkieker.monitoring.writer.tcp.SingleSocketTcpWriter.port=2345"
-#RECEIVER[5]="${BASE_DIR}/collector-2.0/bin/collector -p 2345"
 RECEIVER[5]="${RECEIVER_BIN} 2345"
 
 ## Write configuration
@@ -135,7 +124,7 @@ function execute-experiment() {
     title="$4"
     kieker_parameters="$5"
 
-    information " # recursion=${recursion} loop=${loop} writer=${index} ${title}"
+    info " # recursion=${recursion} loop=${loop} writer=${index} ${title}"
     echo " # ${loop}.${recursion}.${index} ${title}" >> "${DATA_DIR}/kieker.log"
 
     if [  "${kieker_parameters}" = "" ] ; then
@@ -187,7 +176,7 @@ function execute-benchmark() {
   for ((loop=1;loop<="${NUM_OF_LOOPS}";loop+=1)); do
     recursion="${RECURSION_DEPTH}"
 
-    information "## Starting iteration ${loop}/${NUM_OF_LOOPS}"
+    info "## Starting iteration ${loop}/${NUM_OF_LOOPS}"
     echo "## Starting iteration ${loop}/${NUM_OF_LOOPS}" >> "${DATA_DIR}/kieker.log"
 
     for ((index=0;index<${#WRITER_CONFIG[@]};index+=1)); do
@@ -219,6 +208,6 @@ else
    execute-benchmark-body $OPTION 1 1
 fi
 
-information "Done."
+info "Done."
 
 # end

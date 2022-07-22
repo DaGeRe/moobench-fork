@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#
+# Jenkinsfile benchmark runner
+#
+
 BASE_DIR=$(cd "$(dirname "$0")"; pwd)
 
 # load configuration and common functions
@@ -9,12 +13,6 @@ else
 	echo "Missing configuration: ${BASE_DIR}/config"
 	exit 1
 fi
-if [ -f "${BASE_DIR}/common-functions" ] ; then
-	. "${BASE_DIR}/common-functions"
-else
-	echo "Missing configuration: ${BASE_DIR}/common-functions"
-	exit 1
-fi
 if [ -f "${BASE_DIR}/../common-functions.sh" ] ; then
 	. "${BASE_DIR}/../common-functions.sh"
 else
@@ -22,16 +20,20 @@ else
 	exit 1
 fi
 
-## setup
+#
+# setup
+#
 
 export RESULT_FILE="${RESULTS_DIR}/results-text.csv"
 COLLECTED_DATA_FILE="${BASE_DIR}/results.csv"
 BENCHMARK="${BASE_DIR}/benchmark.sh"
 
-##
+#
+# Setup
+#
+
 cd ${BASE_DIR}
 
-## setup
 # install benchmark
 tar -xvpf ${BASE_DIR}/../../benchmark/build/distributions/benchmark.tar
 # copy receiver
