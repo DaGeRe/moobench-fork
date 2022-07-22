@@ -20,46 +20,11 @@ function getSum {
 }
 
 ## Clean up raw results
-function cleanup-results() {
+function cleanupResults() {
   zip -jqr ${RESULTS_DIR}/results.zip ${RAWFN}*
   rm -f ${RAWFN}*
   [ -f ${DATA_DIR}/nohup.out ] && cp ${DATA_DIR}/nohup.out ${RESULTS_DIR}
   [ -f ${DATA_DIR}/nohup.out ] && > ${DATA_DIR}/nohup.out
-}
-
-function checkMoobenchApplication() {
-	if [ ! -f "MooBench.jar" ]
-	then
-		echo "MooBench.jar missing; please build it first using ./gradlew assemble in the main folder"
-		exit 1
-	fi
-}
-
-function getKiekerAgent() {
-	echo "Checking whether Kieker is present in $AGENT"
-	if [ ! -f $AGENT ]
-	then
-		# get agent
-		export VERSION_PATH=`curl "https://oss.sonatype.org/service/local/repositories/snapshots/content/net/kieker-monitoring/kieker/" | grep '<resourceURI>' | sed 's/ *<resourceURI>//g' | sed 's/<\/resourceURI>//g' | grep '/$' | grep -v ".xml" | head -n 1`
-		export AGENT_PATH=`curl "${VERSION_PATH}" | grep 'aspectj.jar</resourceURI' | sort | sed 's/ *<resourceURI>//g' | sed 's/<\/resourceURI>//g' | tail -1`
-		curl "${AGENT_PATH}" > "${AGENT}"
-		
-		if [ ! -f $AGENT ] | [ -s $AGENT ]
-		then
-			echo "Kieker download from $AGENT_PATH failed; please asure that a correct Kieker AspectJ file is present!"
-		fi
-		
-	fi
-}
-
-function getInspectItAgent() {
-	if [ ! -d agent ]
-	then
-		mkdir agent
-		cd agent
-		wget https://github.com/inspectIT/inspectit-ocelot/releases/download/1.11.1/inspectit-ocelot-agent-1.11.1.jar
-		cd ..
-	fi
 }
 
 function getOpentelemetryAgent() {
@@ -86,7 +51,7 @@ function createRLabels() {
 }
 
 ## Generate Results file
-function run-r() {
+function runR() {
 R --vanilla --silent << EOF
 results_fn="${RAWFN}"
 outtxt_fn="${RESULTS_DIR}/results-text.txt"

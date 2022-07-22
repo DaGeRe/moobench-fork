@@ -1,0 +1,10 @@
+# inspectIT
+
+RSCRIPT_PATH="${BASE_DIR}/../stats.csv.r"
+
+JAVA_BIN="/usr/bin/java"
+
+#MORE_PARAMS="--quickstart"
+
+MORE_PARAMS="${MORE_PARAMS}"
+
