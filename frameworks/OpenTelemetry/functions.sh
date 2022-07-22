@@ -12,20 +12,22 @@ function getAgent() {
 	if [ ! -f "${BASE_DIR}/lib/opentelemetry-javaagent.jar" ]
 	then
 		mkdir -p "${BASE_DIR}/lib"
-		wget --output-document=${BASE_DIR}/lib/opentelemetry-javaagent.jar \
+		wget --output-document="${BASE_DIR}/lib/opentelemetry-javaagent.jar" \
 			https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
 	fi
 }
 
 function startJaeger {
-	if [ ! -d jaeger-1.24.0-linux-amd64 ] ; then
+	if [ ! -d "${BASE_DIR}/jaeger-1.24.0-linux-amd64" ] ; then
+		cd "${BASE_DIR}"
 		wget https://github.com/jaegertracing/jaeger/releases/download/v1.24.0/jaeger-1.24.0-linux-amd64.tar.gz
 		tar -xvf jaeger-1.24.0-linux-amd64.tar.gz
 		rm jaeger-1.24.0-linux-amd64.tar.gz
 	fi
-	cd jaeger-1.24.0-linux-amd64
+	
+	cd "${BASE_DIR}/jaeger-1.24.0-linux-amd64"
 	./jaeger-all-in-one &> jaeger.log &
-	cd ..
+	cd "${BASE_DIR}"
 }
 
 function cleanup {
