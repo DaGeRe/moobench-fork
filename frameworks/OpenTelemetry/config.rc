@@ -1,8 +1,10 @@
-# OpenTelementry configuraiton
+# OpenTelementry configuration
 
 JAVA_BIN="/usr/bin/java"
 
 RSCRIPT_PATH="../stats.csv.r"
+
+AGENT_JAR="${BASE_DIR}/lib/opentelemetry-javaagent.jar"
 
 #MORE_PARAMS="--quickstart"
 MORE_PARAMS="--application moobench.application.MonitoredClassSimple ${MORE_PARAMS}"

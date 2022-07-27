@@ -12,7 +12,7 @@ function getAgent() {
 	if [ ! -f "${BASE_DIR}/lib/opentelemetry-javaagent.jar" ]
 	then
 		mkdir -p "${BASE_DIR}/lib"
-		wget --output-document="${BASE_DIR}/lib/opentelemetry-javaagent.jar" \
+		wget --output-document="${AGENT_JAR}" \
 			https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
 	fi
 }
@@ -26,7 +26,7 @@ function startJaeger {
 	fi
 	
 	cd "${BASE_DIR}/jaeger-1.24.0-linux-amd64"
-	./jaeger-all-in-one &> jaeger.log &
+	"${BASE_DIR}/jaeger-1.24.0-linux-amd64/jaeger-all-in-one" &> "${BASE_DIR}/jaeger-1.24.0-linux-amd64/jaeger.log" &
 	cd "${BASE_DIR}"
 }
 
@@ -55,7 +55,7 @@ function runOpenTelemetryNoLogging {
     # OpenTelemetry Instrumentation Logging Deactivated
     k=`expr ${k} + 1`
     info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >> "${BASE_DIR}/OpenTelemetry.log"
     ${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_LOGGING_DEACTIVATED} ${JAR} \
         --output-filename "${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv" \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
@@ -89,7 +89,7 @@ function runOpenTelemetryZipkin {
     k=`expr ${k} + 1`
     startZipkin
     info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
+    echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >> "${BASE_DIR}/OpenTelemetry.log"
     ${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_ZIPKIN} ${JAR} \
         --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
@@ -106,7 +106,7 @@ function runOpenTelemetryJaeger {
 	k=`expr ${k} + 1`
 	startJaeger
 	info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
+	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >> "${BASE_DIR}/OpenTelemetry.log"
 	${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_JAEGER} ${JAR} \
 		--output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
 		--total-calls ${TOTAL_NUM_OF_CALLS} \
@@ -123,7 +123,7 @@ function runOpenTelemetryPrometheus {
 	k=`expr ${k} + 1`
 	startPrometheus
 	info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
-	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >>${BASE_DIR}/OpenTelemetry.log
+	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >> "${BASE_DIR}/OpenTelemetry.log"
 	${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_PROMETHEUS} ${JAR} \
 		--output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
 		--total-calls ${TOTAL_NUM_OF_CALLS} \

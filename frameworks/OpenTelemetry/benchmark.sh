@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #
-# Kieker benchmark script
+# OpenTelemetry benchmark script
 #
-# Usage: benchmark.sh [execute|test]
+# Usage: benchmark.sh
 
 # configure base dir
 BASE_DIR=$(cd "$(dirname "$0")"; pwd)
@@ -18,7 +18,7 @@ if [ ! -d "${BASE_DIR}" ] ; then
 fi
 
 # load configuration and common functions
-if [ -f "${BASE_DIR}/config" ] ; then
+if [ -f "${BASE_DIR}/config.rc" ] ; then
 	source "${BASE_DIR}/config.rc"
 else
 	echo "Missing configuration: ${BASE_DIR}/config.rc"
@@ -60,6 +60,7 @@ checkFile log "${BASE_DIR}/OpenTelemetry.log" clean
 checkDirectory results-directory "${RESULTS_DIR}" recreate
 checkExecutable java "${JAVA_BIN}"
 checkFile R-script "${RSCRIPT_PATH}"
+checkFile opentelemetry-agent "${AGENT_JAR}"
 
 
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
@@ -69,10 +70,10 @@ JAVA_ARGS="-server"
 JAVA_ARGS="${JAVA_ARGS} "
 JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx2G"
 JAVA_ARGS="${JAVA_ARGS} -verbose:gc "
-JAR="-jar MooBench.jar"
+JAR="-jar ${BASE_DIR}/MooBench.jar"
 
 JAVA_ARGS_NOINSTR="${JAVA_ARGS}"
-JAVA_ARGS_OPENTELEMETRY_BASIC="${JAVA_ARGS} -javaagent:${BASE_DIR}/lib/opentelemetry-javaagent-all.jar -Dotel.resource.attributes=service.name=moobench -Dotel.instrumentation.methods.include=moobench.application.MonitoredClassSimple[monitoredMethod];moobench.application.MonitoredClassThreaded[monitoredMethod]"
+JAVA_ARGS_OPENTELEMETRY_BASIC="${JAVA_ARGS} -javaagent:${AGENT_JAR} -Dotel.resource.attributes=service.name=moobench -Dotel.instrumentation.methods.include=moobench.application.MonitoredClassSimple[monitoredMethod];moobench.application.MonitoredClassThreaded[monitoredMethod]"
 JAVA_ARGS_OPENTELEMETRY_LOGGING_DEACTIVATED="${JAVA_ARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=logging -Dotel.traces.sampler=always_off"
 JAVA_ARGS_OPENTELEMETRY_LOGGING="${JAVA_ARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=logging"
 JAVA_ARGS_OPENTELEMETRY_ZIPKIN="${JAVA_ARGS_OPENTELEMETRY_BASIC} -Dotel.traces.exporter=zipkin -Dotel.metrics.exporter=none"
@@ -81,11 +82,19 @@ JAVA_ARGS_OPENTELEMETRY_PROMETHEUS="${JAVA_ARGS_OPENTELEMETRY_BASIC} -Dotel.trac
 
 writeConfiguration
 
+#
+# Run benchmark
+#
+
+info "----------------------------------"
+info "Running benchmark..."
+info "----------------------------------"
+
 ## Execute Benchmark
 for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
     k=0
     info "## Starting iteration ${i}/${NUM_OF_LOOPS}"
-    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >>${BASE_DIR}/OpenTelemetry.log
+    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >> "${BASE_DIR}/OpenTelemetry.log"
 
     runNoInstrumentation
     cleanup

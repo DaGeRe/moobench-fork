@@ -57,18 +57,18 @@ EOF
 }
 
 function startZipkin {
-	if [ ! -d zipkin ] || [ ! -f zipkin/zipkin.jar ]
+	if [ ! -d "${BASE_DIR}/zipkin" ] || [ ! -f "${BASE_DIR}/zipkin/zipkin.jar" ]
 	then
-		mkdir zipkin
-		cd zipkin
+		mkdir -p "${BASE_DIR}/zipkin"
+		cd "${BASE_DIR}/zipkin"
 		curl -sSL https://zipkin.io/quickstart.sh | bash -s
 	else
-		cd zipkin
+		cd "${BASE_DIR}/zipkin"
 	fi
-	java -Xmx6g -jar zipkin.jar &> zipkin.txt &
+	java -Xmx6g -jar "${BASE_DIR}/zipkin/zipkin.jar" &> "${BASE_DIR}/zipkin/zipkin.txt" &
 	pid=$!
 	sleep 5
-	cd ..
+	cd "${BASE_DIR}"
 }
 
 function periodicallyCurlPrometheus {
@@ -90,18 +90,18 @@ function stopBackgroundProcess {
 }
 
 function writeConfiguration() {
-	uname -a >${RESULTS_DIR}/configuration.txt
-	${JAVA_BIN} ${JAVA_ARGS} -version 2 >> ${RESULTS_DIR}/configuration.txt
-	echo "JAVA_ARGS: ${JAVA_ARGS}" >> ${RESULTS_DIR}/configuration.txt
-	echo "" >> ${RESULTS_DIR}/configuration.txt
-	echo "Runtime: circa ${TIME} seconds" >> ${RESULTS_DIR}/configuration.txt
-	echo "" >> ${RESULTS_DIR}/configuration.txt
-	echo "SLEEP_TIME=${SLEEP_TIME}" >> ${RESULTS_DIR}/configuration.txt
-	echo "NUM_OF_LOOPS=${NUM_OF_LOOPS}" >> ${RESULTS_DIR}/configuration.txt
-	echo "TOTAL_NUM_OF_CALLS=${TOTAL_NUM_OF_CALLS}" >> ${RESULTS_DIR}/configuration.txt
-	echo "METHOD_TIME=${METHOD_TIME}" >> ${RESULTS_DIR}/configuration.txt
-	echo "THREADS=${THREADS}" >> ${RESULTS_DIR}/configuration.txt
-	echo "RECURSION_DEPTH=${RECURSION_DEPTH}" >> ${RESULTS_DIR}/configuration.txt
+	uname -a > "${RESULTS_DIR}/configuration.txt"
+	${JAVA_BIN} ${JAVA_ARGS} -version 2 >> "${RESULTS_DIR}/configuration.txt"
+	echo "JAVA_ARGS: ${JAVA_ARGS}" >> "${RESULTS_DIR}/configuration.txt"
+	echo "" >> "${RESULTS_DIR}/configuration.txt"
+	echo "Runtime: circa ${TIME} seconds" >> "${RESULTS_DIR}/configuration.txt"
+	echo "" >> "${RESULTS_DIR}/configuration.txt"
+	echo "SLEEP_TIME=${SLEEP_TIME}" >> "${RESULTS_DIR}/configuration.txt"
+	echo "NUM_OF_LOOPS=${NUM_OF_LOOPS}" >> "${RESULTS_DIR}/configuration.txt"
+	echo "TOTAL_NUM_OF_CALLS=${TOTAL_NUM_OF_CALLS}" >> "${RESULTS_DIR}/configuration.txt"
+	echo "METHOD_TIME=${METHOD_TIME}" >> "${RESULTS_DIR}/configuration.txt"
+	echo "THREADS=${THREADS}" >> "${RESULTS_DIR}/configuration.txt"
+	echo "RECURSION_DEPTH=${RECURSION_DEPTH}" >> "${RESULTS_DIR}/configuration.txt"
 	sync
 }
 

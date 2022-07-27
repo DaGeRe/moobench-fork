@@ -18,7 +18,7 @@ if [ ! -d "${BASE_DIR}" ] ; then
 fi
 
 # load configuration and common functions
-if [ -f "${BASE_DIR}/config" ] ; then
+if [ -f "${BASE_DIR}/config.rc" ] ; then
 	source "${BASE_DIR}/config.rc"
 else
 	echo "Missing configuration: ${BASE_DIR}/config.rc"
