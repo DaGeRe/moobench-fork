@@ -75,7 +75,7 @@ function periodicallyCurlPrometheus {
 	while [ true ]
 	do
 		echo "Curling for prometheus simulation..."
-		curl localhost:8888/metrics 
+		curl localhost:8888/metrics
 		sleep 15
 	done
 }
@@ -108,7 +108,7 @@ function writeConfiguration() {
 function printIntermediaryResults {
    for ((index=0;index<${#TITLE[@]};index+=1)); do
       echo -n "Intermediary results "${TITLE[$index]}" "
-      cat ${RESULTS_DIR}/raw-*-${RECURSION_DEPTH}-${index}.csv | awk -F';' '{print $2}' | getSum
+      cat ${RAWFN}-*-${RECURSION_DEPTH}-${index}.csv | awk -F';' '{print $2}' | getSum
    done
 }
 
@@ -141,6 +141,12 @@ function warn() {
 
 function info() {
 	echo -e "${INFO} $@"
+}
+
+function debug() {
+	if [ "$DEBUG" == "yes" ] ; then
+		echo -e "${INFO} $@"
+	fi
 }
 
 # $1 = NAME, $2 = EXECUTABLE
@@ -184,7 +190,7 @@ function checkDirectory() {
 		exit 1
 	fi
 	if [ ! -d "$2" ] ; then
-		if [ "$3" == "create" ] ; then
+		if [ "$3" == "create" ] || [ "$3" == "recreate" ] ; then
 			info "$1: directory does not exist, creating it"
 			mkdir -p "$2"
 		else

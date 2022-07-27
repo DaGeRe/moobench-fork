@@ -46,15 +46,15 @@ function executeExperiment() {
        BENCHMARK_OPTS="${JAVA_ARGS} ${LTW_ARGS} ${KIEKER_ARGS} ${kieker_parameters}"
     fi
 
-    echo "Run options: ${BENCHMARK_OPTS} -jar MooBench.jar"
+    debug "Run options: ${BENCHMARK_OPTS} -jar MooBench.jar"
 
-    ${JAVA_BIN} ${BENCHMARK_OPTS} -jar "${BASE_DIR}/MooBench.jar" \
+    "${JAVA_BIN}" ${BENCHMARK_OPTS} -jar "${BASE_DIR}/MooBench.jar" \
 	--application moobench.application.MonitoredClassSimple \
         --output-filename "${RAWFN}-${loop}-${recursion}-${index}.csv" \
         --total-calls "${TOTAL_NUM_OF_CALLS}" \
         --method-time "${METHOD_TIME}" \
         --total-threads 1 \
-        --recursion-depth "${recursion}" &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
+        --recursion-depth "${recursion}" #&> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
 
     rm -rf "${DATA_DIR}"/kieker-*
 
