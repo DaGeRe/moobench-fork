@@ -10,7 +10,6 @@
 **/build/**
 **/bin/**
 frameworks/log_*
-results/
 frameworks/Kieker/benchmark/
 frameworks/Kieker/data/
 frameworks/Kieker/MooBench.jar
