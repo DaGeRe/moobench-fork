@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation project(':benchmark')
+    implementation project(':tools:benchmark')
     implementation 'net.kieker-monitoring:kieker:1.14'
     implementation 'net.sourceforge.teetime:teetime:3.0'
     implementation 'org.slf4j:slf4j-api:1.7.+'

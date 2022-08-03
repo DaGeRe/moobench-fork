@@ -9,7 +9,7 @@
 
 rootProject.name = 'moobench'
 
-include 'benchmark'
+include 'tools:benchmark'
 include 'tools:receiver'
 include 'tools:compile-results'
 include 'frameworks:inspectIT'

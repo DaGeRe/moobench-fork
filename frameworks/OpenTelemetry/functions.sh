@@ -42,13 +42,13 @@ function runNoInstrumentation {
     # No instrumentation
     info " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}"
     echo " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}" >> "${BASE_DIR}/OpenTelemetry.log"
-    ${JAVA_BIN} ${JAVA_ARGS_NOINSTR} ${JAR} \
-        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
-        --total-calls ${TOTAL_NUM_OF_CALLS} \
-        --method-time ${METHOD_TIME} \
-        --total-threads ${THREADS} \
-        --recursion-depth $RECURSION_DEPTH \
-        ${MORE_PARAMS} &> "${RESULTS_DIR}/output_${i}_${RECURSION_DEPTH}_${k}.txt"
+    export BENCHMARK_OPTS="${JAVA_ARGS_NOINSTR}"
+    "${MOOBENCH_BIN}" --output-filename "${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv" \
+        --total-calls "${TOTAL_NUM_OF_CALLS}" \
+        --method-time "${METHOD_TIME}" \
+        --total-threads "${THREADS}" \
+        --recursion-depth "${RECURSION_DEPTH}" \
+        ${MORE_PARAMS} #&> "${RESULTS_DIR}/output_${i}_${RECURSION_DEPTH}_${k}.txt"
 }
 
 function runOpenTelemetryNoLogging {
