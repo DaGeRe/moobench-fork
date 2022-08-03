@@ -91,8 +91,9 @@ checkFile Labels "${BASE_DIR}/labels.sh"
 checkFile R-script "${RSCRIPT_PATH}"
 checkDirectory results-directory "${RESULTS_DIR}" recreate
 checkFile log "${DATA_DIR}/kieker.log" clean
-checkFile MooBench "${BASE_DIR}/MooBench.jar"
 checkExecutable java "${JAVA_BIN}"
+checkExecutable moobench "${MOOBENCH_BIN}"
+checkFile aop-file "${AOP}"
 
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 info "Experiment will take circa ${TIME} seconds."
@@ -101,7 +102,7 @@ info "Experiment will take circa ${TIME} seconds."
 JAVA_ARGS="-server"
 JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx2G"
 
-LTW_ARGS="-javaagent:${AGENT} -Dorg.aspectj.weaver.showWeaveInfo=true -Daj.weaving.verbose=true -Dkieker.monitoring.skipDefaultAOPConfiguration=true -Dorg.aspectj.weaver.loadtime.configuration=${AOP}"
+LTW_ARGS="-javaagent:${AGENT} --illegal-access=permit -Dorg.aspectj.weaver.showWeaveInfo=true -Daj.weaving.verbose=true -Dkieker.monitoring.skipDefaultAOPConfiguration=true -Dorg.aspectj.weaver.loadtime.configuration=file://${AOP}"
 
 KIEKER_ARGS="-Dlog4j.configuration=log4j.cfg -Dkieker.monitoring.name=KIEKER-BENCHMARK -Dkieker.monitoring.adaptiveMonitoring.enabled=false -Dkieker.monitoring.periodicSensorsExecutorPoolSize=0"
 

@@ -125,10 +125,12 @@ if [ "$BATCH_MODE" == "yes" ] ; then
 	export ERROR="[error]"
 	export WARNING="[warning]"
 	export INFO="[info]"
+	export DEBUG_INFO="[debug]"
 else
 	export ERROR="${RED}[error]${NC}"
 	export WARNING="${YELLOW}[warning]${NC}"
 	export INFO="${WHITE}[info]${NC}"
+	export DEBUG_INFO="${WHITE}[debug]${NC}"
 fi
 
 function error() {
@@ -144,8 +146,8 @@ function info() {
 }
 
 function debug() {
-	if [ "$DEBUG" == "yes" ] ; then
-		echo -e "${INFO} $@"
+	if [ "${DEBUG}" == "yes" ] ; then
+		echo -e "${DEBUG_INFO} $@"
 	fi
 }
 

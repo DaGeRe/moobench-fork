@@ -40,21 +40,21 @@ function executeExperiment() {
     info " # recursion=${recursion} loop=${loop} writer=${index} ${title}"
     echo " # ${loop}.${recursion}.${index} ${title}" >> "${DATA_DIR}/kieker.log"
 
-    if [  "${kieker_parameters}" = "" ] ; then
-       BENCHMARK_OPTS="${JAVA_ARGS}"
+    if [  "${kieker_parameters}" == "" ] ; then
+       export BENCHMARK_OPTS="${JAVA_ARGS}"
     else
-       BENCHMARK_OPTS="${JAVA_ARGS} ${LTW_ARGS} ${KIEKER_ARGS} ${kieker_parameters}"
+       export BENCHMARK_OPTS="${JAVA_ARGS} ${LTW_ARGS} ${KIEKER_ARGS} ${kieker_parameters}"
     fi
 
-    debug "Run options: ${BENCHMARK_OPTS} -jar MooBench.jar"
+    debug "Run options: ${BENCHMARK_OPTS}"
 
-    "${JAVA_BIN}" ${BENCHMARK_OPTS} -jar "${BASE_DIR}/MooBench.jar" \
+    "${MOOBENCH_BIN}" \
 	--application moobench.application.MonitoredClassSimple \
         --output-filename "${RAWFN}-${loop}-${recursion}-${index}.csv" \
         --total-calls "${TOTAL_NUM_OF_CALLS}" \
         --method-time "${METHOD_TIME}" \
         --total-threads 1 \
-        --recursion-depth "${recursion}" #&> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
+        --recursion-depth "${recursion}" &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
 
     rm -rf "${DATA_DIR}"/kieker-*
 
@@ -71,7 +71,7 @@ function executeBenchmarkBody() {
   recursion="$3"
   if [[ "${RECEIVER[$index]}" ]] ; then
      echo "receiver ${RECEIVER[$index]}"
-     ${RECEIVER[$index]} >> "${DATA_DIR}/kieker.receiver-${i}-${index}.log" &
+     ${RECEIVER[$index]} >> "${DATA_DIR}/kieker.receiver-${loop}-${index}.log" &
      RECEIVER_PID=$!
      echo "PID $RECEIVER_PID"
   fi

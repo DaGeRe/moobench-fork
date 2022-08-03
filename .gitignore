@@ -1,7 +1,8 @@
 
 # Ignore Gradle project-specific cache directory
 **/.gradle/**
-
+/receiver
+/benchmark
 .classpath
 .settings
 **/.classpath
