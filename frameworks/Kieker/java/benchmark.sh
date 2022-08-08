@@ -112,6 +112,9 @@ declare -a RECEIVER
 # Title
 declare -a TITLE
 
+#
+# Different writer setups
+#
 WRITER_CONFIG[0]=""
 WRITER_CONFIG[1]="-Dkieker.monitoring.enabled=false -Dkieker.monitoring.writer=kieker.monitoring.writer.dump.DumpWriter"
 WRITER_CONFIG[2]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=kieker.monitoring.writer.dump.DumpWriter"
