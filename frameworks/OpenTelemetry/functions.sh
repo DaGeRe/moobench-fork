@@ -56,13 +56,13 @@ function runOpenTelemetryNoLogging {
     k=`expr ${k} + 1`
     info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >> "${BASE_DIR}/OpenTelemetry.log"
-    ${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_LOGGING_DEACTIVATED} ${JAR} \
-        --output-filename "${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv" \
+    export BENCHMARK_OPTS="${JAVA_ARGS_OPENTELEMETRY_LOGGING_DEACTIVATED}"
+    "${MOOBENCH_BIN}" --output-filename "${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv" \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
         --recursion-depth ${RECURSION_DEPTH} \
-        ${MORE_PARAMS} &> "${RESULTS_DIR}/output_${i}_${RECURSION_DEPTH}_${k}.txt"
+        ${MORE_PARAMS} #&> "${RESULTS_DIR}/output_${i}_${RECURSION_DEPTH}_${k}.txt"
 }
 
 function runOpenTelemetryLogging {
@@ -70,13 +70,13 @@ function runOpenTelemetryLogging {
     k=`expr ${k} + 1`
     info " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}"
     echo " # ${i}.$RECURSION_DEPTH.${k} ${TITLE[$k]}" >> "${BASE_DIR}/OpenTelemetry.log"
-    ${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_LOGGING} ${JAR} \
-        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
+    export BENCHMARK_OPTS="${JAVA_ARGS_OPENTELEMETRY_LOGGING}"
+    "${MOOBENCH_BIN}" --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
         --recursion-depth $RECURSION_DEPTH \
-        ${MORE_PARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
+        ${MORE_PARAMS} #&> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
     if [ ! "$DEBUG" = true ]
     then
     	echo "DEBUG is $DEBUG, deleting opentelemetry logging file"
@@ -90,13 +90,13 @@ function runOpenTelemetryZipkin {
     startZipkin
     info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
     echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >> "${BASE_DIR}/OpenTelemetry.log"
-    ${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_ZIPKIN} ${JAR} \
-        --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
+    export BENCHMARK_OPTS="${JAVA_ARGS_OPENTELEMETRY_ZIPKIN}"
+    "${MOOBENCH_BIN}" --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
         --total-calls ${TOTAL_NUM_OF_CALLS} \
         --method-time ${METHOD_TIME} \
         --total-threads ${THREADS} \
         --recursion-depth $RECURSION_DEPTH \
-        ${MORE_PARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
+        ${MORE_PARAMS} #&> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
     stopBackgroundProcess
     sleep $SLEEP_TIME
 }
@@ -107,13 +107,13 @@ function runOpenTelemetryJaeger {
 	startJaeger
 	info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
 	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >> "${BASE_DIR}/OpenTelemetry.log"
-	${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_JAEGER} ${JAR} \
-		--output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
+	export BENCHMARK_OPTS="${JAVA_ARGS_OPENTELEMETRY_JAEGER}"
+	"${MOOBENCH_BIN}" --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
 		--total-calls ${TOTAL_NUM_OF_CALLS} \
 		--method-time ${METHOD_TIME} \
 		--total-threads ${THREADS} \
 		--recursion-depth $RECURSION_DEPTH \
-		${MORE_PARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
+		${MORE_PARAMS} #&> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
 	stopBackgroundProcess
 	sleep $SLEEP_TIME
 }
@@ -124,13 +124,13 @@ function runOpenTelemetryPrometheus {
 	startPrometheus
 	info " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]}
 	echo " # ${i}.$RECURSION_DEPTH.${k} "${TITLE[$k]} >> "${BASE_DIR}/OpenTelemetry.log"
-	${JAVA_BIN} ${JAVA_ARGS_OPENTELEMETRY_PROMETHEUS} ${JAR} \
-		--output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
+	export BENCHMARK_OPTS="${JAVA_ARGS_OPENTELEMETRY_PROMETHEUS}"
+	"${MOOBENCH_BIN}" --output-filename ${RAWFN}-${i}-$RECURSION_DEPTH-${k}.csv \
 		--total-calls ${TOTAL_NUM_OF_CALLS} \
 		--method-time ${METHOD_TIME} \
 		--total-threads ${THREADS} \
 		--recursion-depth $RECURSION_DEPTH \
-		${MORE_PARAMS} &> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
+		${MORE_PARAMS} #&> ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
 	stopBackgroundProcess
 	sleep $SLEEP_TIME
 }

@@ -55,7 +55,7 @@ info "----------------------------------"
 
 getAgent
 
-checkFile MooBench "${BASE_DIR}/MooBench.jar"
+checkExecutable MooBench "${MOOBENCH_BIN}"
 checkFile log "${BASE_DIR}/OpenTelemetry.log" clean
 checkDirectory results-directory "${RESULTS_DIR}" recreate
 checkExecutable java "${JAVA_BIN}"
@@ -70,7 +70,6 @@ JAVA_ARGS="-server"
 JAVA_ARGS="${JAVA_ARGS} "
 JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx2G"
 JAVA_ARGS="${JAVA_ARGS} -verbose:gc "
-JAR="-jar ${BASE_DIR}/MooBench.jar"
 
 JAVA_ARGS_NOINSTR="${JAVA_ARGS}"
 JAVA_ARGS_OPENTELEMETRY_BASIC="${JAVA_ARGS} -javaagent:${AGENT_JAR} -Dotel.resource.attributes=service.name=moobench -Dotel.instrumentation.methods.include=moobench.application.MonitoredClassSimple[monitoredMethod];moobench.application.MonitoredClassThreaded[monitoredMethod]"
