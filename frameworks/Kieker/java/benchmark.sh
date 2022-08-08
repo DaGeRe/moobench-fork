@@ -71,17 +71,16 @@ info "----------------------------------"
 getAgent
 
 # Find receiver and extract it
-RECEIVER_ARCHIVE="${BASE_DIR}/../../tools/receiver/build/distributions/receiver.tar"
 
-if [ -f "${RECEIVER_ARCHIVE}" ] ; then
-	tar -xpf "${RECEIVER_ARCHIVE}"
-else
-	echo "Error receiver not found at ${RECEIVER_ARCHIVE}"
-	exit 1
-fi
+checkFile receiver "${RECEIVER_ARCHIVE}"
+tar -xpf "${RECEIVER_ARCHIVE}"
+RECEIVER_BIN="${BASE_DIR}/receiver/bin/receiver"
+
+checkFile moobench "${MOOBENCH_ARCHIVE}"
+tar -xpf "${MOOBENCH_ARCHIVE}"
+MOOBENCH_BIN="${BASE_DIR}/benchmark/bin/benchmark"
 
 PARENT=`dirname "${RESULTS_DIR}"`
-RECEIVER_BIN="${BASE_DIR}/receiver/bin/receiver"
 
 checkDirectory DATA_DIR "${DATA_DIR}" create
 checkDirectory result-base "${PARENT}"
@@ -93,14 +92,14 @@ checkDirectory results-directory "${RESULTS_DIR}" recreate
 checkFile log "${DATA_DIR}/kieker.log" clean
 checkExecutable java "${JAVA_BIN}"
 checkExecutable moobench "${MOOBENCH_BIN}"
+checkExecutable receiver "${RECEIVER_BIN}"
 checkFile aop-file "${AOP}"
 
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 info "Experiment will take circa ${TIME} seconds."
 
 # general server arguments
-JAVA_ARGS="-server"
-JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx2G"
+JAVA_ARGS="-Xms1G -Xmx2G"
 
 LTW_ARGS="-javaagent:${AGENT} --illegal-access=permit -Dorg.aspectj.weaver.showWeaveInfo=true -Daj.weaving.verbose=true -Dkieker.monitoring.skipDefaultAOPConfiguration=true -Dorg.aspectj.weaver.loadtime.configuration=file://${AOP}"
 
@@ -121,7 +120,10 @@ WRITER_CONFIG[4]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=ki
 WRITER_CONFIG[5]="-Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.SingleSocketTcpWriter -Dkieker.monitoring.writer.tcp.SingleSocketTcpWriter.port=2345"
 RECEIVER[5]="${RECEIVER_BIN} 2345"
 
-## Write configuration
+#
+# Write configuration
+#
+
 uname -a > "${RESULTS_DIR}/configuration.txt"
 "${JAVA_BIN}" "${JAVA_ARGS}" -version 2>> "${RESULTS_DIR}/configuration.txt"
 cat << EOF >> "${RESULTS_DIR}/configuration.txt"
