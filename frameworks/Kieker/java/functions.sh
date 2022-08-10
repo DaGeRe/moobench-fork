@@ -7,6 +7,7 @@ then
     exit 1
 fi
 
+
 function getAgent() {
 	info "Checking whether Kieker is present in ${AGENT}"
 	if [ ! -f "${AGENT}" ] ; then
@@ -20,6 +21,8 @@ function getAgent() {
 		fi
 	fi
 }
+
+# experiment setups
 
 #################################
 # function: execute an experiment
@@ -36,7 +39,7 @@ function executeExperiment() {
     title="$4"
     kieker_parameters="$5"
 
-    info " # recursion=${recursion} loop=${loop} writer=${index} ${title}"
+    info " # ${loop}.${recursion}.${index} ${title}"
     echo " # ${loop}.${recursion}.${index} ${title}" >> "${DATA_DIR}/kieker.log"
 
     if [  "${kieker_parameters}" == "" ] ; then

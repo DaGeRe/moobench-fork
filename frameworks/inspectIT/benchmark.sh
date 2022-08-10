@@ -56,19 +56,12 @@ info "----------------------------------"
 # load agent
 getAgent
 
-checkFile MooBench "${BASE_DIR}/MooBench.jar"
+checkExecutable MooBench "${MOOBENCH_BIN}"
 checkFile log "${BASE_DIR}/inspectIT.log" clean
 checkDirectory results-directory "${RESULTS_DIR}" recreate
 checkExecutable java "${JAVA_BIN}"
 checkFile R-script "${RSCRIPT_PATH}"
 
-#
-# Run benchmark
-#
-
-info "----------------------------------"
-info "Running benchmark..."
-info "----------------------------------"
 
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 info "Experiment will take circa ${TIME} seconds."
@@ -76,7 +69,6 @@ info "Experiment will take circa ${TIME} seconds."
 JAVA_ARGS="-server"
 JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx2G"
 JAVA_ARGS="${JAVA_ARGS} -verbose:gc "
-JAR="-jar ${BASE_DIR}/MooBench.jar --application moobench.application.MonitoredClassSimple"
 
 JAVA_ARGS_NOINSTR="${JAVA_ARGS}"
 JAVA_ARGS_LTW="${JAVA_ARGS} -javaagent:${BASE_DIR}/agent/inspectit-ocelot-agent-1.11.1.jar -Djava.util.logging.config.file=${BASE_DIR}/config/logging.properties"
@@ -89,7 +81,13 @@ info "RESULTS_DIR: ${RESULTS_DIR}"
 info "RAWFN: $RAWFN"
 writeConfiguration
 
-info "Ok"
+#
+# Run benchmark
+#
+
+info "----------------------------------"
+info "Running benchmark..."
+info "----------------------------------"
 
 ## Execute Benchmark
 for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
@@ -121,7 +119,7 @@ mv "${BASE_DIR}/inspectIT.log" "${RESULTS_DIR}/inspectIT.log"
 
 # Create R labels
 LABELS=$(createRLabels)
-runR
+runStatistics
 
 ## Clean up raw results
 zip -jqr "${RESULTS_DIR}/results.zip" ${RAWFN}*

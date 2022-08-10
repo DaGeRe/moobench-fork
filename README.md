@@ -34,7 +34,9 @@ Initially, the following steps are required:
 1. Make sure, that you've installed R (http://www.r-project.org/) to generate
    the results , awk to install intermediate results and curl to download
    processing tools (Ubuntu: `sudo apt install r-base gawk curl`).
-2. Compile the application by calling `./gradlew assemble` in the main folder.
+2. Compile the application and install it in the repository root directory.
+   This can be done automatically be calling
+   `./setup.sh`
 
 All experiments are started with the provided "External Controller" scripts.
 The following scripts are available for every framework ($FRAMEWORK):

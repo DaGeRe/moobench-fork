@@ -1,0 +1,5 @@
+## Moobench setup script
+
+MOOBENCH_ARCHIVE="${BASE_DIR}/tools/benchmark/build/distributions/benchmark.tar"
+
+

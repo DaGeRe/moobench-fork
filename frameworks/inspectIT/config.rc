@@ -1,10 +1,12 @@
-# inspectIT
-
-RSCRIPT_PATH="${BASE_DIR}/../statistics.r"
+# inspectIT configurations
 
 JAVA_BIN="/usr/bin/java"
+
+RSCRIPT_PATH="${BASE_DIR}/../statistics.r"
 
 #MORE_PARAMS="--quickstart"
 
 MORE_PARAMS="${MORE_PARAMS}"
+
+MOOBENCH_BIN="${BASE_DIR}/../../benchmark/bin/benchmark"
 

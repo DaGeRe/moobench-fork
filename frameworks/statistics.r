@@ -17,7 +17,7 @@
 #configs.loop=10
 #configs.recursion=c(10)
 #configs.labels=c("No Probe","Inactive Probe","Collecting Data","Writing Data (ASCII)", "Writing Data (Bin)")
-#configs.tool_id="kieker-java"
+#configs.framework_name="kieker-java"
 #results.count=2000000
 #results.skip=1000000
 
@@ -90,7 +90,7 @@ print(resultstext)
 
 currentTime <- as.numeric(Sys.time())
 
-write(paste(configs.tool_id ":"), file=out_yaml_fn,append=FALSE)
+write(paste(configs.framework_name, ":"), file=out_yaml_fn,append=FALSE)
 write(paste("- timestamp:", currentTime), file=out_yaml_fn, append=TRUE) 
 for (writer_idx in (1:(numberOfWriters))) {
    write(paste(" ", configs.labels[writer_idx], ": [", 

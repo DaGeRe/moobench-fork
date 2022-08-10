@@ -45,7 +45,7 @@ pipeline {
 
     stage('Run Benchmark') {
        steps {
-          sh '${BASE_DIR}/run-benchmark.sh ${KEYSTORE} ${UPDATE_SITE_URL}'
+          sh '${BASE_DIR}/run-all.sh ${KEYSTORE} ${UPDATE_SITE_URL}'
        }
     }
     

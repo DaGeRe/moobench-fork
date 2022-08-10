@@ -67,18 +67,15 @@ info "----------------------------------"
 info "Setup..."
 info "----------------------------------"
 
+cd "${BASE_DIR}"
+
 # load agent
 getAgent
 
 # Find receiver and extract it
-
 checkFile receiver "${RECEIVER_ARCHIVE}"
 tar -xpf "${RECEIVER_ARCHIVE}"
 RECEIVER_BIN="${BASE_DIR}/receiver/bin/receiver"
-
-checkFile moobench "${MOOBENCH_ARCHIVE}"
-tar -xpf "${MOOBENCH_ARCHIVE}"
-MOOBENCH_BIN="${BASE_DIR}/benchmark/bin/benchmark"
 
 PARENT=`dirname "${RESULTS_DIR}"`
 
@@ -163,8 +160,7 @@ if [ "$MODE" == "execute" ] ; then
 
    # Create R labels
    LABELS=$(createRLabels)
-   runRyaml
-   read R
+   runStatistics
    cleanupResults
 else
    executeBenchmarkBody $OPTION 1 1

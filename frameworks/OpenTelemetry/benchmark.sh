@@ -53,6 +53,7 @@ info "----------------------------------"
 info "Setup..."
 info "----------------------------------"
 
+# load agent
 getAgent
 
 checkExecutable MooBench "${MOOBENCH_BIN}"
@@ -67,7 +68,6 @@ TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURS
 info "Experiment will take circa ${TIME} seconds."
 
 JAVA_ARGS="-server"
-JAVA_ARGS="${JAVA_ARGS} "
 JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx2G"
 JAVA_ARGS="${JAVA_ARGS} -verbose:gc "
 
@@ -115,7 +115,7 @@ done
 
 # Create R labels
 LABELS=$(createRLabels)
-runR
+runStatistics
 
 cleanupResults
 
@@ -124,4 +124,3 @@ mv "${BASE_DIR}/OpenTelemetry.log" "${RESULTS_DIR}/OpenTelemetry.log"
 [ -f "${BASE_DIR}/errorlog.txt" ] && mv "${BASE_DIR}/errorlog.txt" "${RESULTS_DIR}"
 
 # end
-
