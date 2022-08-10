@@ -43,9 +43,8 @@ pipeline {
 
     stage('Run Benchmark') {
        steps {
-          sh 'which java'
           sh './frameworks/Kieker/java/benchmark.sh'
-          sh './frameworks/OpenTelementry/benchmark.sh'
+          sh './frameworks/OpenTelemetry/benchmark.sh'
           sh './frameworks/inspectIT/benchmark.sh'
        }
     }
