@@ -9,7 +9,7 @@
 #results_fn=paste(data_fn,folder_fn,"/raw",sep="")
 #outtxt_fn=paste(data_fn,folder_fn,"/results-text.txt",sep="")
 #results_fn="raw"
-#outtxt_fn="results-text.txt"
+#out_yam_fn="results.yaml"
 
 #########
 # These are configuration parameters which are automatically prepended to this file by the benchmark.sh script.
@@ -17,6 +17,7 @@
 #configs.loop=10
 #configs.recursion=c(10)
 #configs.labels=c("No Probe","Inactive Probe","Collecting Data","Writing Data (ASCII)", "Writing Data (Bin)")
+#configs.tool_id="kieker-java"
 #results.count=2000000
 #results.skip=1000000
 
@@ -87,22 +88,19 @@ resultstext <- formatC(printvalues,format="f",digits=4,width=8)
 
 print(resultstext)
 
-write(paste("Recursion Depth: ", recursion_depth),file=outtxt_fn,append=TRUE)
-write("response time",file=outtxt_fn,append=TRUE)
-write.table(resultstext,file=outtxt_fn,append=TRUE,quote=FALSE,sep="\t",col.names=FALSE)
+currentTime <- as.numeric(Sys.time())
 
-concResult <- ""
-headResult <- ""
-# write the first n-1 elements preceded by a comma (,)
-for (writer_idx in (1:(numberOfWriters-1))) {
-   headResult <- paste(headResult, configs.labels[writer_idx], ",")
-   concResult <- paste(concResult, printvalues["mean",writer_idx], ",")
+write(paste(configs.tool_id ":"), file=out_yaml_fn,append=FALSE)
+write(paste("- timestamp:", currentTime), file=out_yaml_fn, append=TRUE) 
+for (writer_idx in (1:(numberOfWriters))) {
+   write(paste(" ", configs.labels[writer_idx], ": [", 
+      format(printvalues["mean",writer_idx], scientific=TRUE), ",",
+      format(printvalues["sd",writer_idx], scientific=TRUE), ",", 
+      format(printvalues["ci95%",writer_idx], scientific=TRUE), ",",
+      format(printvalues["md25%",writer_idx], scientific=TRUE), ",",
+      format(printvalues["md50%",writer_idx], scientific=TRUE), ",",
+      format(printvalues["md75%",writer_idx], scientific=TRUE), ",",
+      format(printvalues["max",writer_idx], scientific=TRUE), ",",
+      format(printvalues["min",writer_idx], scientific=TRUE), "]"), file=out_yaml_fn, append=TRUE)
 }
-# write the last without a comma
-headResult <- paste(headResult, configs.labels[numberOfWriters])
-concResult <- paste(concResult, printvalues["mean", numberOfWriters])
-  
-write(headResult,file=outcsv_fn,append=TRUE)
-write(concResult,file=outcsv_fn,append=TRUE)
-
 # end
