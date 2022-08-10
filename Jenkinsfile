@@ -45,11 +45,13 @@ pipeline {
 
     stage('Run Benchmark') {
        steps {
-          sh '${BASE_DIR}/run-all.sh ${KEYSTORE} ${UPDATE_SITE_URL}'
+          sh '${BASE_DIR}/frameworks/Kieker/java/benchmark.sh'
+          sh '${BASE_DIR}/frameworks/OpenTelementry/benchmark.sh'
+          sh '${BASE_DIR}/frameworks/inspectIT/benchmark.sh'
        }
     }
     
-    stage('Upload') {
+/*    stage('Upload') {
        steps {
           sshagent(credentials: ['kieker-irl-key']) {
              sh '''
@@ -68,6 +70,6 @@ pipeline {
            cleanWs()
          }
        }
-    }
+    }*/
   }
 }
