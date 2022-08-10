@@ -56,6 +56,30 @@ source("${RSCRIPT_PATH}")
 EOF
 }
 
+## Generate Results file
+function runRyaml() {
+cat << EOF
+results_fn="${RAWFN}"
+out_yaml_fn="${RESULTS_DIR}/results.yaml"
+configs.loop=${NUM_OF_LOOPS}
+configs.recursion=${RECURSION_DEPTH}
+configs.labels=c($LABELS)
+results.count=${TOTAL_NUM_OF_CALLS}
+results.skip=${TOTAL_NUM_OF_CALLS}/2
+source("${RSCRIPT_PATH}")
+EOF
+R --vanilla --silent << EOF
+results_fn="${RAWFN}"
+out_yaml_fn="${RESULTS_DIR}/results.yaml"
+configs.loop=${NUM_OF_LOOPS}
+configs.recursion=${RECURSION_DEPTH}
+configs.labels=c($LABELS)
+results.count=${TOTAL_NUM_OF_CALLS}
+results.skip=${TOTAL_NUM_OF_CALLS}/2
+source("${RSCRIPT_PATH}")
+EOF
+}
+
 function startZipkin {
 	if [ ! -d "${BASE_DIR}/zipkin" ] || [ ! -f "${BASE_DIR}/zipkin/zipkin.jar" ]
 	then
@@ -217,7 +241,7 @@ if [ -z $SLEEP_TIME ]; then
 	SLEEP_TIME=30             ## 30
 fi
 if [ -z $NUM_OF_LOOPS ]; then
-	NUM_OF_LOOPS=10           ## 10
+	NUM_OF_LOOPS=1 #0           ## 10
 fi
 if [ -z $THREADS ]; then
 	THREADS=1                 ## 1

@@ -9,7 +9,7 @@ RSCRIPT_PATH="${BASE_DIR}/stats.csv.r"
 MAIN_DIR="${BASE_DIR}/../../.."
 
 RECEIVER_ARCHIVE="${MAIN_DIR}/tools/receiver/build/distributions/receiver.tar"
-BENCHMARK_ARCHIVE="${MAIN_DIR}/tools/benchmark/build/distributions/benchmark.tar"
+MOOBENCH_ARCHIVE="${MAIN_DIR}/tools/benchmark/build/distributions/benchmark.tar"
 
 DATA_DIR="${BASE_DIR}/data"
 AGENT="${BASE_DIR}/kieker-2.0.0-SNAPSHOT-aspectj.jar"

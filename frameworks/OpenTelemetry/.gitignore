@@ -1,0 +1,5 @@
+OpenTelemetry.log
+lib/**
+results-OpenTelemetry/**
+zipkin/**
+benchmark/**

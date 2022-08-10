@@ -1,2 +1,5 @@
-agent/
-CMR/
+agent/**
+CMR/**
+results-inspectIT/**
+zipkin/**
+

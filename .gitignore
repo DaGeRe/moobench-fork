@@ -1,8 +1,5 @@
 
 # Ignore Gradle project-specific cache directory
-**/.gradle/**
-/receiver
-/benchmark
 .classpath
 .settings
 **/.classpath
@@ -10,37 +7,5 @@
 **/.settings/**
 **/build/**
 **/bin/**
-frameworks/log_*
-frameworks/Kieker/benchmark/
-frameworks/Kieker/data/
-frameworks/Kieker/MooBench.jar
-frameworks/Kieker/kieker-*-aspectj.jar
-frameworks/Kieker/receiver/
-frameworks/Kieker/results-Kieker/
-frameworks/Kieker/benchmark_*
-frameworks/SPASSmeter/spassmeter.log
-frameworks/SPASSmeter/tmp/
-frameworks/SPASSmeter/MooBench.jar
-frameworks/inspectIT/inspectit.log
-frameworks/inspectIT/MooBench.jar
-frameworks/inspectIT/logs/
-frameworks/inspectIT/tmp/
-frameworks/inspectIT/zipkin/
-frameworks/inspectIT/configuration.txt
-frameworks/inspectIT/results-inspectIT/
-frameworks/inspectIT/prometheus-2.28.1.linux-amd64/
-frameworks/OpenTelemetry/results-OpenTelemetry/
-frameworks/OpenTelemetry/tmp/
-frameworks/OpenTelemetry/*.txt
-frameworks/OpenTelemetry/OpenTelemetry.log
-frameworks/OpenTelemetry/MooBench.jar
-frameworks/OpenTelemetry/zipkin/
-frameworks/OpenTelemetry/lib/
-frameworks/OpenTelemetry/jaeger-1.24.0-linux-amd64/
-frameworks/OpenTelemetry/prometheus-2.28.1.linux-amd64/
-frameworks/OpenTelemetry/prometheus-2.28.1.linux-amd64.tar.gz
-
-frameworks/Kieker/compile-results/
-tools/getConfidenceIntervalTable/*csv
 /.gradle/
 /build/

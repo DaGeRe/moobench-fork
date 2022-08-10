@@ -25,10 +25,10 @@ else
 	exit 1
 fi
 
-if [ -f "${BASE_DIR}/../common-functions.sh" ] ; then
-	source "${BASE_DIR}/../common-functions.sh"
+if [ -f "${MAIN_DIR}/frameworks/common-functions.sh" ] ; then
+	source "${MAIN_DIR}/frameworks/common-functions.sh"
 else
-	echo "Missing library: ${BASE_DIR}/../common-functions.sh"
+	echo "Missing library: ${MAIN_DIR}/frameworks/common-functions.sh"
 	exit 1
 fi
 
@@ -163,8 +163,8 @@ if [ "$MODE" == "execute" ] ; then
 
    # Create R labels
    LABELS=$(createRLabels)
-   runR
-
+   runRyaml
+   read R
    cleanupResults
 else
    executeBenchmarkBody $OPTION 1 1
