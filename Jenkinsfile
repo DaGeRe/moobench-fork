@@ -39,7 +39,7 @@ pipeline {
 
     stage('Compile') {
        steps {
-          sh './gradlew build'
+          sh './setup.sh'
        }
     }
 
