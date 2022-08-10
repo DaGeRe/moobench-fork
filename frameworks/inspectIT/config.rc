@@ -1,6 +1,6 @@
 # inspectIT configurations
 
-JAVA_BIN="/usr/bin/java"
+JAVA_BIN=`which java`
 
 RSCRIPT_PATH="${BASE_DIR}/../statistics.r"
 
