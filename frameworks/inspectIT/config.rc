@@ -1,6 +1,6 @@
 # inspectIT
 
-RSCRIPT_PATH="${BASE_DIR}/../stats.csv.r"
+RSCRIPT_PATH="${BASE_DIR}/../statistics.r"
 
 JAVA_BIN="/usr/bin/java"
 

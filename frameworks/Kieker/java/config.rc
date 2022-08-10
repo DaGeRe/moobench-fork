@@ -4,7 +4,7 @@
 # path setup
 JAVA_BIN="/usr/bin/java"
 
-RSCRIPT_PATH="${BASE_DIR}/stats.csv.r"
+RSCRIPT_PATH="${BASE_DIR}/../../statistics.r"
 
 MAIN_DIR="${BASE_DIR}/../../.."
 

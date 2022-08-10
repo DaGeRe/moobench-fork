@@ -42,28 +42,14 @@ function createRLabels() {
 }
 
 ## Generate Results file
-function runR() {
-R --vanilla --silent << EOF
-results_fn="${RAWFN}"
-outtxt_fn="${RESULTS_DIR}/results-text.txt"
-outcsv_fn="${RESULTS_DIR}/results-text.csv"
-configs.loop=${NUM_OF_LOOPS}
-configs.recursion=${RECURSION_DEPTH}
-configs.labels=c($LABELS)
-results.count=${TOTAL_NUM_OF_CALLS}
-results.skip=${TOTAL_NUM_OF_CALLS}/2
-source("${RSCRIPT_PATH}")
-EOF
-}
-
-## Generate Results file
-function runRyaml() {
+function runStatistics() {
 cat << EOF
 results_fn="${RAWFN}"
 out_yaml_fn="${RESULTS_DIR}/results.yaml"
 configs.loop=${NUM_OF_LOOPS}
 configs.recursion=${RECURSION_DEPTH}
 configs.labels=c($LABELS)
+configs.tool_id="$RESULTS_DIR}"
 results.count=${TOTAL_NUM_OF_CALLS}
 results.skip=${TOTAL_NUM_OF_CALLS}/2
 source("${RSCRIPT_PATH}")
@@ -74,6 +60,7 @@ out_yaml_fn="${RESULTS_DIR}/results.yaml"
 configs.loop=${NUM_OF_LOOPS}
 configs.recursion=${RECURSION_DEPTH}
 configs.labels=c($LABELS)
+configs.tool_id="$RESULTS_DIR}"
 results.count=${TOTAL_NUM_OF_CALLS}
 results.skip=${TOTAL_NUM_OF_CALLS}/2
 source("${RSCRIPT_PATH}")
