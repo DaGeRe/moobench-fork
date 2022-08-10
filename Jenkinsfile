@@ -18,7 +18,6 @@ pipeline {
   environment {
     KEYSTORE = credentials('kieker-irl-key')
     UPDATE_SITE_URL = "sftp://repo@repo.se.internal/moobench"
-    BASE_DIR = "frameworks/Kieker"
 
     DOCKER_ARGS = ''
   }
@@ -45,9 +44,9 @@ pipeline {
 
     stage('Run Benchmark') {
        steps {
-          sh '${BASE_DIR}/frameworks/Kieker/java/benchmark.sh'
-          sh '${BASE_DIR}/frameworks/OpenTelementry/benchmark.sh'
-          sh '${BASE_DIR}/frameworks/inspectIT/benchmark.sh'
+          sh './frameworks/Kieker/java/benchmark.sh'
+          sh './frameworks/OpenTelementry/benchmark.sh'
+          sh './frameworks/inspectIT/benchmark.sh'
        }
     }
     
