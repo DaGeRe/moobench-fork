@@ -24,7 +24,7 @@ function startJaeger {
         tar -xvf jaeger-1.24.0-linux-amd64.tar.gz
         rm jaeger-1.24.0-linux-amd64.tar.gz
     fi
-    
+
     cd "${BASE_DIR}/jaeger-1.24.0-linux-amd64"
     "${BASE_DIR}/jaeger-1.24.0-linux-amd64/jaeger-all-in-one" &> "${BASE_DIR}/jaeger-1.24.0-linux-amd64/jaeger.log" &
     cd "${BASE_DIR}"
@@ -81,8 +81,9 @@ function runOpenTelemetryLogging {
         ${MORE_PARAMS} &> "${RESULTS_DIR}/output_${i}_${RECURSION_DEPTH}_${k}.txt"
     if [ ! "$DEBUG" = true ]
     then
-        echo "DEBUG is $DEBUG, deleting opentelemetry logging file"
-        rm ${RESULTS_DIR}/output_"$i"_"$RECURSION_DEPTH"_$k.txt
+        rm "${RESULTS_DIR}/output_${i}_${RECURSION_DEPTH}_${k}.txt"
+    else
+        debug "Keeping opentelemetry logging file"
     fi
 }
 

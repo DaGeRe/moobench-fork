@@ -72,10 +72,10 @@ function executeBenchmarkBody() {
   loop="$2"
   recursion="$3"
   if [[ "${RECEIVER[$index]}" ]] ; then
-     echo "receiver ${RECEIVER[$index]}"
+     debug "receiver ${RECEIVER[$index]}"
      ${RECEIVER[$index]} >> "${DATA_DIR}/kieker.receiver-${loop}-${index}.log" &
      RECEIVER_PID=$!
-     echo "PID $RECEIVER_PID"
+     debug "PID ${RECEIVER_PID}"
   fi
 
   executeExperiment "$loop" "$recursion" "$index" "${TITLE[$index]}" "${WRITER_CONFIG[$index]}"
