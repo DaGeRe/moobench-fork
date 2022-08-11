@@ -63,6 +63,7 @@ checkExecutable java "${JAVA_BIN}"
 checkFile R-script "${RSCRIPT_PATH}"
 checkFile opentelemetry-agent "${AGENT_JAR}"
 
+showParameter
 
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 info "Experiment will take circa ${TIME} seconds."

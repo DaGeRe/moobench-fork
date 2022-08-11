@@ -208,6 +208,20 @@ function checkDirectory() {
 	fi
 }
 
+function showParameter() {
+	info "FRAMEWORK_NAME ${FRAMEWORK_NAME}"
+	info "RESULTS_DIR ${RESULTS_DIR}"
+	info "RAWFN ${RAWFN}"
+	info "JAVA_BIN ${JAVA_BIN}"
+	info "SLEEP_TIME ${SLEEP_TIME}"
+	info "NUM_OF_LOOPS ${NUM_OF_LOOPS}"
+	info "THREADS ${THREADS}"
+	info "RECURSION_DEPTH ${RECURSION_DEPTH}"
+	info "TOTAL_NUM_OF_CALLS ${TOTAL_NUM_OF_CALLS}"
+	info "METHOD_TIME ${METHOD_TIME}"
+	info "DEBUG ${DEBUG}"
+}
+
 FRAMEWORK_NAME=$(basename -- "${BASE_DIR}")
 RESULTS_DIR="${BASE_DIR}/results-${FRAMEWORK_NAME}"
 RAWFN="${RESULTS_DIR}/raw"
