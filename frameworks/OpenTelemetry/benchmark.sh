@@ -122,4 +122,5 @@ mv "${BASE_DIR}/OpenTelemetry.log" "${RESULTS_DIR}/OpenTelemetry.log"
 [ -f "${RESULTS_DIR}/hotspot-1-${RECURSION_DEPTH}-1.log" ] && grep "<task " "${RESULTS_DIR}/"hotspot-*.log > "${RESULTS_DIR}/OpenTelemetry.log"
 [ -f "${BASE_DIR}/errorlog.txt" ] && mv "${BASE_DIR}/errorlog.txt" "${RESULTS_DIR}"
 
+exit 0
 # end

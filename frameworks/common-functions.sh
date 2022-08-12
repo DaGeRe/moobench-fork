@@ -43,6 +43,11 @@ function createRLabels() {
 
 ## Generate Results file
 function runStatistics() {
+if [ "${TOTAL_NUM_OF_CALLS}" == 1 ] ; then
+   export SKIP=0
+else
+   export SKIP=${TOTAL_NUM_OF_CALLS}/2
+fi
 R --vanilla --silent << EOF
 results_fn="${RAWFN}"
 out_yaml_fn="${RESULTS_DIR}/results.yaml"
@@ -51,7 +56,7 @@ configs.recursion=${RECURSION_DEPTH}
 configs.labels=c($LABELS)
 configs.framework_name="${FRAMEWORK_NAME}"
 results.count=${TOTAL_NUM_OF_CALLS}
-results.skip=${TOTAL_NUM_OF_CALLS}/2
+results.skip=${SKIP}
 source("${RSCRIPT_PATH}")
 EOF
 }
