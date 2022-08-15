@@ -62,13 +62,12 @@ checkDirectory results-directory "${RESULTS_DIR}" recreate
 checkExecutable java "${JAVA_BIN}"
 checkFile R-script "${RSCRIPT_PATH}"
 
+showParameter
 
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 info "Experiment will take circa ${TIME} seconds."
 
-JAVA_ARGS="-server"
-JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx2G"
-JAVA_ARGS="${JAVA_ARGS} -verbose:gc "
+JAVA_ARGS="-Xms1G -Xmx2G -verbose:gc"
 
 JAVA_ARGS_NOINSTR="${JAVA_ARGS}"
 JAVA_ARGS_LTW="${JAVA_ARGS} -javaagent:${BASE_DIR}/agent/inspectit-ocelot-agent-1.11.1.jar -Djava.util.logging.config.file=${BASE_DIR}/config/logging.properties"
@@ -77,8 +76,6 @@ JAVA_ARGS_INSPECTIT_NULLWRITER="${JAVA_ARGS_LTW} -Dinspectit.service-name=mooben
 JAVA_ARGS_INSPECTIT_ZIPKIN="${JAVA_ARGS_LTW} -Dinspectit.service-name=moobench-inspectit -Dinspectit.exporters.metrics.prometheus.enabled=false -Dinspectit.exporters.tracing.zipkin.url=http://127.0.0.1:9411/api/v2/spans -Dinspectit.config.file-based.path=${BASE_DIR}/config/zipkin/"
 JAVA_ARGS_INSPECTIT_PROMETHEUS="${JAVA_ARGS_LTW} -Dinspectit.service-name=moobench-inspectit -Dinspectit.exporters.metrics.zipkin.enabled=false -Dinspectit.exporters.metrics.prometheus.enabled=true -Dinspectit.config.file-based.path=${BASE_DIR}/config/prometheus/"
 
-info "RESULTS_DIR: ${RESULTS_DIR}"
-info "RAWFN: $RAWFN"
 writeConfiguration
 
 #

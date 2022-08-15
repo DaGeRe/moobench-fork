@@ -43,6 +43,11 @@ function createRLabels() {
 
 ## Generate Results file
 function runStatistics() {
+if [ "${TOTAL_NUM_OF_CALLS}" == 1 ] ; then
+   export SKIP=0
+else
+   export SKIP=${TOTAL_NUM_OF_CALLS}/2
+fi
 R --vanilla --silent << EOF
 results_fn="${RAWFN}"
 out_yaml_fn="${RESULTS_DIR}/results.yaml"
@@ -51,7 +56,7 @@ configs.recursion=${RECURSION_DEPTH}
 configs.labels=c($LABELS)
 configs.framework_name="${FRAMEWORK_NAME}"
 results.count=${TOTAL_NUM_OF_CALLS}
-results.skip=${TOTAL_NUM_OF_CALLS}/2
+results.skip=${SKIP}
 source("${RSCRIPT_PATH}")
 EOF
 }
@@ -107,7 +112,7 @@ function writeConfiguration() {
 
 function printIntermediaryResults {
    for ((index=0;index<${#TITLE[@]};index+=1)); do
-      echo -n "Intermediary results "${TITLE[$index]}" "
+      info_n "Intermediary results "${TITLE[$index]}" "
       cat ${RAWFN}-*-${RECURSION_DEPTH}-${index}.csv | awk -F';' '{print $2}' | getSum
    done
 }
@@ -143,6 +148,10 @@ function warn() {
 
 function info() {
 	echo -e "${INFO} $@"
+}
+
+function info_n() {
+	echo -n -e "${INFO} $@"
 }
 
 function debug() {
@@ -206,6 +215,20 @@ function checkDirectory() {
 			mkdir -p "$2"
 		fi
 	fi
+}
+
+function showParameter() {
+	info "FRAMEWORK_NAME ${FRAMEWORK_NAME}"
+	info "RESULTS_DIR ${RESULTS_DIR}"
+	info "RAWFN ${RAWFN}"
+	info "JAVA_BIN ${JAVA_BIN}"
+	info "SLEEP_TIME ${SLEEP_TIME}"
+	info "NUM_OF_LOOPS ${NUM_OF_LOOPS}"
+	info "THREADS ${THREADS}"
+	info "RECURSION_DEPTH ${RECURSION_DEPTH}"
+	info "TOTAL_NUM_OF_CALLS ${TOTAL_NUM_OF_CALLS}"
+	info "METHOD_TIME ${METHOD_TIME}"
+	info "DEBUG ${DEBUG}"
 }
 
 FRAMEWORK_NAME=$(basename -- "${BASE_DIR}")

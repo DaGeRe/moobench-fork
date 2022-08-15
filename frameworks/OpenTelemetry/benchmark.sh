@@ -63,13 +63,12 @@ checkExecutable java "${JAVA_BIN}"
 checkFile R-script "${RSCRIPT_PATH}"
 checkFile opentelemetry-agent "${AGENT_JAR}"
 
+showParameter
 
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 info "Experiment will take circa ${TIME} seconds."
 
-JAVA_ARGS="-server"
-JAVA_ARGS="${JAVA_ARGS} -Xms1G -Xmx2G"
-JAVA_ARGS="${JAVA_ARGS} -verbose:gc "
+JAVA_ARGS="-Xms1G -Xmx2G -verbose:gc"
 
 JAVA_ARGS_NOINSTR="${JAVA_ARGS}"
 JAVA_ARGS_OPENTELEMETRY_BASIC="${JAVA_ARGS} -javaagent:${AGENT_JAR} -Dotel.resource.attributes=service.name=moobench -Dotel.instrumentation.methods.include=moobench.application.MonitoredClassSimple[monitoredMethod];moobench.application.MonitoredClassThreaded[monitoredMethod]"
@@ -123,4 +122,5 @@ mv "${BASE_DIR}/OpenTelemetry.log" "${RESULTS_DIR}/OpenTelemetry.log"
 [ -f "${RESULTS_DIR}/hotspot-1-${RECURSION_DEPTH}-1.log" ] && grep "<task " "${RESULTS_DIR}/"hotspot-*.log > "${RESULTS_DIR}/OpenTelemetry.log"
 [ -f "${BASE_DIR}/errorlog.txt" ] && mv "${BASE_DIR}/errorlog.txt" "${RESULTS_DIR}"
 
+exit 0
 # end
