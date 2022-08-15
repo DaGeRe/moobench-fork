@@ -2,25 +2,63 @@
 # standard import
 import sys
 import time
+import configparser
+import re
 # instrumentation
-import tools.aspect
+
 # read argumetns
-total_calls =int(sys.argv[1])
-recursion_depth = int(sys.argv[2])
-method_time = int(sys.argv[3])
-ini_path = sys.argv[4]
+if len(sys.argv) < 2:
+    print('Path to the benchmark configuration file was not provided.')
 
 
+
+parser = configparser.ConfigParser()
+parser.read(sys.argv[1])
+
+total_calls =int(parser.get('Benchmark','total_calls'))
+recursion_depth = int(parser.get('Benchmark','recursion_depth'))
+method_time = int(parser.get('Benchmark','method_time'))
+ini_path = parser.get('Benchmark','config_path')
+inactive = parser.getboolean('Benchmark', 'inactive')
+instrumentation_on = parser.getboolean('Benchmark', 'instrumentation_on')
+approach = parser.getint('Benchmark', 'approach')
+
+print(f"total_cals = {total_calls}")
+print(f"recurison_depth = {recursion_depth}")
+print(f"method_time = {method_time}")
 
 # instrument
 from monitoring.controller import SingleMonitoringController
 from tools.importhookast import InstrumentOnImportFinder
+from tools.importhook import PostImportFinder
 ex =[]
 #sys.path.append("/home/serafim/Desktop/moo")
 some_var = SingleMonitoringController(ini_path)
-sys.meta_path.insert(0, InstrumentOnImportFinder(ignore_list=ex, debug_on=True))
+if instrumentation_on:
+    print ('Instrumentation is on.')
+    if approach == 2:
+        print("2nd instrumentation approach is chosen")
+        if not inactive:
+            print("Instrumentation is activated")
+        else:
+            print("Instrumentation is not activated")
+        
+        sys.meta_path.insert(0, InstrumentOnImportFinder(ignore_list=ex, empty=inactive, debug_on=True))
+    else:
+        print("1st instrumentation approach is chosen")
+        if not inactive:
+            print("Instrumentation is activated")
+        else:
+            print("Instrumentation is not activated")
+        pattern_object = re.compile('moo')
+        exclude_modules = list()
+        sys.meta_path.insert(0, PostImportFinder(pattern_object, exclude_modules, empty = inactive))
+else:
+    print('Instrumentation is off')
 import moo
-print(moo.__dict__)
+
+
+
 
 start_ns = 0
 stop_ns = 0
