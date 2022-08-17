@@ -9,102 +9,181 @@ fi
 
 
 function getAgent() {
-	info "Checking whether Kieker is present in ${AGENT}"
-	if [ ! -f "${AGENT}" ] ; then
-		# get agent
-		export VERSION_PATH=`curl "https://oss.sonatype.org/service/local/repositories/snapshots/content/net/kieker-monitoring/kieker/" | grep '<resourceURI>' | sed 's/ *<resourceURI>//g' | sed 's/<\/resourceURI>//g' | grep '/$' | grep -v ".xml" | head -n 1`
-		export AGENT_PATH=`curl "${VERSION_PATH}" | grep 'aspectj.jar</resourceURI' | sort | sed 's/ *<resourceURI>//g' | sed 's/<\/resourceURI>//g' | tail -1`
-		curl "${AGENT_PATH}" > "${AGENT}"
+	info "Setup Kieker4Python"
+	
+	checkExecutable python "${PYHTON}"
+	checkExecutable pip "${PIP}"
+	checkExecutbale git "${GIT}"
 
-		if [ ! -f "${AGENT}" ] || [ -s "${AGENT}" ] ; then
-			error "Kieker download from $AGENT_PATH failed; please asure that a correct Kieker AspectJ file is present!"
-		fi
-	fi
+	"${GIT}" clone "${KIEKER_4_PYTHON_REPO_URL}"
+	checkDirectory kieker-python "${KIEKER_4_PYTHON_DIR}"
+	cd "${KIEKER_4_PYTHON_DIR}"
+	"${PYTHON}" -m build
+	"${PIP}" install dist/kieker-monitoring-for-python-0.0.1.tar.gz
+	cd "${BASE_DIR}"
 }
 
 # experiment setups
 
 #################################
 # function: execute an experiment
-#
-# $1 = i iterator
-# $2 = j iterator
-# $3 = k iterator
-# $4 = title
-# $5 = writer parameters
-function executeExperiment() {
-    loop="$1"
-    recursion="$2"
-    index="$3"
-    title="$4"
-    kieker_parameters="$5"
 
-    info " # ${loop}.${recursion}.${index} ${title}"
-    echo " # ${loop}.${recursion}.${index} ${title}" >> "${DATA_DIR}/kieker.log"
+function createConfig() {
+    inactive="$1"
+    instrument="$2"
+    approach="$3"
+cat > config.ini << EOF
+[Benchmark]
+total_calls = ${TOTAL_NUM_OF_CALLS}
+recursion_depth = ${RECURSION_DEPTH} 
+method_time = ${METHOD_TIME}
+config_path = ${BASE_DIR}/monitoring.ini
+inactive = $inactive
+instrumentation_on = $instrument
+approach = $appraoch
+EOF
+}
 
-    if [  "${kieker_parameters}" == "" ] ; then
-       export BENCHMARK_OPTS="${JAVA_ARGS}"
-    else
-       export BENCHMARK_OPTS="${JAVA_ARGS} ${LTW_ARGS} ${KIEKER_ARGS} ${kieker_parameters}"
-    fi
+function createMonitoring() {
+    mode="$1"
+cat > monitoring.ini << EOF
+[Main]
+mode = ${mode}
 
-    debug "Run options: ${BENCHMARK_OPTS}"
+[Tcp]
+host = 127.0.0.1
+port = 5678
+connection_timeout = 10
 
-    "${MOOBENCH_BIN}" \
-	--application moobench.application.MonitoredClassSimple \
-        --output-filename "${RAWFN}-${loop}-${recursion}-${index}.csv" \
-        --total-calls "${TOTAL_NUM_OF_CALLS}" \
-        --method-time "${METHOD_TIME}" \
-        --total-threads 1 \
-        --recursion-depth "${recursion}" &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
+[FileWriter]
+file_path = ${DATA_DIR}
+EOF
+}
+
+function noInstrumentation() {
+    index="$1"
+    loop="$2"
+    
+    info " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}"
+    echo " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}" >> "${DATA_DIR}/kieker.log"
+  
+    createConfig True False 1
+  
+    "${PYTHON}" benchmark.py # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
 
     rm -rf "${DATA_DIR}"/kieker-*
 
-    [ -f "${DATA_DIR}/hotspot.log" ] && mv "${DATA_DIR}/hotspot.log" "${RESULTS_DIR}/hotspot-${loop}-${recursion}-${index}.log"
     echo >> "${DATA_DIR}/kieker.log"
     echo >> "${DATA_DIR}/kieker.log"
     sync
     sleep "${SLEEP_TIME}"
 }
 
-function executeBenchmarkBody() {
-  index="$1"
-  loop="$2"
-  recursion="$3"
-  if [[ "${RECEIVER[$index]}" ]] ; then
-     debug "receiver ${RECEIVER[$index]}"
-     ${RECEIVER[$index]} >> "${DATA_DIR}/kieker.receiver-${loop}-${index}.log" &
-     RECEIVER_PID=$!
-     debug "PID ${RECEIVER_PID}"
-  fi
+function dactivatedProbe() {
+    index="$1"
+    loop="$2"
+    approach="$3"
+    
+    info " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}"
+    echo " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}" >> "${DATA_DIR}/kieker.log"
+  
+    createMonitoring dummy
+    createConfig True True ${approach}
+  
+    "${PYTHON}" benchmark.py # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
 
-  executeExperiment "$loop" "$recursion" "$index" "${TITLE[$index]}" "${WRITER_CONFIG[$index]}"
+    rm -rf "${DATA_DIR}"/kieker-*
 
-  if [[ "${RECEIVER_PID}" ]] ; then
-     kill -TERM "${RECEIVER_PID}"
-     unset RECEIVER_PID
-  fi
+    echo >> "${DATA_DIR}/kieker.log"
+    echo >> "${DATA_DIR}/kieker.log"
+    sync
+    sleep "${SLEEP_TIME}"
+}
+
+function noLogging() {
+    index="$1"
+    loop="$2"
+    approach="$3"
+    
+    info " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}"
+    echo " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}" >> "${DATA_DIR}/kieker.log"
+    
+    createMonitoring dummy
+    createConfig False True ${approach}
+    
+    "${PYTHON}" benchmark.py # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
+
+    rm -rf "${DATA_DIR}"/kieker-*
+
+    echo >> "${DATA_DIR}/kieker.log"
+    echo >> "${DATA_DIR}/kieker.log"
+    sync
+    sleep "${SLEEP_TIME}"
+}
+
+function textLogging() {
+    index="$1"
+    loop="$2"
+    approach="$3"
+    
+    info " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}"
+    echo " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}" >> "${DATA_DIR}/kieker.log"
+
+    createMonitoring text
+    createConfig False True ${approach}
+  
+    "${PYTHON}" benchmark.py # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
+
+    rm -rf "${DATA_DIR}"/kieker-*
+
+    echo >> "${DATA_DIR}/kieker.log"
+    echo >> "${DATA_DIR}/kieker.log"
+    sync
+    sleep "${SLEEP_TIME}"
+}
+
+function tcpLogging() {
+    index="$1"
+    loop="$2"
+    approach="$3"
+    
+    info " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}"
+    echo " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}" >> "${DATA_DIR}/kieker.log"
+  
+    createMonitoring tcp
+    createConfig False True ${approach}
+  
+    "${PYTHON}" benchmark.py # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
+
+    rm -rf "${DATA_DIR}"/kieker-*
+
+    echo >> "${DATA_DIR}/kieker.log"
+    echo >> "${DATA_DIR}/kieker.log"
+    sync
+    sleep "${SLEEP_TIME}"
 }
 
 ## Execute Benchmark
 function executeBenchmark() {
   for ((loop=1;loop<="${NUM_OF_LOOPS}";loop+=1)); do
-    recursion="${RECURSION_DEPTH}"
-
     info "## Starting iteration ${loop}/${NUM_OF_LOOPS}"
     echo "## Starting iteration ${loop}/${NUM_OF_LOOPS}" >> "${DATA_DIR}/kieker.log"
 
-    for ((index=0;index<${#WRITER_CONFIG[@]};index+=1)); do
-      executeBenchmarkBody $index $loop $recursion
-    done
-
+    noInstrumentation 0 $loop
+    dactivatedProbe 1 $loop
+    dactivatedProbe 2 $loop
+    noLogging 2 $loop 1
+    noLogging 2 $loop 2
+    textLogging 3 $loop 1
+    textLogging 3 $loop 2
+    tcpLogging 4 $loop 1
+    tcpLogging 4 $loop 2
+    
     printIntermediaryResults
   done
 
   mv "${DATA_DIR}/kieker.log" "${RESULTS_DIR}/kieker.log"
-  [ -f "${RESULTS_DIR}/hotspot-1-${RECURSION_DEPTH}-1.log" ] && grep "<task " "${RESULTS_DIR}"/hotspot-*.log > "${RESULTS_DIR}/log.log"
   [ -f "${DATA_DIR}/errorlog.txt" ] && mv "${DATA_DIR}/errorlog.txt" "${RESULTS_DIR}"
 }
-
 
 # end
