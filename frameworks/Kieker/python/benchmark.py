@@ -55,7 +55,7 @@ if instrumentation_on:
         sys.meta_path.insert(0, PostImportFinder(pattern_object, exclude_modules, empty = inactive))
 else:
     print('Instrumentation is off')
-import moo
+import monitored_application
 
 
 
@@ -65,7 +65,7 @@ stop_ns = 0
 timings = []
 for i in range(total_calls):
     start_ns = time.time_ns()
-    moo.monitored_method(method_time, recursion_depth)
+    monitored_application.monitored_method(method_time, recursion_depth)
     stop_ns = time.time_ns()
     timings.append(stop_ns-start_ns)
     if i%100000 ==0:
