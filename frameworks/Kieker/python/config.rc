@@ -3,6 +3,10 @@
 PYTHON=`which python3`
 
 PIP=`which pip`
+if [ ! -f "$PIP" ] ; then
+	PIP=`which pip3`
+fi
+
 GIT=`which git`
 
 RSCRIPT_PATH="${BASE_DIR}/../../statistics.r"
