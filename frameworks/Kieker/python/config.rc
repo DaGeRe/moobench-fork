@@ -1,6 +1,11 @@
 # benchmark setup script
 
 PYTHON=`which python3`
+
+if [ ! -f $PYTHON ] ; then
+   PYTHON="/usr/bin/python3.9"
+fi
+
 PIP=`which pip`
 GIT=`which git`
 
