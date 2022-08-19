@@ -1,6 +1,5 @@
 __pycache__/**
 config.ini
-config.rc
 monitoring.ini
 data/**
 kieker-lang-pack-python/**
