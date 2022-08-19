@@ -47,6 +47,7 @@ config_path = ${BASE_DIR}/monitoring.ini
 inactive = $inactive
 instrumentation_on = $instrument
 approach = $approach
+output_filename = ${RAWFN}-${loop}-${RECURSION_DEPTH}-${index}.csv
 EOF
 }
 
@@ -76,7 +77,6 @@ function noInstrumentation() {
     createConfig True False 1
   
     "${PYTHON}" benchmark.py "${BASE_DIR}/config.ini" # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
-
 
     echo >> "${DATA_DIR}/kieker.log"
     echo >> "${DATA_DIR}/kieker.log"
@@ -178,13 +178,13 @@ function executeBenchmark() {
 
     noInstrumentation 0 $loop
     dactivatedProbe 1 $loop 1
-    dactivatedProbe 1 $loop 2
-    noLogging 2 $loop 1
-    noLogging 2 $loop 2
-    textLogging 3 $loop 1
-    textLogging 3 $loop 2
-    tcpLogging 4 $loop 1
-    tcpLogging 4 $loop 2
+    dactivatedProbe 2 $loop 2
+    noLogging 3 $loop 1
+    noLogging 4 $loop 2
+    textLogging 5 $loop 1
+    textLogging 6 $loop 2
+    tcpLogging 7 $loop 1
+    tcpLogging 8 $loop 2
     
     printIntermediaryResults
   done

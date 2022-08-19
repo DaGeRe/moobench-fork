@@ -76,8 +76,6 @@ showParameter
 TIME=`expr ${METHOD_TIME} \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} + ${SLEEP_TIME} \* 4 \* ${NUM_OF_LOOPS}  \* ${RECURSION_DEPTH} + 50 \* ${TOTAL_NUM_OF_CALLS} / 1000000000 \* 4 \* ${RECURSION_DEPTH} \* ${NUM_OF_LOOPS} `
 info "Experiment will take circa ${TIME} seconds."
 
-# JAVA_ARGS used to configure and setup a specific writer
-declare -a WRITER_CONFIG
 # Receiver setup if necessary
 declare -a RECEIVER
 # Title
@@ -115,7 +113,10 @@ info "----------------------------------"
 
 executeBenchmark
 
-# cleanup
+# Create R labels
+LABELS=$(createRLabels)
+runStatistics
+cleanupResults
 
 info "Done."
 

@@ -44,21 +44,6 @@ else
 	echo "Missing file: ${BASE_DIR}/labels.sh"
 	exit 1
 fi
-
-#
-# check command line parameters
-#
-if [ "$1" == "" ] ; then
-	MODE="execute"
-else
-	if [ "$1" == "execute" ] ; then
-		MODE="execute"
-	else
-		mode="test"
-	fi
-	OPTION="$2"
-fi
-
 #
 # Setup
 #
@@ -72,24 +57,23 @@ cd "${BASE_DIR}"
 # load agent
 getAgent
 
+checkDirectory data-dir "${DATA_DIR}" create
+checkDirectory results-directory "${RESULTS_DIR}" recreate
+PARENT=`dirname "${RESULTS_DIR}"`
+checkDirectory result-base "${PARENT}"
+
 # Find receiver and extract it
 checkFile receiver "${RECEIVER_ARCHIVE}"
 tar -xpf "${RECEIVER_ARCHIVE}"
 RECEIVER_BIN="${BASE_DIR}/receiver/bin/receiver"
+checkExecutable receiver "${RECEIVER_BIN}"
 
-PARENT=`dirname "${RESULTS_DIR}"`
-
-checkDirectory DATA_DIR "${DATA_DIR}" create
-checkDirectory result-base "${PARENT}"
 checkFile ApsectJ-Agent "${AGENT}"
-checkExecutable Receiver "${RECEIVER_BIN}"
-checkFile Labels "${BASE_DIR}/labels.sh"
 checkFile R-script "${RSCRIPT_PATH}"
-checkDirectory results-directory "${RESULTS_DIR}" recreate
 checkFile log "${DATA_DIR}/kieker.log" clean
+
 checkExecutable java "${JAVA_BIN}"
 checkExecutable moobench "${MOOBENCH_BIN}"
-checkExecutable receiver "${RECEIVER_BIN}"
 checkFile aop-file "${AOP}"
 
 showParameter
@@ -153,20 +137,12 @@ info "----------------------------------"
 info "Running benchmark..."
 info "----------------------------------"
 
-if [ "$MODE" == "execute" ] ; then
-   if [ "$OPTION" == "" ] ; then
-     executeBenchmark
-   else
-     executeBenchmarkBody $OPTION 1 1
-   fi
+executeBenchmark
 
-   # Create R labels
-   LABELS=$(createRLabels)
-   runStatistics
-   cleanupResults
-else
-   executeBenchmarkBody $OPTION 1 1
-fi
+# Create R labels
+LABELS=$(createRLabels)
+runStatistics
+cleanupResults
 
 info "Done."
 
