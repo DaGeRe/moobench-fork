@@ -1,5 +1,10 @@
-__pycache__ /**
+__pycache__/**
 config.ini
 config.rc
 monitoring.ini
+data/**
+kieker-lang-pack-python/**
+receiver/**
+record-map.log
+results-python/**
 
