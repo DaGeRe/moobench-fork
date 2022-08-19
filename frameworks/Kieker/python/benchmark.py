@@ -23,7 +23,7 @@ inactive = parser.getboolean('Benchmark', 'inactive')
 instrumentation_on = parser.getboolean('Benchmark', 'instrumentation_on')
 approach = parser.getint('Benchmark', 'approach')
 
-print(f"total_cals = {total_calls}")
+print(f"total_calls = {total_calls}")
 print(f"recurison_depth = {recursion_depth}")
 print(f"method_time = {method_time}")
 
@@ -32,7 +32,6 @@ from monitoring.controller import SingleMonitoringController
 from tools.importhookast import InstrumentOnImportFinder
 from tools.importhook import PostImportFinder
 ex =[]
-#sys.path.append("/home/serafim/Desktop/moo")
 some_var = SingleMonitoringController(ini_path)
 if instrumentation_on:
     print ('Instrumentation is on.')

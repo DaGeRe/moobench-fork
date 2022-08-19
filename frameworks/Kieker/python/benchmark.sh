@@ -113,7 +113,7 @@ info "----------------------------------"
 info "Running benchmark..."
 info "----------------------------------"
 
-benchmark
+executeBenchmark
 
 # cleanup
 

@@ -11,13 +11,19 @@ fi
 function getAgent() {
 	info "Setup Kieker4Python"
 	
-	checkExecutable python "${PYHTON}"
+	checkExecutable python "${PYTHON}"
 	checkExecutable pip "${PIP}"
-	checkExecutbale git "${GIT}"
+	checkExecutable git "${GIT}"
 
+	# note: if it already exists
+	if [ -d "${KIEKER_4_PYTHON_DIR}" ] ; then
+		rm -rf "${KIEKER_4_PYTHON_DIR}"
+	fi
 	"${GIT}" clone "${KIEKER_4_PYTHON_REPO_URL}"
 	checkDirectory kieker-python "${KIEKER_4_PYTHON_DIR}"
 	cd "${KIEKER_4_PYTHON_DIR}"
+	
+	"${GIT}" checkout "${KIEKER_4_PYTHON_BRANCH}"
 	"${PYTHON}" -m build
 	"${PIP}" install dist/kieker-monitoring-for-python-0.0.1.tar.gz
 	cd "${BASE_DIR}"
@@ -32,7 +38,7 @@ function createConfig() {
     inactive="$1"
     instrument="$2"
     approach="$3"
-cat > config.ini << EOF
+cat > "${BASE_DIR}/config.ini" << EOF
 [Benchmark]
 total_calls = ${TOTAL_NUM_OF_CALLS}
 recursion_depth = ${RECURSION_DEPTH} 
@@ -40,13 +46,13 @@ method_time = ${METHOD_TIME}
 config_path = ${BASE_DIR}/monitoring.ini
 inactive = $inactive
 instrumentation_on = $instrument
-approach = $appraoch
+approach = $approach
 EOF
 }
 
 function createMonitoring() {
     mode="$1"
-cat > monitoring.ini << EOF
+cat > "${BASE_DIR}/monitoring.ini" << EOF
 [Main]
 mode = ${mode}
 
@@ -56,7 +62,7 @@ port = 5678
 connection_timeout = 10
 
 [FileWriter]
-file_path = ${DATA_DIR}
+file_path = ${DATA_DIR}/kieker
 EOF
 }
 
@@ -69,9 +75,8 @@ function noInstrumentation() {
   
     createConfig True False 1
   
-    "${PYTHON}" benchmark.py # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
+    "${PYTHON}" benchmark.py "${BASE_DIR}/config.ini" # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
 
-    rm -rf "${DATA_DIR}"/kieker-*
 
     echo >> "${DATA_DIR}/kieker.log"
     echo >> "${DATA_DIR}/kieker.log"
@@ -90,9 +95,8 @@ function dactivatedProbe() {
     createMonitoring dummy
     createConfig True True ${approach}
   
-    "${PYTHON}" benchmark.py # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
+    "${PYTHON}" benchmark.py "${BASE_DIR}/config.ini" # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
 
-    rm -rf "${DATA_DIR}"/kieker-*
 
     echo >> "${DATA_DIR}/kieker.log"
     echo >> "${DATA_DIR}/kieker.log"
@@ -111,9 +115,8 @@ function noLogging() {
     createMonitoring dummy
     createConfig False True ${approach}
     
-    "${PYTHON}" benchmark.py # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
+    "${PYTHON}" benchmark.py "${BASE_DIR}/config.ini" # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
 
-    rm -rf "${DATA_DIR}"/kieker-*
 
     echo >> "${DATA_DIR}/kieker.log"
     echo >> "${DATA_DIR}/kieker.log"
@@ -132,9 +135,8 @@ function textLogging() {
     createMonitoring text
     createConfig False True ${approach}
   
-    "${PYTHON}" benchmark.py # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
+    "${PYTHON}" benchmark.py "${BASE_DIR}/config.ini" # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
 
-    rm -rf "${DATA_DIR}"/kieker-*
 
     echo >> "${DATA_DIR}/kieker.log"
     echo >> "${DATA_DIR}/kieker.log"
@@ -149,13 +151,18 @@ function tcpLogging() {
     
     info " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}"
     echo " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}" >> "${DATA_DIR}/kieker.log"
-  
+    
+    ${RECEIVER_BIN} 5678 &
+    RECEIVER_PID=$!
+    echo $RECEIVER_PID
+    sleep "${SLEEP_TIME}"
+      
     createMonitoring tcp
     createConfig False True ${approach}
   
-    "${PYTHON}" benchmark.py # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
+    "${PYTHON}" benchmark.py "${BASE_DIR}/config.ini" # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
 
-    rm -rf "${DATA_DIR}"/kieker-*
+    kill -9 $RECEIVER_PID
 
     echo >> "${DATA_DIR}/kieker.log"
     echo >> "${DATA_DIR}/kieker.log"
@@ -170,8 +177,8 @@ function executeBenchmark() {
     echo "## Starting iteration ${loop}/${NUM_OF_LOOPS}" >> "${DATA_DIR}/kieker.log"
 
     noInstrumentation 0 $loop
-    dactivatedProbe 1 $loop
-    dactivatedProbe 2 $loop
+    dactivatedProbe 1 $loop 1
+    dactivatedProbe 1 $loop 2
     noLogging 2 $loop 1
     noLogging 2 $loop 2
     textLogging 3 $loop 1
