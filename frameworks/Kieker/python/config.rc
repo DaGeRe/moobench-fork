@@ -3,7 +3,7 @@
 PYTHON=`which python3`
 
 if [ ! -f $PYTHON ] ; then
-   PYTHON="/usr/bin/python3.9"
+   PYTHON=`which python`
 fi
 
 PIP=`which pip`
