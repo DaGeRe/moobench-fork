@@ -2,10 +2,6 @@
 
 PYTHON=`which python3`
 
-if [ ! -f $PYTHON ] ; then
-   PYTHON=`which python`
-fi
-
 PIP=`which pip`
 GIT=`which git`
 
