@@ -51,16 +51,23 @@ pipeline {
        }
     }
     
-/*    stage('Upload') {
+    stage('Upload') {
        steps {
           sshagent(credentials: ['kieker-irl-key']) {
              sh '''
-                 cd ${BASE_DIR}
-	         sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}/all-results.json
-                 compile-results/bin/compile-results results-Kieker/results-text.csv all-results.json
-                 echo "put all-results.json" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
-                 echo "put partial-results.json" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
-                 echo "put relative-results.json" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
+                 cp frameworks/Kieker/python/results.yaml kieker-python-results.yaml
+                 cp frameworks/Kieker/java/results.yaml kieker-java-results.yaml
+                 cp frameworks/OpenTelemetry/results.yaml open-telementry-results.yaml
+                 cp frameworks/inpsectIT/results.yaml inspect-it-results.yaml
+                 echo "put kieker-python-results.yaml" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
+                 echo "put kieker-java-results.yaml" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
+                 echo "put open-telementry-results.yaml" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
+                 echo "put insepct-it-results.yaml" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
+//	         sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}/all-results.json
+//                 compile-results/bin/compile-results results-Kieker/results-text.csv all-results.json
+//                 echo "put all-results.json" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
+//                 echo "put partial-results.json" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
+//                 echo "put relative-results.json" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
                 '''
           }
        }
@@ -70,6 +77,6 @@ pipeline {
            cleanWs()
          }
        }
-    }*/
+    }
   }
 }
