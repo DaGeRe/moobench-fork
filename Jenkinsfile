@@ -46,19 +46,23 @@ pipeline {
        steps {
           sh './frameworks/Kieker/python/benchmark.sh'
           sh './frameworks/Kieker/java/benchmark.sh'
-          sh './frameworks/OpenTelemetry/benchmark.sh'
-          sh './frameworks/inspectIT/benchmark.sh'
+ //         sh './frameworks/OpenTelemetry/benchmark.sh'
+ //         sh './frameworks/inspectIT/benchmark.sh'
+
+          cp frameworks/Kieker/python/results.yaml kieker-python-results.yaml
+          cp frameworks/Kieker/java/results.yaml kieker-java-results.yaml
+ //         cp frameworks/OpenTelemetry/results.yaml open-telementry-results.yaml
+ //         cp frameworks/inpsectIT/results.yaml inspect-it-results.yaml
+
+          stash includes: '*-results.yaml', name: 'yaml'
        }
     }
     
     stage('Upload') {
        steps {
           sshagent(credentials: ['kieker-irl-key']) {
+             unstash 'yaml'
              sh '''
-                 cp frameworks/Kieker/python/results.yaml kieker-python-results.yaml
-                 cp frameworks/Kieker/java/results.yaml kieker-java-results.yaml
-                 cp frameworks/OpenTelemetry/results.yaml open-telementry-results.yaml
-                 cp frameworks/inpsectIT/results.yaml inspect-it-results.yaml
                  echo "put kieker-python-results.yaml" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
                  echo "put kieker-java-results.yaml" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
                  echo "put open-telementry-results.yaml" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
