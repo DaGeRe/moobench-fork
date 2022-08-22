@@ -242,7 +242,7 @@ if [ -z $SLEEP_TIME ]; then
 	SLEEP_TIME=3 #0             ## 30
 fi
 if [ -z $NUM_OF_LOOPS ]; then
-	NUM_OF_LOOPS=10           ## 10
+	NUM_OF_LOOPS=3           ## 10
 fi
 if [ -z $THREADS ]; then
 	THREADS=1                 ## 1
