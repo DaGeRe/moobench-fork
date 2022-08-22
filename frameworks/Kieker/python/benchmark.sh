@@ -113,24 +113,24 @@ info "----------------------------------"
 
 
 ## Execute Benchmark
-for ((i=1;loop<="${NUM_OF_LOOPS}";i+=1)); do
+for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
 
     info "## Starting iteration ${i}/${NUM_OF_LOOPS}"
     echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >> "${DATA_DIR}/kieker.log"
 
-    noInstrumentation 0 $loop
+    noInstrumentation 0 $i
 
-    dactivatedProbe 1 $loop 1
-    dactivatedProbe 2 $loop 2
+    dactivatedProbe 1 $i 1
+    dactivatedProbe 2 $i 2
 
-    noLogging 3 $loop 1
-    noLogging 4 $loop 2
+    noLogging 3 $i 1
+    noLogging 4 $i 2
 
-    textLogging 5 $loop 1
-    textLogging 6 $loop 2
+    textLogging 5 $i 1
+    textLogging 6 $i 2
 
-    tcpLogging 7 $loop 1
-    tcpLogging 8 $loop 2
+    tcpLogging 7 $i 1
+    tcpLogging 8 $i 2
     
     printIntermediaryResults
 done
