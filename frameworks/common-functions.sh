@@ -239,7 +239,7 @@ RAWFN="${RESULTS_DIR}/raw"
 
 # Initialize all unset parameters
 if [ -z $SLEEP_TIME ]; then
-	SLEEP_TIME=30             ## 30
+	SLEEP_TIME=3 #0             ## 30
 fi
 if [ -z $NUM_OF_LOOPS ]; then
 	NUM_OF_LOOPS=10           ## 10
@@ -251,7 +251,7 @@ if [ -z $RECURSION_DEPTH ]; then
 	RECURSION_DEPTH=10        ## 10
 fi
 if [ -z $TOTAL_NUM_OF_CALLS ]; then
-	TOTAL_NUM_OF_CALLS=2000000     ## 2000000
+	TOTAL_NUM_OF_CALLS=10 #000000     ## 2000000
 fi
 if [ -z $METHOD_TIME ]; then
 	METHOD_TIME=0             ## 500000
