@@ -25,7 +25,7 @@ function getAgent() {
 	
 	"${GIT}" checkout "${KIEKER_4_PYTHON_BRANCH}"
 	"${PYTHON}" -m pip install --upgrade build
-        "{PIP}" install decorator
+        "${PIP}" install decorator
 	"${PYTHON}" -m build
 	"${PIP}" install dist/kieker-monitoring-for-python-0.0.1.tar.gz
 	cd "${BASE_DIR}"
@@ -76,6 +76,7 @@ function noInstrumentation() {
     info " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}"
     echo " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}" >> "${DATA_DIR}/kieker.log"
   
+    createMonitoring dummy
     createConfig True False 1
   
     "${PYTHON}" benchmark.py "${BASE_DIR}/config.ini" # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
