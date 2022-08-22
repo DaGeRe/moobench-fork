@@ -25,6 +25,7 @@ function getAgent() {
 	
 	"${GIT}" checkout "${KIEKER_4_PYTHON_BRANCH}"
 	"${PYTHON}" -m pip install --upgrade build
+        "{PIP}" install decorator
 	"${PYTHON}" -m build
 	"${PIP}" install dist/kieker-monitoring-for-python-0.0.1.tar.gz
 	cd "${BASE_DIR}"
