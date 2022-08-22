@@ -88,22 +88,11 @@ function executeBenchmarkBody() {
 
 ## Execute Benchmark
 function executeBenchmark() {
-  for ((loop=1;loop<="${NUM_OF_LOOPS}";loop+=1)); do
     recursion="${RECURSION_DEPTH}"
 
-    info "## Starting iteration ${loop}/${NUM_OF_LOOPS}"
-    echo "## Starting iteration ${loop}/${NUM_OF_LOOPS}" >> "${DATA_DIR}/kieker.log"
-
     for ((index=0;index<${#WRITER_CONFIG[@]};index+=1)); do
-      executeBenchmarkBody $index $loop $recursion
+      executeBenchmarkBody $index $i $recursion
     done
-
-    printIntermediaryResults
-  done
-
-  mv "${DATA_DIR}/kieker.log" "${RESULTS_DIR}/kieker.log"
-  [ -f "${RESULTS_DIR}/hotspot-1-${RECURSION_DEPTH}-1.log" ] && grep "<task " "${RESULTS_DIR}"/hotspot-*.log > "${RESULTS_DIR}/log.log"
-  [ -f "${DATA_DIR}/errorlog.txt" ] && mv "${DATA_DIR}/errorlog.txt" "${RESULTS_DIR}"
 }
 
 

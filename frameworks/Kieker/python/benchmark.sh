@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #
-# Kieker benchmark script
+# Kieker python benchmark script
 #
-# Usage: benchmark.sh [execute|test]
+# Usage: benchmark.sh
 
 # configure base dir
 BASE_DIR=$(cd "$(dirname "$0")"; pwd)
@@ -44,6 +44,7 @@ else
 	echo "Missing file: ${BASE_DIR}/labels.sh"
 	exit 1
 fi
+
 #
 # Setup
 #
@@ -57,10 +58,11 @@ cd "${BASE_DIR}"
 # load agent
 getAgent
 
-checkDirectory data-dir "${DATA_DIR}" create
+checkFile log "${DATA_DIR}/kieker.log" clean
 checkDirectory results-directory "${RESULTS_DIR}" recreate
 PARENT=`dirname "${RESULTS_DIR}"`
 checkDirectory result-base "${PARENT}"
+checkDirectory data-dir "${DATA_DIR}" create
 
 # Find receiver and extract it
 checkFile receiver "${RECEIVER_ARCHIVE}"
@@ -69,7 +71,6 @@ RECEIVER_BIN="${BASE_DIR}/receiver/bin/receiver"
 checkExecutable receiver "${RECEIVER_BIN}"
 
 checkFile R-script "${RSCRIPT_PATH}"
-checkFile log "${DATA_DIR}/kieker.log" clean
 
 showParameter
 
@@ -98,10 +99,9 @@ METHOD_TIME=${METHOD_TIME}
 RECURSION_DEPTH=${RECURSION_DEPTH}
 EOF
 
-info "Ok"
-
 sync
 
+info "Ok"
 
 #
 # Run benchmark
@@ -111,13 +111,42 @@ info "----------------------------------"
 info "Running benchmark..."
 info "----------------------------------"
 
-executeBenchmark
+
+## Execute Benchmark
+for ((i=1;loop<="${NUM_OF_LOOPS}";i+=1)); do
+
+    info "## Starting iteration ${i}/${NUM_OF_LOOPS}"
+    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >> "${DATA_DIR}/kieker.log"
+
+    noInstrumentation 0 $loop
+
+    dactivatedProbe 1 $loop 1
+    dactivatedProbe 2 $loop 2
+
+    noLogging 3 $loop 1
+    noLogging 4 $loop 2
+
+    textLogging 5 $loop 1
+    textLogging 6 $loop 2
+
+    tcpLogging 7 $loop 1
+    tcpLogging 8 $loop 2
+    
+    printIntermediaryResults
+done
 
 # Create R labels
 LABELS=$(createRLabels)
 runStatistics
 cleanupResults
 
+mv "${DATA_DIR}/kieker.log" "${RESULTS_DIR}/kieker.log"
+[ -f "${DATA_DIR}/errorlog.txt" ] && mv "${DATA_DIR}/errorlog.txt" "${RESULTS_DIR}"
+
+checkFile results.yaml "${RESULTS_DIR}/results.yaml"
+checkFile results.yaml "${RESULTS_DIR}/results.zip"
+
 info "Done."
 
+exit 0
 # end

@@ -40,6 +40,7 @@ function createConfig() {
     inactive="$1"
     instrument="$2"
     approach="$3"
+    loop="$4"
 cat > "${BASE_DIR}/config.ini" << EOF
 [Benchmark]
 total_calls = ${TOTAL_NUM_OF_CALLS}
@@ -77,7 +78,7 @@ function noInstrumentation() {
     echo " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}" >> "${DATA_DIR}/kieker.log"
   
     createMonitoring dummy
-    createConfig True False 1
+    createConfig True False 1 $loop
   
     "${PYTHON}" benchmark.py "${BASE_DIR}/config.ini" # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
 
@@ -96,7 +97,7 @@ function dactivatedProbe() {
     echo " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}" >> "${DATA_DIR}/kieker.log"
   
     createMonitoring dummy
-    createConfig True True ${approach}
+    createConfig True True ${approach} $loop
   
     "${PYTHON}" benchmark.py "${BASE_DIR}/config.ini" # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
 
@@ -116,7 +117,7 @@ function noLogging() {
     echo " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}" >> "${DATA_DIR}/kieker.log"
     
     createMonitoring dummy
-    createConfig False True ${approach}
+    createConfig False True ${approach} $loop
     
     "${PYTHON}" benchmark.py "${BASE_DIR}/config.ini" # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
 
@@ -136,7 +137,7 @@ function textLogging() {
     echo " # ${loop}.${RECURSION_DEPTH}.${index} ${TITLE[index]}" >> "${DATA_DIR}/kieker.log"
 
     createMonitoring text
-    createConfig False True ${approach}
+    createConfig False True ${approach} $loop
   
     "${PYTHON}" benchmark.py "${BASE_DIR}/config.ini" # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
 
@@ -161,7 +162,7 @@ function tcpLogging() {
     sleep "${SLEEP_TIME}"
       
     createMonitoring tcp
-    createConfig False True ${approach}
+    createConfig False True ${approach} $loop
   
     "${PYTHON}" benchmark.py "${BASE_DIR}/config.ini" # &> "${RESULTS_DIR}/output_${loop}_${RECURSION_DEPTH}_${index}.txt"
 
@@ -171,29 +172,6 @@ function tcpLogging() {
     echo >> "${DATA_DIR}/kieker.log"
     sync
     sleep "${SLEEP_TIME}"
-}
-
-## Execute Benchmark
-function executeBenchmark() {
-  for ((loop=1;loop<="${NUM_OF_LOOPS}";loop+=1)); do
-    info "## Starting iteration ${loop}/${NUM_OF_LOOPS}"
-    echo "## Starting iteration ${loop}/${NUM_OF_LOOPS}" >> "${DATA_DIR}/kieker.log"
-
-    noInstrumentation 0 $loop
-    dactivatedProbe 1 $loop 1
-    dactivatedProbe 2 $loop 2
-    noLogging 3 $loop 1
-    noLogging 4 $loop 2
-    textLogging 5 $loop 1
-    textLogging 6 $loop 2
-    tcpLogging 7 $loop 1
-    tcpLogging 8 $loop 2
-    
-    printIntermediaryResults
-  done
-
-  mv "${DATA_DIR}/kieker.log" "${RESULTS_DIR}/kieker.log"
-  [ -f "${DATA_DIR}/errorlog.txt" ] && mv "${DATA_DIR}/errorlog.txt" "${RESULTS_DIR}"
 }
 
 # end

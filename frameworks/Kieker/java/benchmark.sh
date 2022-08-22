@@ -3,7 +3,7 @@
 #
 # Kieker benchmark script
 #
-# Usage: benchmark.sh [execute|test]
+# Usage: benchmark.sh
 
 # configure base dir
 BASE_DIR=$(cd "$(dirname "$0")"; pwd)
@@ -44,6 +44,7 @@ else
 	echo "Missing file: ${BASE_DIR}/labels.sh"
 	exit 1
 fi
+
 #
 # Setup
 #
@@ -58,6 +59,7 @@ cd "${BASE_DIR}"
 getAgent
 
 checkDirectory data-dir "${DATA_DIR}" create
+checkFile log "${DATA_DIR}/kieker.log" clean
 checkDirectory results-directory "${RESULTS_DIR}" recreate
 PARENT=`dirname "${RESULTS_DIR}"`
 checkDirectory result-base "${PARENT}"
@@ -68,13 +70,14 @@ tar -xpf "${RECEIVER_ARCHIVE}"
 RECEIVER_BIN="${BASE_DIR}/receiver/bin/receiver"
 checkExecutable receiver "${RECEIVER_BIN}"
 
+
 checkFile ApsectJ-Agent "${AGENT}"
-checkFile R-script "${RSCRIPT_PATH}"
-checkFile log "${DATA_DIR}/kieker.log" clean
+checkFile aop-file "${AOP}"
+
 
 checkExecutable java "${JAVA_BIN}"
 checkExecutable moobench "${MOOBENCH_BIN}"
-checkFile aop-file "${AOP}"
+checkFile R-script "${RSCRIPT_PATH}"
 
 showParameter
 
@@ -106,28 +109,7 @@ WRITER_CONFIG[4]="-Dkieker.monitoring.enabled=true -Dkieker.monitoring.writer=ki
 WRITER_CONFIG[5]="-Dkieker.monitoring.writer=kieker.monitoring.writer.tcp.SingleSocketTcpWriter -Dkieker.monitoring.writer.tcp.SingleSocketTcpWriter.port=2345"
 RECEIVER[5]="${RECEIVER_BIN} 2345"
 
-#
-# Write configuration
-#
-
-uname -a > "${RESULTS_DIR}/configuration.txt"
-"${JAVA_BIN}" "${JAVA_ARGS}" -version 2>> "${RESULTS_DIR}/configuration.txt"
-cat << EOF >> "${RESULTS_DIR}/configuration.txt"
-JAVA_ARGS: ${JAVA_ARGS}
-
-Runtime: circa ${TIME} seconds
-
-SLEEP_TIME=${SLEEP_TIME}
-NUM_OF_LOOPS=${NUM_OF_LOOPS}
-TOTAL_NUM_OF_CALLS=${TOTAL_NUM_OF_CALLS}
-METHOD_TIME=${METHOD_TIME}
-RECURSION_DEPTH=${RECURSION_DEPTH}
-EOF
-
-info "Ok"
-
-sync
-
+writeConfiguration
 
 #
 # Run benchmark
@@ -137,13 +119,30 @@ info "----------------------------------"
 info "Running benchmark..."
 info "----------------------------------"
 
-executeBenchmark
+for ((i=1;loop<="${NUM_OF_LOOPS}";i+=1)); do
+
+    info "## Starting iteration ${i}/${NUM_OF_LOOPS}"
+    echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >> "${DATA_DIR}/kieker.log"
+
+    executeBenchmark    
+
+    printIntermediaryResults
+done
 
 # Create R labels
 LABELS=$(createRLabels)
 runStatistics
+
 cleanupResults
+
+mv "${DATA_DIR}/kieker.log" "${RESULTS_DIR}/kieker.log"
+[ -f "${RESULTS_DIR}/hotspot-1-${RECURSION_DEPTH}-1.log" ] && grep "<task " "${RESULTS_DIR}/"hotspot-*.log > "${RESULTS_DIR}/java.log"
+[ -f "${DATA_DIR}/errorlog.txt" ] && mv "${DATA_DIR}/errorlog.txt" "${RESULTS_DIR}"
+
+checkFile results.yaml "${RESULTS_DIR}/results.yaml"
+checkFile results.yaml "${RESULTS_DIR}/results.zip"
 
 info "Done."
 
+exit 0
 # end
