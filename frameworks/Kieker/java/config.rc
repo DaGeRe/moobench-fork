@@ -1,6 +1,8 @@
 ##
 # MooBench configuration parameter
 
+source ${MAIN_DIR}/config.rc
+
 # path setup
 JAVA_BIN=`which java`
 

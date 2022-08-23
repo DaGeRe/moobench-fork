@@ -1,5 +1,7 @@
 # benchmark setup script
 
+source ${MAIN_DIR}/config.rc
+
 PYTHON=`which python3`
 
 PIP=`which pip`
@@ -11,7 +13,6 @@ GIT=`which git`
 
 RSCRIPT_PATH="${BASE_DIR}/../../statistics.r"
 
-MAIN_DIR="${BASE_DIR}/../../.."
 DATA_DIR="${BASE_DIR}/data"
 
 KIEKER_4_PYTHON_REPO_URL="https://github.com/rju/kieker-lang-pack-python.git"

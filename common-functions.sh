@@ -238,24 +238,12 @@ RESULTS_DIR="${BASE_DIR}/results-${FRAMEWORK_NAME}"
 RAWFN="${RESULTS_DIR}/raw"
 
 # Initialize all unset parameters
-if [ -z $SLEEP_TIME ]; then
-	SLEEP_TIME=30             ## 30
-fi
-if [ -z $NUM_OF_LOOPS ]; then
-	NUM_OF_LOOPS=10           ## 10
-fi
-if [ -z $THREADS ]; then
-	THREADS=1                 ## 1
-fi
-if [ -z $RECURSION_DEPTH ]; then
-	RECURSION_DEPTH=10        ## 10
-fi
-if [ -z $TOTAL_NUM_OF_CALLS ]; then
-	TOTAL_NUM_OF_CALLS=2000000     ## 2000000
-fi
-if [ -z $METHOD_TIME ]; then
-	METHOD_TIME=0             ## 500000
-fi
-if [ -z $DEBUG ]; then
-	DEBUG=false	  	  ## false
-fi
+SLEEP_TIME=30              ## 30
+NUM_OF_LOOPS=10            ## 10
+THREADS=1                  ## 1
+RECURSION_DEPTH=10         ## 10
+TOTAL_NUM_OF_CALLS=2000000 ## 2 000 000
+METHOD_TIME=0              ## 500 000
+DEBUG=false	  	   ## false
+
+# end

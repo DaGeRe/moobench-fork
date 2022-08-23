@@ -1,5 +1,7 @@
 # OpenTelementry configuration
 
+source ${MAIN_DIR}/config.rc
+
 JAVA_BIN=`which java`
 
 RSCRIPT_PATH="${BASE_DIR}/../statistics.r"

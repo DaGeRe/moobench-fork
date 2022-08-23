@@ -1,0 +1,8 @@
+export SLEEP_TIME=30
+export NUM_OF_LOOPS=10
+export THREADS=1
+export RECURSION_DEPTH=10
+export TOTAL_NUM_OF_CALLS=200000
+export METHOD_TIME=0
+export DEBUG=false
+

@@ -17,18 +17,20 @@ if [ ! -d "${BASE_DIR}" ] ; then
 	exit 1
 fi
 
+MAIN_DIR="${BASE_DIR}/../.."
+
+if [ -f "${MAIN_DIR}/common-functions.sh" ] ; then
+	source "${MAIN_DIR}/common-functions.sh"
+else
+	echo "Missing library: ${MAIN_DIR}/common-functions.sh"
+	exit 1
+fi
+
 # load configuration and common functions
 if [ -f "${BASE_DIR}/config.rc" ] ; then
 	source "${BASE_DIR}/config.rc"
 else
 	echo "Missing configuration: ${BASE_DIR}/config.rc"
-	exit 1
-fi
-
-if [ -f "${BASE_DIR}/../common-functions.sh" ] ; then
-	source "${BASE_DIR}/../common-functions.sh"
-else
-	echo "Missing library: ${BASE_DIR}/../common-functions.sh"
 	exit 1
 fi
 
