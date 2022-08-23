@@ -25,10 +25,10 @@ else
         exit 1
 fi
 
-if [ -f "${BASE_DIR}/frameworks/common-functions.sh" ] ; then
-        source "${BASE_DIR}/frameworks/common-functions.sh"
+if [ -f "${BASE_DIR}/common-functions.sh" ] ; then
+        source "${BASE_DIR}/common-functions.sh"
 else
-        echo "Missing library: ${BASE_DIR}/frameworks/common-functions.sh"
+        echo "Missing library: ${BASE_DIR}/common-functions.sh"
         exit 1
 fi
 
