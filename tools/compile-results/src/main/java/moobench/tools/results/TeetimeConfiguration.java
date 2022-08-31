@@ -1,5 +1,7 @@
 package moobench.tools.results;
 
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,29 +14,29 @@ import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 public class TeetimeConfiguration extends Configuration {
 
 	public TeetimeConfiguration(Settings settings) {
-		MainLogReader mainLogReader = new MainLogReader(settings.getMainLogJson());
-		MappingFileReader mappingFileReader = new MappingFileReader(settings.getMappingFile());
-		SpecialArrayElementStage arrayElementStage = new SpecialArrayElementStage(settings.getResultCsvPaths());
-		ReadCsvFileSource readCsvFileSource = new ReadCsvFileSource();
+		List<Path> logFilePaths = new ArrayList<Path>();
+		for (Path path : settings.getInputPaths()) {
+			logFilePaths.add(settings.getLogPath().resolve(path.getFileName()));
+		}
+			
+		ElementProducer<Path> yamlInputPathsProducer = new ElementProducer<>(settings.getInputPaths());
+		ElementProducer<Path> yamlLogPathsProducer = new ElementProducer<>(logFilePaths);
 
-		MergeDataStage mergeDataStage = new MergeDataStage();
-		mergeDataStage.declareActive();
+		LogAppender :: logAppender
+		Distributor :: distributor
 
-		Distributor<List<Map<String, JsonNode>>> distributor = new Distributor<>(new CopyByReferenceStrategy());
+		YamlLogSink :: yamlLogSink
+		ChartAssemblerStage :: chartAssemblerStage
+		JsonLogSink :: jsonLogSink
+		GenerateHtmlTable :: generateHtmlTable
+		FileSink :: fileSink
 
-		LogWriter mainLogWriter = new LogWriter(settings.getMainLogJson());
-		MakeWindowStage makeWindowStage = new MakeWindowStage(settings.getWindow());
-		LogWriter partialLogWriter = new LogWriter(settings.getPartialLogJson());
-		
-		this.connectPorts(mainLogReader.getOutputPort(), mergeDataStage.getMainLogInputPort());
-		this.connectPorts(mappingFileReader.getOutputPort(), mergeDataStage.getMappingInputPort());
-		this.connectPorts(arrayElementStage.getOutputPort(), readCsvFileSource.getInputPort());
-		this.connectPorts(readCsvFileSource.getOutputPort(), mergeDataStage.getNewDataInputPort());
-		
-		this.connectPorts(mergeDataStage.getOutputPort(), distributor.getInputPort());
-		
-		this.connectPorts(distributor.getNewOutputPort(), mainLogWriter.getInputPort());
-		this.connectPorts(distributor.getNewOutputPort(), makeWindowStage.getInputPort());
-		this.connectPorts(makeWindowStage.getOutputPort(), partialLogWriter.getInputPort());
+		yamlInputPathsProducer -> logAppender.newRecord
+		yamlLogPathsProducer -> logAppender.log
+
+		logAppender.output -- log -> distributor
+		distributor -> yamlLogSink
+		distributor -> chartAssemblerStage -> jsonLogSink
+		distributor -> generateHtmlTable -> fileSink
 	}
 }

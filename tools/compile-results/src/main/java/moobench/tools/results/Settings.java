@@ -9,35 +9,35 @@ import com.beust.jcommander.converters.PathConverter;
 
 public class Settings {
 	
-	@Parameter(names= { "-l", "--main-log" }, required = true, converter = PathConverter.class, description = "Main log file")
-	private Path mainLogJson;
+	@Parameter(names = { "-i", "--input" }, variableArity = true, required = true, converter = PathConverter.class, description = "List of input data sets")
+	private List<Path> inputPaths;
 
-	@Parameter(names= { "-p", "--partial-log" }, required = true, converter = PathConverter.class, description = "Partial log file")
-	private Path partialLogJson;
+	@Parameter(names= { "-l", "--log" }, required = true, converter = PathConverter.class, description = "YAML log file root path")
+	private Path logPath;
 	
-	@Parameter(names= { "-d", "--result-data" }, variableArity = true, required = true, converter = PathConverter.class, description = "Collection of experiment data")
-	private List<Path> resultCsvPaths;
+	@Parameter(names= { "-t", "--table" }, required = true, converter = PathConverter.class, description = "Output HTML table for results")
+	private Path tablePath;
 	
-	@Parameter(names= { "-m", "--mapping-file" }, required = true, converter = PathConverter.class, description = "Experiment Result to log mapping")
-	private Path mappingFile;
+	@Parameter(names= { "-j", "--json-log" }, required = true, converter = PathConverter.class, description = "Partial JSON log for viewing")
+	private Path jsonLogPath;
 	
 	@Parameter(names= { "-w", "--window" }, required = true, description = "Time Window Size")
 	private Integer window;
-	
-	public Path getMainLogJson() {
-		return mainLogJson;
+
+	public List<Path> getInputPaths() {
+		return inputPaths;
 	}
 	
-	public Path getPartialLogJson() {
-		return partialLogJson;
+	public Path getLogPath() {
+		return logPath;
 	}
 	
-	public List<Path> getResultCsvPaths() {
-		return resultCsvPaths;
+	public Path getTablePath() {
+		return tablePath;
 	}
 	
-	public Path getMappingFile() {
-		return mappingFile;
+	public Path getJsonLogPath() {
+		return jsonLogPath;
 	}
 	
 	public Integer getWindow() {

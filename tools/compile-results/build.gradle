@@ -18,4 +18,5 @@ dependencies {
     implementation 'net.kieker-monitoring:kieker:2.0.0-SNAPSHOT'
     implementation 'net.sourceforge.teetime:teetime:3.1-SNAPSHOT'
     implementation 'com.beust:jcommander:1.78'
+    implementation 'org.yaml:snakeyaml:1.30'
 }

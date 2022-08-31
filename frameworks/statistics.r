@@ -90,10 +90,12 @@ print(resultstext)
 
 currentTime <- as.numeric(Sys.time())
 
-write(paste(configs.framework_name, ":"), file=out_yaml_fn,append=FALSE)
-write(paste("- timestamp:", currentTime), file=out_yaml_fn, append=TRUE) 
+write(paste("kind:", configs.framework_name), file=out_yaml_fn,append=FALSE)
+write("experiments:", file=out_yaml_fn, append=TRUE)
+write(paste("- timestamp:", currentTime), file=out_yaml_fn, append=TRUE)
+write("  measurements:", file=out_yaml_fn, append=TRUE)
 for (writer_idx in (1:(numberOfWriters))) {
-   write(paste(" ", configs.labels[writer_idx], ": [", 
+   write(paste("    ", configs.labels[writer_idx], ": [", 
       format(printvalues["mean",writer_idx], scientific=TRUE), ",",
       format(printvalues["sd",writer_idx], scientific=TRUE), ",", 
       format(printvalues["ci95%",writer_idx], scientific=TRUE), ",",
