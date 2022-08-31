@@ -1,3 +1,5 @@
+MOOBENCH_ARCHIVE="${BASE_DIR}/tools/benchmark/build/distributions/benchmark.tar"
+
 export SLEEP_TIME=10
 export NUM_OF_LOOPS=1
 export THREADS=1
