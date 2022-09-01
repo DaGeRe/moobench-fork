@@ -40,4 +40,8 @@ checkFile moobench "${MOOBENCH_ARCHIVE}"
 tar -xpf "${MOOBENCH_ARCHIVE}"
 MOOBENCH_BIN="${BASE_DIR}/benchmark/bin/benchmark"
 
+checkFile compile-result "${COMPILE_RESULT_ARCHIVE}"
+tar -xpf "${COMPILE_RESULT_ARCHIVE}"
+COMPILE_RESULT_BIN="${BASE_DIR}/compile-results/bin/compile-results"
+
 # end
