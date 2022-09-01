@@ -3,56 +3,37 @@
  */
 package moobench.tools.results;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import moobench.tools.results.data.Experiment;
 import moobench.tools.results.data.ExperimentLog;
-import teetime.framework.AbstractStage;
-import teetime.framework.InputPort;
+import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
 /**
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class LogAppenderStage extends AbstractStage {
+public class LogAppenderStage extends AbstractConsumerStage<ExperimentLog> {
 
-	private final InputPort<ExperimentLog> newDataInputPort = this.createInputPort(ExperimentLog.class);
-	private final InputPort<ExperimentLog> logInputPort = this.createInputPort(ExperimentLog.class);
 	private final OutputPort<ExperimentLog> outputPort = this.createOutputPort(ExperimentLog.class);
 	
-	private Map<String,ExperimentLog> logs;
-
-	public InputPort<ExperimentLog> getNewDataInputPort() {
-		return newDataInputPort;
-	}
-	
-	public InputPort<ExperimentLog> getLogInputPort() {
-		return logInputPort;
-	}
+	private Map<String,ExperimentLog> logs = new HashMap<>();
 	
 	public OutputPort<ExperimentLog> getOutputPort() {
 		return outputPort;
 	}
 	
 	@Override
-	protected void execute() throws Exception {
-		ExperimentLog newData = this.newDataInputPort.receive();
-		if (newData != null) {
-			appendData(newData);
-		}
-		ExperimentLog logData = this.logInputPort.receive();
-		if (logData != null) {
-			appendData(logData);
-		}
-	}
-	
-	private void appendData(ExperimentLog newData) {
-		ExperimentLog presentLog = logs.get(newData.getKind());
+	protected void execute(ExperimentLog log) throws Exception {
+		ExperimentLog presentLog = logs.get(log.getKind());
 		if (presentLog != null) {
-			for (Experiment experiment : newData.getExperiments()) {
+			for (Experiment experiment : log.getExperiments()) {
 				presentLog.getExperiments().add(experiment);
 			}
+		} else {
+			logs.put(log.getKind(), log);
 		}
 	}
 	

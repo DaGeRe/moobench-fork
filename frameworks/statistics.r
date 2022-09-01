@@ -90,19 +90,27 @@ print(resultstext)
 
 currentTime <- as.numeric(Sys.time())
 
+mktext <- function(value) {
+    if (is.na(value)) {
+       return(".NAN")
+    } else {
+       return(format(value, scientific=TRUE))
+    }
+}
+
 write(paste("kind:", configs.framework_name), file=out_yaml_fn,append=FALSE)
 write("experiments:", file=out_yaml_fn, append=TRUE)
 write(paste("- timestamp:", currentTime), file=out_yaml_fn, append=TRUE)
 write("  measurements:", file=out_yaml_fn, append=TRUE)
 for (writer_idx in (1:(numberOfWriters))) {
    write(paste("    ", configs.labels[writer_idx], ": [", 
-      format(printvalues["mean",writer_idx], scientific=TRUE), ",",
-      format(printvalues["sd",writer_idx], scientific=TRUE), ",", 
-      format(printvalues["ci95%",writer_idx], scientific=TRUE), ",",
-      format(printvalues["md25%",writer_idx], scientific=TRUE), ",",
-      format(printvalues["md50%",writer_idx], scientific=TRUE), ",",
-      format(printvalues["md75%",writer_idx], scientific=TRUE), ",",
-      format(printvalues["max",writer_idx], scientific=TRUE), ",",
-      format(printvalues["min",writer_idx], scientific=TRUE), "]"), file=out_yaml_fn, append=TRUE)
+      mktext(printvalues["mean",writer_idx]), ",",
+      mktext(printvalues["sd",writer_idx]), ",", 
+      mktext(printvalues["ci95%",writer_idx]), ",",
+      mktext(printvalues["md25%",writer_idx]), ",",
+      mktext(printvalues["md50%",writer_idx]), ",",
+      mktext(printvalues["md75%",writer_idx]), ",",
+      mktext(printvalues["max",writer_idx]), ",",
+      mktext(printvalues["min",writer_idx]), "]"), file=out_yaml_fn, append=TRUE)
 }
 # end

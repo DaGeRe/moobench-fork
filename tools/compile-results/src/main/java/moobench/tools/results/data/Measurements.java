@@ -2,16 +2,16 @@ package moobench.tools.results.data;
 
 public class Measurements {
 		
-	private double mean;
-	private double convidence;
-	private double standardDeviation;
-	private double lowerQuartile;
-	private double median;
-	private double upperQuartile;
-	private double max;
-	private double min;
+	private Double mean;
+	private Double convidence;
+	private Double standardDeviation;
+	private Double lowerQuartile;
+	private Double median;
+	private Double upperQuartile;
+	private Double max;
+	private Double min;
 
-	public Measurements(double mean, double standardDeviation, double convidence, double lowerQuartile, double median, double upperQuartile, double min, double max) {
+	public Measurements(Double mean, Double standardDeviation, Double convidence, Double lowerQuartile, Double median, Double upperQuartile, Double min, Double max) {
 		this.mean = mean;
 		this.convidence = convidence;
 		this.standardDeviation = standardDeviation;
@@ -22,7 +22,7 @@ public class Measurements {
 		this.max = max;
 	}
 	
-	public double getMean() {
+	public Double getMean() {
 		return mean;
 	}
 	
@@ -32,31 +32,31 @@ public class Measurements {
 	 * 
 	 * @return convidence value
 	 */
-	public double getConvidence() {
+	public Double getConvidence() {
 		return convidence;
 	}
 	
-	public double getStandardDeviation() {
+	public Double getStandardDeviation() {
 		return standardDeviation;
 	}
 	
-	public double getLowerQuartile() {
+	public Double getLowerQuartile() {
 		return lowerQuartile;
 	}
 	
-	public double getMedian() {
+	public Double getMedian() {
 		return median;
 	}
 	
-	public double getUpperQuartile() {
+	public Double getUpperQuartile() {
 		return upperQuartile;
 	}
 	
-	public double getMin() {
+	public Double getMin() {
 		return min;
 	}
 	
-	public double getMax() {
+	public Double getMax() {
 		return max;
 	}
 

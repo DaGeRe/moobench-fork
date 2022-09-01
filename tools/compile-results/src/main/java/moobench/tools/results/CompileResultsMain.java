@@ -4,8 +4,6 @@
 package moobench.tools.results;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 

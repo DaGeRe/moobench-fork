@@ -55,6 +55,12 @@ info "----------------------------------"
 info "Setup..."
 info "----------------------------------"
 
+# This is necessary, as the framework name is originally
+# derived from the directory the script is sitting in, but
+# Kieker supports multiple languages and has multiple
+# sub directories for each programming language.
+export FRAMEWORK_NAME="kieker-${FRAMEWORK_NAME}"
+
 cd "${BASE_DIR}"
 
 # load agent

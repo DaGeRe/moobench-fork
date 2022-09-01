@@ -14,11 +14,14 @@ public class YamlReaderStage extends AbstractTransformation<Path, ExperimentLog>
 
 	@Override
 	protected void execute(Path path) throws Exception {
-		Yaml yaml = new Yaml(new Constructor(ExperimentLog.class));
-		InputStream inputStream = Files.newInputStream(path);
-		ExperimentLog data = yaml.load(inputStream);
-		
-		this.outputPort.send(data);
+		if (Files.exists(path)) {
+			Yaml yaml = new Yaml(new Constructor(ExperimentLog.class));
+			InputStream inputStream = Files.newInputStream(path);
+			ExperimentLog data = yaml.load(inputStream);
+			
+			this.outputPort.send(data);
+		} else
+			this.logger.error("Cannot read YAML log file {}", path.toString());
 	}
 
 }

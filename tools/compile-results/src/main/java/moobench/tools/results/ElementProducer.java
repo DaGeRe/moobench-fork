@@ -25,8 +25,10 @@ public class ElementProducer<O> extends AbstractProducerStage<O> {
 	@Override
 	protected void execute() throws Exception {
 		for (O element : elements) {
+			this.logger.debug(String.format("Reading log %s", element));
 			this.outputPort.send(element);
 		}
+		this.workCompleted();
 	}
 
 }
