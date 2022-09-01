@@ -32,6 +32,8 @@ else
         exit 1
 fi
 
+checkExecutable compile-results "${COMPILE_RESULTS_BIN}"
+
 KEYSTORE="$1"
 UPDATE_SITE_RUL="$2"
 
