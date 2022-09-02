@@ -119,7 +119,6 @@ LABELS=$(createRLabels)
 runStatistics
 
 cleanupResults
-{RAWFN}*
 
 mv "${BASE_DIR}/inspectIT.log" "${RESULTS_DIR}/inspectIT.log"
 [ -f "${RESULTS_DIR}/hotspot-1-${RECURSION_DEPTH}-1.log" ] && grep "<task " "${RESULTS_DIR}/"hotspot-*.log > "${RESULTS_DIR}/java.log"
