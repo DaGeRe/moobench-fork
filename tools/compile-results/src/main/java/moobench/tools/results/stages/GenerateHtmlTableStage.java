@@ -3,8 +3,8 @@ package moobench.tools.results.stages;
 import java.nio.file.Path;
 import java.util.Set;
 
-import moobench.tools.results.OrderedSet;
 import moobench.tools.results.data.Measurements;
+import moobench.tools.results.data.OrderedSet;
 import moobench.tools.results.data.OutputFile;
 import moobench.tools.results.data.TableInformation;
 import teetime.stage.basic.AbstractTransformation;

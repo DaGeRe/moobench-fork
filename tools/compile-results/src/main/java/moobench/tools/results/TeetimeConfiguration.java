@@ -28,6 +28,7 @@ import moobench.tools.results.stages.ComputeTableStage;
 import moobench.tools.results.stages.ElementProducer;
 import moobench.tools.results.stages.FileSink;
 import moobench.tools.results.stages.GenerateHtmlTableStage;
+import moobench.tools.results.stages.JsonChartSink;
 import moobench.tools.results.stages.LogAppenderStage;
 import moobench.tools.results.stages.TailChartStage;
 import moobench.tools.results.stages.YamlLogSink;

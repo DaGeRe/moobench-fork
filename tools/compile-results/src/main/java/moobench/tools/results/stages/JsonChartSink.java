@@ -1,7 +1,8 @@
-package moobench.tools.results;
+package moobench.tools.results.stages;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Calendar;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -34,7 +35,13 @@ public class JsonChartSink extends AbstractConsumerStage<Chart> {
                 final Double number = value.getValues().get(i);
                 objectNode.put(name, number);
             }
-            objectNode.put("time", value.getTimestamp());
+
+            final Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(value.getTimestamp() * 1000);
+
+            objectNode.put("time", String.format("%d-%d %d:%d",
+                    calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)));
             arrayNode.add(objectNode);
         }
 
