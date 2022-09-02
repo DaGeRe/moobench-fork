@@ -1,8 +1,9 @@
-package moobench.tools.results;
+package moobench.tools.results.stages;
 
 import java.nio.file.Path;
 import java.util.Set;
 
+import moobench.tools.results.OrderedSet;
 import moobench.tools.results.data.Measurements;
 import moobench.tools.results.data.OutputFile;
 import moobench.tools.results.data.TableInformation;
@@ -17,13 +18,13 @@ public class GenerateHtmlTableStage extends AbstractTransformation<TableInformat
     }
 
     @Override
-    protected void execute(final TableInformation element) throws Exception {
+    protected void execute(final TableInformation tableInformation) throws Exception {
         String content = "<table>\n" + "  <tr>\n" + "    <th>setup</th>\n" + "    <th>run</th>\n"
                 + "    <th>mean</th>\n" + "    <th>ci</th>\n" + "    <th>sd</th>\n" + "    <th>1.quartile</th>\n"
                 + "    <th>median</th>\n" + "    <th>3.quartile</th>\n" + "    <th>min</th>\n" + "    <th>max</th>\n"
                 + "  </tr>\n";
-        final Set<String> currentKeySet = element.getCurrent().getMeasurements().keySet();
-        final Set<String> previousKeySet = element.getPrevious().getMeasurements().keySet();
+        final Set<String> currentKeySet = tableInformation.getCurrent().getMeasurements().keySet();
+        final Set<String> previousKeySet = tableInformation.getPrevious().getMeasurements().keySet();
         final Set<String> completeKeySet = new OrderedSet<>();
         if (currentKeySet != null) {
             completeKeySet.addAll(currentKeySet);
@@ -33,11 +34,11 @@ public class GenerateHtmlTableStage extends AbstractTransformation<TableInformat
         }
 
         for (final String key : completeKeySet) {
-            content += this.addMode(key, element.getCurrent().getMeasurements().get(key),
-                    element.getPrevious().getMeasurements().get(key));
+            content += this.addMode(key, tableInformation.getCurrent().getMeasurements().get(key),
+                    tableInformation.getPrevious().getMeasurements().get(key));
         }
         content += "</table>\n";
-        this.outputPort.send(new OutputFile(this.tablePath.resolve(element.getName() + ".html"), content));
+        this.outputPort.send(new OutputFile(this.tablePath.resolve(tableInformation.getName() + "-table.html"), content));
     }
 
     private String addMode(final String key, final Measurements current, final Measurements previous) {

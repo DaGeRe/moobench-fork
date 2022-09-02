@@ -1,3 +1,19 @@
+/***************************************************************************
+ * Copyright (C) 2022 Kieker (https://kieker-monitoring.net)
+
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 package moobench.tools.results;
 
 import java.io.File;
@@ -7,6 +23,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import moobench.tools.results.data.ExperimentLog;
+import moobench.tools.results.stages.ChartAssemblerStage;
+import moobench.tools.results.stages.ComputeTableStage;
+import moobench.tools.results.stages.ElementProducer;
+import moobench.tools.results.stages.FileSink;
+import moobench.tools.results.stages.GenerateHtmlTableStage;
+import moobench.tools.results.stages.LogAppenderStage;
+import moobench.tools.results.stages.TailChartStage;
+import moobench.tools.results.stages.YamlLogSink;
+import moobench.tools.results.stages.YamlReaderStage;
 import teetime.framework.Configuration;
 import teetime.stage.basic.distributor.Distributor;
 import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
@@ -27,7 +52,8 @@ public class TeetimeConfiguration extends Configuration {
 
         final ChartAssemblerStage chartAssemblerStage = new ChartAssemblerStage();
         final TailChartStage tailChartStage = new TailChartStage(settings.getWindow());
-        final JsonLogSink jsonLogSink = new JsonLogSink(settings.getJsonLogPath());
+        final JsonChartSink jsonLogSink = new JsonChartSink(settings.getJsonChartPath());
+
         final ComputeTableStage computeTableStage = new ComputeTableStage();
         final GenerateHtmlTableStage generateHtmlTableStage = new GenerateHtmlTableStage(settings.getTablePath());
         final FileSink fileSink = new FileSink();

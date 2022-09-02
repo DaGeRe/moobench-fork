@@ -1,4 +1,4 @@
-package moobench.tools.results;
+package moobench.tools.results.stages;
 
 import java.io.InputStream;
 import java.nio.file.Files;

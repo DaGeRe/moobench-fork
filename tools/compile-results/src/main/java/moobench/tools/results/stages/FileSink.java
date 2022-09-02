@@ -14,32 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package moobench.tools.results.data;
+package moobench.tools.results.stages;
 
-import java.nio.file.Path;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
 
-/**
- * Pass down file path and content for the file to a data sink.
- *
- * @author Reiner Jung
- * @since 1.3.0
- */
-public class OutputFile {
+import moobench.tools.results.data.OutputFile;
+import teetime.framework.AbstractConsumerStage;
 
-    Path filePath;
-    String content;
+public class FileSink extends AbstractConsumerStage<OutputFile> {
 
-    public OutputFile(final Path filePath, final String content) {
-        this.filePath = filePath;
-        this.content = content;
-    }
-
-    public Path getFilePath() {
-        return this.filePath;
-    }
-
-    public String getContent() {
-        return this.content;
+    @Override
+    protected void execute(final OutputFile outputFile) throws Exception {
+        try (final BufferedWriter writer = Files.newBufferedWriter(outputFile.getFilePath())) {
+            writer.write(outputFile.getContent());
+            writer.close();
+        } catch(final IOException e) {
+            this.logger.error("Cannot write file {}", outputFile.getFilePath().toString());
+        }
     }
 
 }

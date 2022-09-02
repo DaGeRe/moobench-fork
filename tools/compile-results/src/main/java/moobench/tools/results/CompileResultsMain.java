@@ -1,9 +1,23 @@
-/**
- * 
- */
+/***************************************************************************
+ * Copyright (C) 2022 Kieker (https://kieker-monitoring.net)
+
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 package moobench.tools.results;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 
@@ -12,41 +26,47 @@ import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
 
 /**
- * Read the CSV output of the R script and the existing JSON file and append a
- * record to the JSON file based on the CSV dataset. Further compute a list of
- * the last 50 runs and the last relative values.
+ * Integrate new measurements into the YAML log and create derived outputs: HTML tables and
+ * JSON files for measruement overview and mean execution time graphs, respectively.
  *
  * @author Reiner Jung
+ * @since 1.3.0
  *
  */
 public class CompileResultsMain extends AbstractService<TeetimeConfiguration, Settings> {
 
-	 public static void main(final String[] args) {
-		 final CompileResultsMain main = new CompileResultsMain();
-		 System.exit(main.run("compile-result", "Compile Results", args, new Settings()));
-	 }
-	
-	@Override
-	protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
-		return new TeetimeConfiguration(this.parameterConfiguration);
-	}
+    public static void main(final String[] args) {
+        final CompileResultsMain main = new CompileResultsMain();
+        System.exit(main.run("compile-result", "Compile Results", args, new Settings()));
+    }
 
-	@Override
-	protected File getConfigurationFile() {
-		return null;
-	}
+    @Override
+    protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
+        return new TeetimeConfiguration(this.parameterConfiguration);
+    }
 
-	@Override
-	protected boolean checkConfiguration(Configuration configuration, JCommander commander) {
-		return true;
-	}
+    @Override
+    protected File getConfigurationFile() {
+        return null;
+    }
 
-	@Override
-	protected boolean checkParameters(JCommander commander) throws ConfigurationException {
-		return true;
-	}
+    @Override
+    protected boolean checkConfiguration(final Configuration configuration, final JCommander commander) {
+        return true;
+    }
 
-	@Override
-	protected void shutdownService() {
-	}
+    @Override
+    protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
+        for (final Path inputPath : this.parameterConfiguration.getInputPaths()) {
+            if (!inputPath.toFile().isFile() || !inputPath.toFile().exists()) {
+                this.logger.error("Cannot read input file {}", inputPath.toString());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    protected void shutdownService() {
+    }
 }
