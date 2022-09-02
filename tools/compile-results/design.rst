@@ -14,45 +14,73 @@ Parameter
 -t path for table
 -j json output
 
-Log Paths
----------
-
-log_file_path = log path + "/all-" + basename(input path)
-
 Pipeline
 --------
 
-ElementProducer :: yamlInputPathsProducer
-ElementProducer :: yamlLogPathsProducer
+yamlInputPathsProducer ElementProducer(logFilePaths)
+yamlInputReader YamlReaderStage()
 
-YamlReaderStage :: yamlInputReaderStage
-YamlReaderStage :: yamlLogReaderStage
+logAppenderStage LogAppenderStage
+distributor Distributor<>(CopyByReferenceStrategy())
 
-LogAppender :: logAppender
-Distributor :: distributor
+yamlLogSink YamlLogSink(logPath)
 
-YamlLogSink :: yamlLogSink
-ChartAssemblerStage :: chartAssemblerStage
-JsonLogSink :: jsonLogSink
-GenerateHtmlTable :: generateHtmlTable
-FileSink :: fileSink
+chartAssemblerStage ChartAssemblerStage()
+tailChartStage TailChartStage(windowSize)
+jsonLogSink JsonChartSink(chartPath);
 
-yamlInputPathsProducer -> yamlInputReaderStage -> logAppender.newRecord
-yamlLogPathsProducer -> yamlLogReaderStage -> logAppender.log
+computeTableStage ComputeTableStage()
+generateHtmlTableStage GenerateHtmlTableStage(tablePath)
+fileSink FileSink()
 
-logAppender.output -- log -> distributor
+yamlInputPathsProducer -> yamlInputReader -> logAppenderStage -> distributor
+
 distributor -> yamlLogSink
-distributor -> chartAssemblerStage -> jsonLogSink
-distributor -> generateHtmlTable -> fileSink
+distributor -> chartAssemblerStage -> tailChartStage -> jsonLogSink
+distributor -> computeTableStage -> generateHtmlTableStage -> fileSink
 
 Data Structure
 --------------
 
-Log
-- string name
-- List<Entry> entries
+**Log Model**
 
-Entry
+ExperimentLog:
+- String kind
+- List<Experiment> experiments
+
+Experiment:
 - long timestamp
-- Map<String, List<Double>>
+- List<Measurements> measurements
+
+Measurements:
+- Double mean
+- Double convidence
+- Double standardDeviation
+- Double lowerQuartile
+- Double median
+- Double upperQuartile
+- Double max
+- Double min
+
+**Chart**
+
+Chart:
+- String name
+- List<String> headers
+- List<ValueTuple> values
+
+ValueTuple:
+- long timestamp
+- List<Double> values
+
+**Table**
+
+TableInformation:
+- String name
+- Experiment current
+- Experiment previous
+
+In previous, we store an artifical results based on the last 10 experiments using
+value = (experiment_i + value) / 2
+
 
