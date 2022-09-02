@@ -44,7 +44,7 @@ sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=re
 sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}/opentelemetry.yaml
 sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}/inspectit.yaml
 cd ..
-"${COMPILE_RESULTS_BIN}" -i *-results.yaml -l results -t results -j results -w 100
+"${COMPILE_RESULTS_BIN}" -i *-results.yaml -l results -t results -l results -w 100
 cd results
 echo "put *.yaml" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
 echo "put *.html" | sftp -oNoHostAuthenticationForLocalhost=yes -oStrictHostKeyChecking=no -oUser=repo  -F /dev/null -i ${KEYSTORE} ${UPDATE_SITE_URL}
