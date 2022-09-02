@@ -24,7 +24,7 @@ pipeline {
 
   options {
     buildDiscarder logRotator(artifactNumToKeepStr: '10')
-    timeout(time: 20, unit: 'HOURS') 
+    timeout(time: 60, unit: 'HOURS') 
     retry(1)
     parallelsAlwaysFailFast()
   }
