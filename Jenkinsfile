@@ -52,7 +52,7 @@ pipeline {
           sh 'cp frameworks/Kieker/python/results-python/results.yaml kieker-python-results.yaml'
           sh 'cp frameworks/Kieker/java/results-java/results.yaml kieker-java-results.yaml'
           sh 'cp frameworks/OpenTelemetry/results-OpenTelemetry/results.yaml open-telementry-results.yaml'
-          sh 'cp frameworks/inpsectIT/results-inspectIT/results.yaml inspect-it-results.yaml'
+          sh 'cp frameworks/inspectIT/results-inspectIT/results.yaml inspect-it-results.yaml'
 
           stash includes: '*-results.yaml', name: 'yaml'
        }
