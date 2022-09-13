@@ -28,7 +28,10 @@ public class JsonChartSink extends AbstractConsumerStage<Chart> {
         final ObjectNode node = mapper.createObjectNode();
         final ArrayNode arrayNode = node.putArray("results");
 
+        chart.sort();
+
         for(final ValueTuple value : chart.getValues()) {
+            System.err.printf("time %d\n", value.getTimestamp());
             final ObjectNode objectNode = mapper.createObjectNode();
             for (int i = 0;i < chart.getHeaders().size();i++) {
                 final String name = chart.getHeaders().get(i);
