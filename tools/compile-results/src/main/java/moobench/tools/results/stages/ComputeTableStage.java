@@ -63,14 +63,25 @@ public class ComputeTableStage extends AbstractTransformation<ExperimentLog, Tab
     }
 
     private Measurements computePrevious(final Measurements previousMeasurements, final Measurements measurements) {
-        return new Measurements((measurements.getMean() + previousMeasurements.getMean())/2,
-                (measurements.getStandardDeviation() + previousMeasurements.getStandardDeviation())/2,
-                (measurements.getConvidence() + previousMeasurements.getConvidence())/2,
-                (measurements.getLowerQuartile() + previousMeasurements.getLowerQuartile())/2,
-                (measurements.getMedian() + previousMeasurements.getMedian())/2,
-                (measurements.getUpperQuartile() + previousMeasurements.getUpperQuartile())/2,
-                (measurements.getMin() + previousMeasurements.getMin())/2,
-                (measurements.getMax() + previousMeasurements.getMax())/2);
+        return new Measurements(
+                this.computeValue(measurements.getMean(), previousMeasurements.getMean()),
+                this.computeValue(measurements.getStandardDeviation(), previousMeasurements.getStandardDeviation()),
+                this.computeValue(measurements.getConvidence(), previousMeasurements.getConvidence()),
+                this.computeValue(measurements.getLowerQuartile(), previousMeasurements.getLowerQuartile()),
+                this.computeValue(measurements.getMedian(), previousMeasurements.getMedian()),
+                this.computeValue(measurements.getUpperQuartile(), previousMeasurements.getUpperQuartile()),
+                this.computeValue(measurements.getMin(), previousMeasurements.getMin()),
+                this.computeValue(measurements.getMax(), previousMeasurements.getMax()));
+    }
+
+    private Double computeValue(final Double newValue, final Double previousValue) {
+        if (newValue.isNaN() || newValue.isInfinite()) {
+            return previousValue;
+        } else if (previousValue.isNaN() || previousValue.isInfinite()) {
+            return newValue;
+        } else {
+            return (newValue + previousValue)/2;
+        }
     }
 
 }
