@@ -17,6 +17,8 @@
 package moobench.tools.results.data;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ExperimentLog {
@@ -38,5 +40,21 @@ public class ExperimentLog {
 
     public void setExperiments(final List<Experiment> experiments) {
         this.experiments = experiments;
+    }
+
+    public void sort() {
+	    Collections.sort(this.experiments, new Comparator<Experiment>() {
+	
+	        @Override
+	        public int compare(final Experiment left, final Experiment right) {
+	            if (left.getTimestamp() < right.getTimestamp()) {
+	                return -1;
+	            } else if (left.getTimestamp() > right.getTimestamp()) {
+	                return 1;
+	            } else {
+	                return 0;
+	            }
+	        }
+	    });
     }
 }

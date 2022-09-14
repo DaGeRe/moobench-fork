@@ -40,6 +40,7 @@ public class LogAppenderStage extends AbstractConsumerStage<ExperimentLog> {
 	@Override
 	protected void onTerminating() {
 		for (ExperimentLog experimentLog : logs.values()) {
+			experimentLog.sort();
 			this.outputPort.send(experimentLog);
 		}
 		super.onTerminating();
