@@ -70,7 +70,7 @@ public class GenerateHtmlTableStage extends AbstractTransformation<TableInformat
     }
 
     private StringBuilder addDouble(final StringBuilder cells, final Double value) {
-        return cells.append(String.format("    <td style=\"text-align: right;\">%1.2f</td>\n", value));
+        return cells.append(String.format("    <td style=\"text-align: right;\">%1.3f</td>\n", value));
     }
 
 }
