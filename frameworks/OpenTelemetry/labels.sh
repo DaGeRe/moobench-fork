@@ -1,5 +1,5 @@
 TITLE[0]="No instrumentation"
-TITLE[1]="No Logging"
+TITLE[1]="No logging"
 TITLE[2]="Logging"
 TITLE[3]="Zipkin"
 MACHINE_TYPE=`uname -m`; 
