@@ -17,7 +17,7 @@ if [ ! -d "${BASE_DIR}" ] ; then
 	exit 1
 fi
 
-MAIN_DIR="${BASE_DIR}/../../.."
+MAIN_DIR="${BASE_DIR}/../.."
 
 if [ -f "${MAIN_DIR}/common-functions.sh" ] ; then
 	source "${MAIN_DIR}/common-functions.sh"
