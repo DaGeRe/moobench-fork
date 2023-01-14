@@ -1,5 +1,5 @@
 ---
-name: Build MooBench for OpenTelemetry execution check
+name: OpenTelemetry-java execution check
 on:
   - push
   - pull_request
