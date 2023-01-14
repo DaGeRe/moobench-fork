@@ -6,9 +6,9 @@ source ${MAIN_DIR}/config.rc
 # path setup
 JAVA_BIN=`which java`
 
-RSCRIPT_PATH="${BASE_DIR}/../../statistics.r"
+RSCRIPT_PATH="${BASE_DIR}/../statistics.r"
 
-MAIN_DIR="${BASE_DIR}/../../.."
+MAIN_DIR="${BASE_DIR}/../.."
 
 MOOBENCH_BIN="${MAIN_DIR}/benchmark/bin/benchmark"
 RECEIVER_ARCHIVE="${MAIN_DIR}/tools/receiver/build/distributions/receiver.tar"
