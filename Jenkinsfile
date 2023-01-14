@@ -44,13 +44,13 @@ pipeline {
 
     stage('Run Benchmark') {
        steps {
-          sh './frameworks/Kieker/python/benchmark.sh'
-          sh './frameworks/Kieker/java/benchmark.sh'
+          sh './frameworks/Kieker-python/benchmark.sh'
+          sh './frameworks/Kieker-java/benchmark.sh'
           sh './frameworks/OpenTelemetry-java/benchmark.sh'
           sh './frameworks/inspectIT-java/benchmark.sh'
 
-          sh 'cp frameworks/Kieker/python/results-python/results.yaml kieker-python-results.yaml'
-          sh 'cp frameworks/Kieker/java/results-java/results.yaml kieker-java-results.yaml'
+          sh 'cp frameworks/Kieker-python/results-Kieker-python/results.yaml kieker-python-results.yaml'
+          sh 'cp frameworks/Kieker-java/results-Kieker-java/results.yaml kieker-java-results.yaml'
           sh 'cp frameworks/OpenTelemetry-java/results-OpenTelemetry/results.yaml open-telementry-results.yaml'
           sh 'cp frameworks/inspectIT-java/results-inspectIT/results.yaml inspect-it-results.yaml'
 

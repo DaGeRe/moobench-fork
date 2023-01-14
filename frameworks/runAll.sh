@@ -18,7 +18,7 @@ fi
 cd "${BASE_DIR}"
 
 start=$(pwd)
-for benchmark in inspectIT-java OpenTelemetry-java Kieker
+for benchmark in inspectIT-java OpenTelemetry-java Kieker-java
 do
         cd "${benchmark}"
         ./benchmark.sh &> "${start}/log_${benchmark}.txt"

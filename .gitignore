@@ -14,3 +14,9 @@
 # Do not store measurement results
 frameworks/OpenTelemetry-java/raw*
 frameworks/OpenTelemetry-java/results-OpenTelemetry-java/
+frameworks/inspectIT-java/raw*
+frameworks/inspectIT-java/results-inspectIT-java/
+frameworks/Kieker-java/raw*
+frameworks/Kieker-java/results-Kieker-java/
+frameworks/Kieker-python/raw*
+frameworks/Kieker-python/results-Kieker-python/
