@@ -4,6 +4,9 @@ on:
   - push
   - pull_request
   - workflow_dispatch
+  - schedule:
+      - cron: 0 */8 * * *
+
 jobs:
   build:
     strategy:
@@ -13,7 +16,6 @@ jobs:
         java:
           - 1.8
           - 11
-          - 17
       fail-fast: false
     runs-on: ${{ matrix.os }}
     name: Java ${{ matrix.java }} OS ${{ matrix.os }} sample
