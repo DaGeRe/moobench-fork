@@ -25,7 +25,7 @@ jobs:
           java-version: ${{ matrix.java }}
       - name: Assemble Project
         run: |
-          ./gradlew assemble 
+          ./setup.sh
           cd frameworks/OpenTelemetry-java/ 
           export SLEEP_TIME=0
           export NUM_OF_LOOPS=1 
