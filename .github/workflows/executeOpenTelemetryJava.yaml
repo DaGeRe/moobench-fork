@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-      - name: Assemble Project
+      - name: Run minimal parameter experiment and check success
         run: |
           ./setup.sh
           cd frameworks/OpenTelemetry-java/ 
