@@ -42,7 +42,7 @@ public class CompileResultsMain extends AbstractService<TeetimeConfiguration, Se
 
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
-        return new TeetimeConfiguration(this.parameterConfiguration);
+        return new TeetimeConfiguration(this.settings);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class CompileResultsMain extends AbstractService<TeetimeConfiguration, Se
 
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        for (final Path inputPath : this.parameterConfiguration.getInputPaths()) {
+        for (final Path inputPath : this.settings.getInputPaths()) {
             if (!inputPath.toFile().isFile() || !inputPath.toFile().exists()) {
                 this.logger.error("Cannot read input file {}", inputPath.toString());
                 return false;
