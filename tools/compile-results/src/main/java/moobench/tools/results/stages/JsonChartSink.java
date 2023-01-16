@@ -42,9 +42,9 @@ public class JsonChartSink extends AbstractConsumerStage<Chart> {
             final Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(value.getTimestamp() * 1000);
 
-            objectNode.put("time", String.format("%d-%d %d:%d",
+            objectNode.put("time", String.format("%d-%d-%d",
                     calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH)+1,
-                    calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)));
+                    calendar.get(Calendar.YEAR)));
             arrayNode.add(objectNode);
         }
 
