@@ -6,9 +6,10 @@ The MooBench micro-benchmarks can be used to quantify the performance overhead
 caused by monitoring framework components. 
 
 Currenly (fully) supported monitoring frameworks are:
-* Kieker (http://kieker-monitoring.net)
-* OpenTelemetry (https://opentelemetry.io/)
-* inspectIT (https://inspectit.rocks/)
+* Kieker with Java (http://kieker-monitoring.net)
+* OpenTelemetry with Java (https://opentelemetry.io/)
+* inspectIT with Java (https://inspectit.rocks/)
+For all combinations of supported monitoring frameworks $FRAMEWORK and languages $LANGUAGE, the folder frameworks contains a folder $FRAMEWORK-$LANGUAGE.
 
 ## Directory Structure
 
@@ -39,10 +40,10 @@ Initially, the following steps are required:
    `./setup.sh`
 
 All experiments are started with the provided "External Controller" scripts.
-The following scripts are available for every framework ($FRAMEWORK):
-* In `frameworks/$FRAMEWORK/benchmark.sh` a script is provided for regular
+The following scripts are available for every supported framework ($FRAMEWORK) and language ($LANGUAGE):
+* In `frameworks/$FRAMEWORK-$LANGUAGE/benchmark.sh` a script is provided for regular
   execution (with default parameters)
-* In `frameworks/$FRAMEWORK/runExponentialSizes.sh` a script is provided for
+* In `frameworks/$FRAMEWORK-$LANGUAGE/runExponentialSizes.sh` a script is provided for
   execution with different call tree depth sizes (exponentially growing from 2)
 
 Each scripts will start different factorial experiments (started `$NUM_OF_LOOPS`
