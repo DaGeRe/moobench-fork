@@ -11,6 +11,9 @@
 /build/
 /benchmark/**
 
+# Do not store compile results
+compile-results/
+
 # Do not store measurement results
 frameworks/OpenTelemetry-java/raw*
 frameworks/OpenTelemetry-java/results-OpenTelemetry-java/
