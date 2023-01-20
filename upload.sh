@@ -8,6 +8,9 @@
 # configure base dir
 BASE_DIR=$(cd "$(dirname "$0")"; pwd)
 
+KEYSTORE="$1"
+UPDATE_SITE_URL="$2"
+
 #
 # source functionality
 #
@@ -33,9 +36,13 @@ else
 fi
 
 checkExecutable compile-results "${COMPILE_RESULTS_BIN}"
+checkFile keystore "${KEYSTORE}"
 
-KEYSTORE="$1"
-UPDATE_SITE_RUL="$2"
+if [ "${UPDATE_SITE_URL}" == "" ] ; then
+	error "Missing UPDATE_SITE_URL"
+	information "Usage: $0 KEYSTORE UPDATE_SITE_URL"
+	exit 1
+fi
 
 mkdir results
 cd results
