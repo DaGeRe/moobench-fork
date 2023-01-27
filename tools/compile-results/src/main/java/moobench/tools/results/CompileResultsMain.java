@@ -46,7 +46,7 @@ public class CompileResultsMain extends AbstractService<TeetimeConfiguration, Se
     }
 
     @Override
-    protected File getConfigurationFile() {
+    protected Path getConfigurationPath() {
         return null;
     }
 
