@@ -51,8 +51,8 @@ pipeline {
 
           sh 'cp frameworks/Kieker-python/results-Kieker-python/results.yaml kieker-python-results.yaml'
           sh 'cp frameworks/Kieker-java/results-Kieker-java/results.yaml kieker-java-results.yaml'
-          sh 'cp frameworks/OpenTelemetry-java/results-OpenTelemetry/results.yaml open-telementry-results.yaml'
-          sh 'cp frameworks/inspectIT-java/results-inspectIT/results.yaml inspect-it-results.yaml'
+          sh 'cp frameworks/OpenTelemetry-java/results-OpenTelemetry-java/results.yaml open-telementry-results.yaml'
+          sh 'cp frameworks/inspectIT-java/results-inspectIT-java/results.yaml inspect-it-results.yaml'
 
           stash includes: '*-results.yaml', name: 'yaml'
        }
