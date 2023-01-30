@@ -140,7 +140,7 @@ for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
     tcpLogging 7 $i 1
     tcpLogging 8 $i 2
     
-    printIntermediaryResults
+    printIntermediaryResults "${i}"
 done
 
 # Create R labels

@@ -7,6 +7,7 @@
 
 # configure base dir
 BASE_DIR=$(cd "$(dirname "$0")"; pwd)
+MAIN_DIR="${BASE_DIR}/../.."
 
 #
 # source functionality
@@ -16,8 +17,6 @@ if [ ! -d "${BASE_DIR}" ] ; then
 	echo "Base directory ${BASE_DIR} does not exist."
 	exit 1
 fi
-
-MAIN_DIR="${BASE_DIR}/../.."
 
 if [ -f "${MAIN_DIR}/common-functions.sh" ] ; then
 	source "${MAIN_DIR}/common-functions.sh"
@@ -134,8 +133,7 @@ for ((i=1;i<="${NUM_OF_LOOPS}";i+=1)); do
     echo "## Starting iteration ${i}/${NUM_OF_LOOPS}" >> "${DATA_DIR}/kieker.log"
 
     executeBenchmark
-
-    printIntermediaryResults
+    printIntermediaryResults "${i}"
 done
 
 # Create R labels
