@@ -36,7 +36,7 @@ cd "${BASE_DIR}"
 
 JAVA_VERSION=`java -version"
 
-info "Java version "${JAVA_VERSION}"
+info "Java version ${JAVA_VERSION}"
 
 ./gradlew build
 
