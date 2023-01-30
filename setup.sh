@@ -34,7 +34,7 @@ fi
 
 cd "${BASE_DIR}"
 
-JAVA_VERSION=`java -version"
+JAVA_VERSION=`java -version`
 
 info "Java version ${JAVA_VERSION}"
 
