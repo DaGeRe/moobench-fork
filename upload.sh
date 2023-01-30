@@ -11,9 +11,6 @@ BASE_DIR=$(cd "$(dirname "$0")"; pwd)
 KEYSTORE="$1"
 UPDATE_SITE_URL="$2"
 
-error "Upload deactived for debugging purposes."
-exit 1
-
 #
 # source functionality
 #
