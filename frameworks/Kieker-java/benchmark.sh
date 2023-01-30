@@ -9,6 +9,10 @@
 BASE_DIR=$(cd "$(dirname "$0")"; pwd)
 MAIN_DIR="${BASE_DIR}/../.."
 
+# Hotfix for ASPECTJ
+# https://stackoverflow.com/questions/70411097/instrument-java-17-with-aspectj
+export JAVA_OPTS="--add-opens java.base/java.lang=ALL-UNNAMED"
+
 #
 # source functionality
 #
