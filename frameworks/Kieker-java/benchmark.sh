@@ -11,7 +11,12 @@ MAIN_DIR="${BASE_DIR}/../.."
 
 # Hotfix for ASPECTJ
 # https://stackoverflow.com/questions/70411097/instrument-java-17-with-aspectj
-export JAVA_OPTS="--add-opens java.base/java.lang=ALL-UNNAMED"
+JAVA_VERSION=$(java -version 2>&1 | grep -oP 'version "?(1\.)?\K\d+')
+if [ "$JAVA_VERSION" != "8" ]
+then
+	export JAVA_OPTS="--add-opens java.base/java.lang=ALL-UNNAMED"
+	echo "Setting \$JAVA_OPTS, since Java version is bigger than 8"
+fi
 
 #
 # source functionality
