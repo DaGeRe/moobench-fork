@@ -88,7 +88,7 @@ function noInstrumentation() {
     sleep "${SLEEP_TIME}"
 }
 
-function dactivatedProbe() {
+function deactivatedProbe() {
     index="$1"
     loop="$2"
     approach="$3"

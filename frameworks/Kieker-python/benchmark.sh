@@ -128,8 +128,8 @@ for ((i=1;i<=${NUM_OF_LOOPS};i+=1)); do
 
     noInstrumentation 0 $i
 
-    dactivatedProbe 1 $i 1
-    dactivatedProbe 2 $i 2
+    deactivatedProbe 1 $i 1
+    deactivatedProbe 2 $i 2
 
     noLogging 3 $i 1
     noLogging 4 $i 2
