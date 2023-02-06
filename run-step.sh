@@ -6,10 +6,10 @@
 ./frameworks/inspectIT-java/benchmark.sh || exit
 
 echo "copy"
-cp -v frameworks/Kieker-python/results-Kieker-python/results.yaml kieker-python-results.yaml
-cp -v frameworks/Kieker-java/results-Kieker-java/results.yaml kieker-java-results.yaml
-cp -v frameworks/OpenTelemetry-java/results-OpenTelemetry-java/results.yaml open-telementry-results.yaml
-cp -v frameworks/inspectIT-java/results-inspectIT-java/results.yaml inspect-it-results.yaml
+cp -v frameworks/Kieker-python/results/results.yaml Kieker-python-results.yaml
+cp -v frameworks/Kieker-java/results/results.yaml Kieker-java-results.yaml
+cp -v frameworks/OpenTelemetry-java/results/results.yaml OpenTelemetry-java-results.yaml
+cp -v frameworks/inspectIT-java/results/results.yaml inspectIT-java-results.yaml
 
 # end
 

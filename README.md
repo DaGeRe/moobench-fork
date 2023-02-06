@@ -19,7 +19,7 @@ For all combinations of supported monitoring frameworks $FRAMEWORK and languages
 - docker = Dockerfile to be used in automated runs on our intrestructure
 - frameworks = benchmark setups for the different frameworks
   - Kieker
-  - OpenTelementry
+  - OpenTelemetry
   - SPASSmeter
   - inspectIT
 - gradle = build system, gradle libraries

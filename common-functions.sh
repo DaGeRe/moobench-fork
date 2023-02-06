@@ -245,7 +245,7 @@ function showParameter() {
 }
 
 FRAMEWORK_NAME=$(basename -- "${BASE_DIR}")
-RESULTS_DIR="${BASE_DIR}/results-${FRAMEWORK_NAME}"
+RESULTS_DIR="${BASE_DIR}/results"
 RAWFN="${RESULTS_DIR}/raw"
 
 # Initialize all unset parameters

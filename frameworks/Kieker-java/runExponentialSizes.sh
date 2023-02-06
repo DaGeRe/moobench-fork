@@ -14,7 +14,7 @@ else
 	exit 1
 fi
 
-RESULTS_DIR="${BASE_DIR}/results-Kieker-java"
+RESULTS_DIR="${BASE_DIR}/exp-results"
 
 #
 # checks
