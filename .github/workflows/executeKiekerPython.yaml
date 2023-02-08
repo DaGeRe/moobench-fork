@@ -34,9 +34,9 @@ jobs:
           ./benchmark.sh 
           unzip results/results.zip 
           measuredValues=$(cat raw-1-10-* | wc -l) 
-          if [ $measuredValues -ne 50 ] 
+          if [ $measuredValues -ne 90 ] 
           then
-            echo "It should be 50 measured values, but was $measuredValues"
+            echo "It should be 90 measured values, but was $measuredValues"
             exit 1
           fi
 
